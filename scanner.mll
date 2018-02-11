@@ -50,17 +50,17 @@ rule tokenize = parse
 | "fresh" { FRESH }
 | "remove" { REMOVE }
 | "NULL" { NULL }
-| "{}" { MLIT(empty) } /*needed? hw to MLIT--map lit*/
-| ['0'-'9']+ as lit { ILIT(int_of_string lit) } /*MLIT. BLIT*/
-| ['a'-'z']+['0'-'9' a'-'z' 'A'-'Z']+ as lit { VARIABLE(lit) }
+| "{}" { MLIT(empty) } (*needed? hw to MLIT--map lit*)
+| ['0'-'9']+ as lit { ILIT(int_of_string lit) } (*MLIT. BLIT*)
+| ['a'-'z']['0'-'9' 'a'-'z' 'A'-'Z']+ as lit { VARIABLE(lit) }
 | "true" { BLIT(true) }
 | "false" { BLIT(false) }
 | eof { EOF }
-| "/*" { comment lexbuf }
+| "(*" { comment lexbuf }
 | "//" { sincomment lexbuf }
-and comment = parse "*/" { tokenize lexbuf }
+and comment = parse "*)" { tokenize lexbuf }
 | _ { comment lexbuf }
 and sincomment = parse ['\n'] { tokenize lexbuf }
 | _ { sincomment lexbuf }
 
-/*todo: test, how to do string literal*/
+(*todo: test, how to do string literal*)
