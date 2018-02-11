@@ -5,7 +5,8 @@
 | CCURLY | DOT | EQUALS | NEQ | LEQ | GEQ | AND | OR | RET | PRINT | EXIT
 | FUNCT | FOR | WHILE | FOREACH | END | IF | ELSE | INTV | CHARV | STRINGV
 | BOOLV | VOID | MAPV | LISTV | PLAYER | BOARD | DICT | LETSCO | FRESH | REMOVE
-| NULL | ILIT of int | VARIABLE of string | BLIT of bool | EOF}
+| NULL | LITI of int | VARIABLE of string | LITB of bool | LITS of string
+| LITC of char | EOF}
 
 rule tokenize = parse
   [' ' '\t' '\r' '\n'] { tokenize lexbuf }
@@ -52,15 +53,16 @@ rule tokenize = parse
 | "list" { LISTV }
 | "Player" { PLAYER }
 | "Board" { BOARD }
-| "dictionary" { DICT }
-| "letterScores" { LETSCO }
 | "fresh" { FRESH }
 | "remove" { REMOVE }
 | "NULL" { NULL }
-| ['0'-'9']+ as lit { ILIT(int_of_string lit) } (*MLIT. BLIT*)
+| ['0'-'9']+ as lit { LITI(int_of_string lit) }
 | ['a'-'z']['0'-'9' 'a'-'z' 'A'-'Z']+ as lit { VARIABLE(lit) }
-| "true" { BLIT(true) }
-| "false" { BLIT(false) }
+| "true" { LITB(true) }
+| "false" { LITB(false) }
+| "\"['0'-'9' 'a'-'z' 'A'-'Z']+\"" as lit { LITS(lit) }
+| "\'['0'-'9' 'a'-'z' 'A'-'Z']\'" as lit { LITC(lit.[0]) }
+| "\'\'" { LITC(Char.chr 0) }
 | eof { EOF }
 | "/*" { comment lexbuf }
 | "//" { sincomment lexbuf }
@@ -68,5 +70,3 @@ and comment = parse "*/" { tokenize lexbuf }
 | _ { comment lexbuf }
 and sincomment = parse ['\n'] { tokenize lexbuf }
 | _ { sincomment lexbuf }
-
-(*todo: test, how to do string literal, are dict/letterscore part of stdlib*)
