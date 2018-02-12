@@ -1,12 +1,12 @@
 (*{ open Parser } LATER *)
 (*below is placeholder *)
-{ type token = ASSIGN | PLUS | MINUS | TIMES | DIVIDE | SEMI | LESS
-| GREATER | MODULO | NOT | COLON | OPAREN | CPAREN | OBRACK | CBRACK | OCURLY
-| CCURLY | DOT | EQUALS | NEQ | LEQ | GEQ | AND | OR | RET | PRINT | EXIT
+{ type token = ASSIGN | PLUS | MINUS | TIMES | DIVIDE | SEMI | LESS | GREATER
+| MODULO | NOT | OPAREN | CPAREN | OBRACK | CBRACK | OCURLY | CCURLY
+| COMMA | DOT | COLON | EQUALS | NEQ | LEQ | GEQ | AND | OR | RET | PRINT | EXIT
 | FUNCT | FOR | WHILE | FOREACH | END | IF | ELSE | INTV | CHARV | STRINGV
 | BOOLV | VOID | MAPV | LISTV | PLAYER | BOARD | DICT | LETSCO | FRESH | REMOVE
 | NULL | LITI of int | VARIABLE of string | LITB of bool | LITS of string
-| LITC of char | EOF}
+| LITC of char | EOF }
 
 rule tokenize = parse
   [' ' '\t' '\r' '\n'] { tokenize lexbuf }
@@ -20,14 +20,15 @@ rule tokenize = parse
 | '>' { GREATER }
 | '%' { MODULO }
 | '!' { NOT }
-| ':' { COLON }
 | '(' { OPAREN }
 | ')' { CPAREN }
 | '[' { OBRACK }
 | ']' { CBRACK }
 | '{' { OCURLY }
 | '}' { CCURLY }
+| ',' { COMMA }
 | '.' { DOT }
+| ':' { COLON }
 | "==" { EQUALS }
 | "!=" { NEQ }
 | "<=" { LEQ }
@@ -56,12 +57,12 @@ rule tokenize = parse
 | "fresh" { FRESH }
 | "remove" { REMOVE }
 | "NULL" { NULL }
-| ['0'-'9']+ as lit { LITI(int_of_string lit) }
-| ['a'-'z']['0'-'9' 'a'-'z' 'A'-'Z']+ as lit { VARIABLE(lit) }
 | "true" { LITB(true) }
 | "false" { LITB(false) }
-| "\"['0'-'9' 'a'-'z' 'A'-'Z']+\"" as lit { LITS(lit) }
-| "\'['0'-'9' 'a'-'z' 'A'-'Z']\'" as lit { LITC(lit.[0]) }
+| ['0'-'9']+ as lit { LITI(int_of_string lit) }
+| ['\'']['0'-'9' 'a'-'z' 'A'-'Z']['\''] as lit { LITC(lit.[1]) }
+| ['a'-'z']['0'-'9' 'a'-'z' 'A'-'Z']+ as lit { VARIABLE(lit) }
+| ['"']['0'-'9' 'a'-'z' 'A'-'Z']+['"'] as lit { LITS(lit) }
 | "\'\'" { LITC(Char.chr 0) }
 | eof { EOF }
 | "/*" { comment lexbuf }
