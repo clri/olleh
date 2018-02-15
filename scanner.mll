@@ -1,12 +1,12 @@
-(*{ open Parser } LATER *)
-(*below is placeholder *)
+{ open Parser }
+(*below is placeholder
 { type token = ASSIGN | PLUS | MINUS | TIMES | DIVIDE | SEMI | LESS | GREATER
 | MODULO | NOT | OPAREN | CPAREN | OBRACK | CBRACK | OCURLY | CCURLY
 | COMMA | DOT | COLON | EQUALS | NEQ | LEQ | GEQ | AND | OR | RET | PRINT | EXIT
 | FUNCT | FOR | WHILE | FOREACH | END | IF | ELSE | INTV | CHARV | STRINGV
 | BOOLV | VOID | MAPV | LISTV | PLAYER | BOARD | DICT | LETSCO | FRESH | REMOVE
 | NULL | LITI of int | VARIABLE of string | LITB of bool | LITS of string
-| LITC of char | EOF }
+| LITC of char | EOF }*)
 
 rule tokenize = parse
   [' ' '\t' '\r' '\n'] { tokenize lexbuf }
@@ -62,7 +62,7 @@ rule tokenize = parse
 | ['0'-'9']+ as lit { LITI(int_of_string lit) }
 | ['\'']['0'-'9' 'a'-'z' 'A'-'Z']['\''] as lit { LITC(lit.[1]) }
 | ['a'-'z']['0'-'9' 'a'-'z' 'A'-'Z']+ as lit { VARIABLE(lit) }
-| ['"']['0'-'9' 'a'-'z' 'A'-'Z']+['"'] as lit { LITS(lit) }
+| ['"']['0'-'9' 'a'-'z' 'A'-'Z']*['"'] as lit { LITS(lit) }
 | "\'\'" { LITC(Char.chr 0) }
 | eof { EOF }
 | "/*" { comment lexbuf }
