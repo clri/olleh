@@ -28,3 +28,8 @@ parser.cmx : ast.cmo parser.cmi
 scanner.cmo : parser.cmi
 scanner.cmx : parser.cmx
 parser.cmi : ast.cmo
+
+TESTS = \
+
+
+TESTFILES = $(TESTS:%=test-%.olh) $(TESTS:%=test-%.out)
