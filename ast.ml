@@ -10,14 +10,19 @@ type uop = Neg | Not
 
 type typ = Int | Bool | Char | String | List | Map | Player | Board | Void
 
-type bind = typ * string | typ * string * expr | typ * string * typ * expr list
-    | typ * string * typ * typ list
+type bind = typ * string
+type bind2 = typ * string * expr
+type bind3 = typ * string * typ * expr list
+type bind4 =  typ * string * typ * typ list
 
 type expr =
-      Literal of int
-    | Fliteral of string
-    | BoolLit of bool
-    | Id of string
+      Literali of int
+    | Literals of string
+    | Literalb of bool
+    | Literalc of char
+    | Literalm of 'a * 'b list
+    | Literall of 'a list
+    | Variable of string
     | Binop of expr * op * expr
     | Unop of uop * expr
     | Assign of string * expr
@@ -25,22 +30,23 @@ type expr =
     | Noexpr
 
 type stmt =
-      Block of stmt list
+      bind
+    | func_decl
     | Expr of expr
     | Return of expr
     | If of expr * stmt * stmt
     | While of expr * stmt
     | For of expr * expr * expr * stmt
+    | Foreach
 
 type func_decl = {
     typ         : typ;
     fname       : string;
     formals     : bind list;
-    locals      : bind list;
     body        : stmt list;
 }
 
-type program = bind list * func_decl list
+type program = stmt list
 
 
 (* Pretty-printing functions *)
