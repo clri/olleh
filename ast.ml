@@ -8,9 +8,10 @@ type op = Add | Sub | Mult | Div | Equal |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Float | Void
+type typ = Int | Bool | Float | Void | List | Player | Board | Map
 
-type bind = typ * string
+type bind = typ * string 	(* variable declaration *)
+
 
 type expr =
       Literal of int
@@ -22,6 +23,7 @@ type expr =
     | Assign of string * expr
     | Call of string * expr list
     | Noexpr
+    |  
 
 type stmt =
       Block of stmt list
