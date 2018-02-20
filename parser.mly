@@ -28,7 +28,7 @@
 %%
 
 program:
-  decls EOF { $1 }
+  stmt_list EOF { $1 }
 
 decls:
     /* nothing */ { ([], [])		}
@@ -37,7 +37,7 @@ decls:
 
 
 fdecl:
-  FUNCT typ VARIABLE OPAREN formals_opt CPAREN COLON vdecl_list stmt_list END SEMI
+  FUNCT typ VARIABLE OPAREN formals_opt CPAREN COLON stmt_list END SEMI
      { { typ = $2;
          fname = $3;
          formals = $5;
@@ -57,10 +57,13 @@ typ:
     INTV    { int   }
   | BOOLV   { boolean }
   | CHARV   { char }
-  | VOID    { void  }
-  | STRINGV { String}
-  | MAPV    { map }
+  | VOID    { void }
+  | STRINGV { String }
   | LISTV   { list }
+  | obj     { $1 }
+
+obj:
+    MAPV    { map }
   | PLAYER  { Player }
   | BOARD   { Board }
 
@@ -69,11 +72,49 @@ vdecl_list:
   | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-  typ LITS { ( $1, $2) }
+    typ VARIABLE SEMI { ( $1, $2) }
+  | typ VARIABLE ASSIGN expr { ( $1, $2, $4) }
+  | obj VARIABLE ASSIGN FRESH obj RPAREN fsh LPAREN SEMI { ( $2, $2, $5, $7 )}
+
+fsh:
+    /* nothing */ { [] }
+  | typ  { $1 :: [] } /*you can have a map of any type for now*/
+  | expr COMMA expr { $2 :: $1 } /*correct order?*/
 
 stmt_list:
     /* nothing */ { [] }
   | stmt_list stmt { $2 :: $1 }
 
 stmt:
-  SEMI { ; }
+    vdecl_list
+  | expr SEMI                               { Expr $1               }
+  | RETURN expr_opt SEMI                    { Return $2             }
+  | IF OPAREN expr CPAREN COLON stmt_list %prec NOELSE END SEMI
+                                            { If($3, $6, [])        }
+  | IF OPAREN expr CPAREN COLON stmt_list ELSE COLON stmt_list END SEMI
+                                            { If($3, $6, $9)        }
+  | WHILE OPAREN expr CPAREN stmt_list END SEMI
+                                            { While($3, $5)         }
+  | FOR LPAREN expr RPAREN stmt_list END    { For($3, $5, $7, $9)   }
+  | FOREACH VARIABLE VARIABLE COLON stmt_list END SEMI
+                                            { Foreach($2, $3, $5)   }
+
+expr_opt:
+    /* nothing */ { Noexpr }
+  | expr          { $1 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**/
