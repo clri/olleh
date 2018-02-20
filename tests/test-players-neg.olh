@@ -1,6 +1,6 @@
 /*
 Negative test.
-Meant to create player and set up their first turn.
+Meant to create players and set up their first turn.
 */
 
 Player p1 = new Player();
