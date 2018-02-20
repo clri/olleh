@@ -87,7 +87,7 @@ stmt_list:
 stmt:
     vdecl_list                              { $1 } /*already parsed*/
   | expr SEMI                               { Expr $1               }
-  | RET expr_opt SEMI                    { RET $2             }
+  | RET expr_opt SEMI                       { RET $2             }
   | IF OPAREN expr CPAREN COLON stmt_list %prec NOELSE END SEMI
                                             { If($3, $6, [])        }
   | IF OPAREN expr CPAREN COLON stmt_list ELSE COLON stmt_list END SEMI
@@ -141,7 +141,7 @@ expr:
   | MINUS expr %prec NEG { Unop(Neg, $2)                   }
   | NOT expr         { Unop(Not, $2)                       }
   | VARIABLE ASSIGN expr { Assign($1, $3)                  }
-  | VARIABLE DOT VARIABLE ASSIGN expr { Assign($1, $3, $5) } /*assign to mem*/
+  | VARIABLE DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
   | OPAREN expr CPAREN { $2                                }
 
