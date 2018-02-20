@@ -1,0 +1,8 @@
+/*
+Negative test.
+Meant to print strings and ints.
+*/
+
+print "This is a string printed correctly.";
+print 42;
+print "September " + 19;
