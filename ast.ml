@@ -14,20 +14,20 @@ type formalbind = typ * string
 
 type expr =
       Literali of int
+    | Literalc of char
     | Literals of string
     | Literalb of bool
-    | Literalc of char
-    | Literalm of (expr * expr) list
-    | Literall of expr list
     | Null
     | Variable of string
     | Vmember of string * string
+    | Literall of expr list
+    | Literalm of (expr * expr) list
     | Binop of expr * op * expr
     | Unop of uop * expr
     | Assign of string * expr
+    | Rem of string * expr
     | Assignm of string * string * expr
     | Call of string * expr list
-    | Rem of string * expr
     | Newtobj of typ * typ
     | Newobj of typ * expr list
     | Noexpr
