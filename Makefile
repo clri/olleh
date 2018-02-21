@@ -28,3 +28,13 @@ parser.cmx : ast.cmo parser.cmi
 scanner.cmo : parser.cmi
 scanner.cmx : parser.cmx
 parser.cmi : ast.cmo
+
+# Building the tarball
+
+TESTS = \
+    func-pos if-pos players-neg print-neg
+
+TESTFILES = $(TESTS:%=test-%.olh) $(TESTS:%=test-%.out)
+
+TARFILES = README \
+    ast.ml Makefile parser.mly scanner.mll

@@ -1,0 +1,9 @@
+function void switchTurns(Player p1, Player p2):
+	if (p1.turn):
+		p1.turn = false;
+		p2.turn = true;
+	else: 
+		p2.turn = false;
+		p1.turn = true;
+	end;
+end;
