@@ -1,0 +1,12 @@
+/*
+ * Positive test: creating players map and board
+ */
+
+Player townsend = fresh Player();
+Player edwards = fresh Player();
+
+
+map guessed = fresh map(String);
+Board battlefield = fresh Board(1,5);
+
+
