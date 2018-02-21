@@ -1,0 +1,9 @@
+/*
+ * Negative test.
+ * Meant to be a function to set players' turns.
+ */
+
+function void setTurn(Player townsend, Player edwards) {
+    townsend.turn = false;
+    edwards.turn = true;
+}

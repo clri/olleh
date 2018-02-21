@@ -32,7 +32,8 @@ parser.cmi : ast.cmo
 # Building the tarball
 
 TESTS = \
-    func-pos if-pos players-neg print-neg
+    func-pos if-pos loop-pos vers-pos \
+    players-neg print-neg foreach-neg if-neg func-neg
 
 TESTFILES = $(TESTS:%=test-%.olh) $(TESTS:%=test-%.out)
 
