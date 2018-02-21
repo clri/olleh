@@ -1,5 +1,5 @@
 %{ open Ast %}
-%token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT REMOVE
+%token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT REMOVE NULL
 %token INTV CHARV STRINGV BOOLV VOID BOARD MAPV LISTV PLAYER
 %token EQUALS LESS GREATER NOT NEQ LEQ GEQ AND OR
 %token RET END IF ELSE FOR FOREACH WHILE
@@ -14,6 +14,7 @@
 %start program
 %type <Ast.program> program
 
+%left COMMA
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN
@@ -119,6 +120,7 @@ expr:
   | LITC	     { Literalc($1)                        }
   | LITB             { Literalb($1)                        }
   | LITS             { Literals($1)                        }
+  | NULL             { Null                                }
   | VARIABLE         { Variable($1)                        }
   | VARIABLE DOT VARIABLE { Vmember($1, $3)                } /*member of obj*/
   | OBRACK lis CBRACK { Literall($2)                       } /*list literal*/
