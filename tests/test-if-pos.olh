@@ -2,16 +2,16 @@
  * Positive: if/else
  */
 
-Player1 edwards = fresh Player();
+Player edwards = fresh Player();
 
-if (edwards.score > 5): 
+if (edwards.score > 5):
 	print "Good job Edwards!";
 
 else:
-	if (edwards.score > 2): 
+	if (edwards.score > 2):
 		print "Not too shabby";
-	
-	else: 
+
+	else:
 		print "Meh, I've seen better";
 	end;
 end;

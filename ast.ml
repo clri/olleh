@@ -28,6 +28,7 @@ type expr =
     | Assignm of string * string * expr
     | Call of string * expr list
     | Rem of string * expr
+    | Newtobj of typ * typ
     | Newobj of typ * expr list
     | Noexpr
 
@@ -37,7 +38,7 @@ type stmt =
     | If of expr * (stmt list) * (stmt list)
     | While of expr * (stmt list)
     | For of expr * (stmt list)
-    | Foreach of string * string * (stmt list)
+    | Foreach of string * expr * (stmt list)
     | Bind of typ * string
     | Assignd of typ * string * expr
     | Print of expr
