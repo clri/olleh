@@ -28,6 +28,7 @@ rule tokenize = parse
 | "&&" { AND }
 | "||" { OR }
 | "->" { MAPTO }
+| "Null" { NULL }
 | "return" { RET }
 | "print" { PRINT }
 | "exit" { EXIT }

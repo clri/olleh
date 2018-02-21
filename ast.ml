@@ -19,6 +19,7 @@ type expr =
     | Literalc of char
     | Literalm of (expr * expr) list
     | Literall of expr list
+    | Null
     | Variable of string
     | Vmember of string * string
     | Binop of expr * op * expr
