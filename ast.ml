@@ -27,6 +27,7 @@ type expr =
     | Assignm of string * string * expr
     | Call of string * expr list
     | Rem of string * expr
+    | Newobj of typ * expr list
     | Noexpr
 
 type stmt =
@@ -38,8 +39,8 @@ type stmt =
     | Foreach of string * string * (stmt list)
     | Bind of typ * string
     | Assignd of typ * string * expr
-    | Assignf of typ * string * typ * expr list
     | Print of expr
+    | Exit of int
 
 type func_decl = {
     typ         : typ;

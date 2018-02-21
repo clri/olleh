@@ -17,6 +17,7 @@
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN
+%nonassoc DOT
 %left OR
 %left AND
 %left EQUALS NEQ
@@ -24,6 +25,7 @@
 %left PLUS MINUS
 %left TIMES DIVIDE MODULO
 %right NOT NEG
+%nonassoc PRINT
 
 %%
 
@@ -35,15 +37,17 @@ decls:
   | decls stmt { (($2 :: fst $1), snd $1) }
   | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
-
 typ:
+    typr { $1 }
+  | obj  { $1 }
+
+typr:
     INTV    { Int }
   | BOOLV   { Bool }
   | CHARV   { Char }
   | VOID    { Void }
   | STRINGV { String }
   | LISTV   { List }
-  | obj     { $1 }
 
 obj:
     MAPV    { Map }
@@ -73,7 +77,7 @@ stmt_list:
   | stmt_list stmt { $2 :: $1 }
 
 stmt:
-  | expr SEMI                               { Expr $1               }
+  expr SEMI                                 { Expr $1               }
   | RET expr_opt SEMI                       { Return $2             }
   | IF OPAREN expr CPAREN COLON stmt_list %prec NOELSE END SEMI
                                             { If($3, $6, [])        }
@@ -81,13 +85,13 @@ stmt:
                                             { If($3, $6, $9)        }
   | WHILE OPAREN expr CPAREN stmt_list END SEMI
                                             { While($3, $5)         }
-  | FOR CPAREN expr OPAREN stmt_list END    { For($3, $5)           }
+  | FOR OPAREN expr CPAREN stmt_list END    { For($3, $5)           }
   | FOREACH VARIABLE VARIABLE COLON stmt_list END SEMI
                                             { Foreach($2, $3, $5)   }
   | typ VARIABLE SEMI { Bind( $1, $2) }
-  | typ VARIABLE ASSIGN expr { Assignd( $1, $2, $4) }
-  | obj VARIABLE ASSIGN FRESH obj OPAREN args_opt CPAREN SEMI { Assignf( $1, $2, $5, $7 )}
+  | typ VARIABLE ASSIGN expr SEMI { Assignd( $1, $2, $4) }
   | PRINT expr { Print($2) }
+  | EXIT SEMI                               { Exit(0) }
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -136,9 +140,10 @@ expr:
   | MINUS expr %prec NEG { Unop(Neg, $2)                   }
   | NOT expr         { Unop(Not, $2)                       }
   | VARIABLE ASSIGN expr { Assign($1, $3)                  }
+  | VARIABLE DOT REMOVE OPAREN expr CPAREN { Rem($1, $5)   }
   | VARIABLE DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
-  | VARIABLE DOT REMOVE OPAREN expr CPAREN { Rem($1, $5)   }
+  | FRESH obj OPAREN args_opt CPAREN { Newobj( $2, $4 )    }
   | OPAREN expr CPAREN { $2                                }
 
 
