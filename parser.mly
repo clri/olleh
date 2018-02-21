@@ -143,9 +143,9 @@ expr:
   | VARIABLE ASSIGN expr { Assign($1, $3)                  }
   | VARIABLE DOT REMOVE OPAREN expr CPAREN { Rem($1, $5)   }
   | VARIABLE DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
+  | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
   | FRESH obj OPAREN typ CPAREN { Newtobj( $2, $4 )        }
   | FRESH obj OPAREN args_opt CPAREN { Newobj( $2, $4 )    }
-  | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
   | OPAREN expr CPAREN { $2                                }
 
 
