@@ -86,7 +86,7 @@ stmt:
   | WHILE OPAREN expr CPAREN stmt_list END SEMI
                                             { While($3, $5)         }
   | FOR OPAREN expr CPAREN stmt_list END    { For($3, $5)           }
-  | FOREACH VARIABLE VARIABLE COLON stmt_list END SEMI
+  | FOREACH VARIABLE expr COLON stmt_list END SEMI
                                             { Foreach($2, $3, $5)   }
   | typ VARIABLE SEMI { Bind( $1, $2) }
   | typ VARIABLE ASSIGN expr SEMI { Assignd( $1, $2, $4) }
@@ -143,6 +143,7 @@ expr:
   | VARIABLE ASSIGN expr { Assign($1, $3)                  }
   | VARIABLE DOT REMOVE OPAREN expr CPAREN { Rem($1, $5)   }
   | VARIABLE DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
+  | FRESH obj OPAREN typ CPAREN { Newtobj( $2, $4 )        }
   | FRESH obj OPAREN args_opt CPAREN { Newobj( $2, $4 )    }
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
   | OPAREN expr CPAREN { $2                                }
