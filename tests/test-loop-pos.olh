@@ -1,15 +1,16 @@
 /*
- *  Positive: testing foreach 
- */ 
+ *  Positive: testing foreach
+ */
 
 Board brd = fresh Board(1,5);
 
 foreach x brd.subStrings():
-    if checkWord(x): print "plt is great";
+    if (checkWord(x)):
+    print "plt is great";
+    end;
 end;
 
 int turns = 5;
 for (turns):
 	print "Townsend vs Edwards";
 end;
-
