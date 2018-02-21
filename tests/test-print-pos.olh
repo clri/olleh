@@ -3,5 +3,5 @@ String adj = "hard";
 print "PLT is really" + adj;
 adj = "timeconsuming";
 print "no, " + adj;
-adj = "hard and timeconsuming but kind cool";
+adj = "hard and timeconsuming but kinda cool";
 print "actually, "  + adj;
