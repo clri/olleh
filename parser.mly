@@ -1,5 +1,5 @@
-/* %{ open Ast %} later */
-%token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA NULL PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO
+%{ open Ast %}
+%token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA NULL PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT REMOVE
 %token INTV CHARV STRINGV BOOLV VOID BOARD MAPV LISTV PLAYER
 %token EQUALS LESS GREATER NOT NEQ LEQ GEQ AND OR
 %token RET END IF ELSE FOR FOREACH WHILE
@@ -28,12 +28,27 @@
 %%
 
 program:
-  stmt_list EOF { $1 }
+  decls EOF { $1 }
 
 decls:
-    /* nothing */ { ([], [])		}
-  | decls vdecl { (($2 :: fst $1), snd $1) }
+   /* nothing */ { ([], [])               }
+  | decls stmt { (($2 :: fst $1), snd $1) }
   | decls fdecl { (fst $1, ($2 :: snd $1)) }
+
+
+typ:
+    INTV    { Int }
+  | BOOLV   { Bool }
+  | CHARV   { Char }
+  | VOID    { Void }
+  | STRINGV { String }
+  | LISTV   { List }
+  | obj     { $1 }
+
+obj:
+    MAPV    { Map }
+  | PLAYER  { Player }
+  | BOARD   { Board }
 
 
 fdecl:
@@ -52,42 +67,14 @@ formal_list:
     typ VARIABLE                   { [($1,$2)]     }
   | formal_list COMMA typ VARIABLE { ($3,$4) :: $1 }
 
-typ:
-    INTV    { int   }
-  | BOOLV   { boolean }
-  | CHARV   { char }
-  | VOID    { void }
-  | STRINGV { String }
-  | LISTV   { list }
-  | obj     { $1 }
-
-obj:
-    MAPV    { map }
-  | PLAYER  { Player }
-  | BOARD   { Board }
-
-vdecl_list:
-    /* nothing */ { [] }
-  | vdecl_list vdecl { $2 :: $1 }
-
-vdecl:
-    typ VARIABLE SEMI { ( $1, $2) }
-  | typ VARIABLE ASSIGN expr { ( $1, $2, $4) }
-  | obj VARIABLE ASSIGN FRESH obj OPAREN fsh CPAREN SEMI { ( $2, $2, $5, $7 )}
-
-fsh:
-    /* nothing */ { [] }
-  | typ  { $1 :: [] } /*you can have a map of any type for now*/
-  | expr COMMA expr { $3 :: ($1 :: []) } /*correct order?*/
 
 stmt_list:
     /* nothing */ { [] }
   | stmt_list stmt { $2 :: $1 }
 
 stmt:
-    vdecl_list                              { $1 } /*already parsed*/
   | expr SEMI                               { Expr $1               }
-  | RET expr_opt SEMI                       { RET $2             }
+  | RET expr_opt SEMI                       { Return $2             }
   | IF OPAREN expr CPAREN COLON stmt_list %prec NOELSE END SEMI
                                             { If($3, $6, [])        }
   | IF OPAREN expr CPAREN COLON stmt_list ELSE COLON stmt_list END SEMI
@@ -97,6 +84,10 @@ stmt:
   | FOR CPAREN expr OPAREN stmt_list END    { For($3, $5)           }
   | FOREACH VARIABLE VARIABLE COLON stmt_list END SEMI
                                             { Foreach($2, $3, $5)   }
+  | typ VARIABLE SEMI { Bind( $1, $2) }
+  | typ VARIABLE ASSIGN expr { Assignd( $1, $2, $4) }
+  | obj VARIABLE ASSIGN FRESH obj OPAREN args_opt CPAREN SEMI { Assignf( $1, $2, $5, $7 )}
+  | PRINT expr { Print($2) }
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -105,6 +96,10 @@ expr_opt:
 args_opt:
     /* nothing */ { [] }
   | args_list  { List.rev $1 }
+
+args_list:
+    expr                    { [$1] }
+  | args_list COMMA expr { $3 :: $1 }
 
 lis:
     /* nothing */ { [] }
@@ -122,7 +117,7 @@ expr:
   | LITB             { Literalb($1)                        }
   | LITS             { Literals($1)                        }
   | VARIABLE         { Variable($1)                        }
-  | VARIABLE DOT VARIABLE { Variable($1, $3)               } /*member of obj*/
+  | VARIABLE DOT VARIABLE { Vmember($1, $3)                } /*member of obj*/
   | OBRACK lis CBRACK { Literall($2)                       } /*list literal*/
   | OCURLY maplis CCURLY { Literalm($2)                    } /*map literal*/
   | expr PLUS   expr { Binop($1, Add,   $3)                }
@@ -143,11 +138,9 @@ expr:
   | VARIABLE ASSIGN expr { Assign($1, $3)                  }
   | VARIABLE DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
+  | VARIABLE DOT REMOVE OPAREN expr CPAREN { Rem($1, $5)   }
   | OPAREN expr CPAREN { $2                                }
 
-args_list:
-    expr                    { [$1] }
-  | args_list COMMA expr { $3 :: $1 }
 
 
 

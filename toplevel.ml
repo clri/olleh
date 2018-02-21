@@ -6,7 +6,7 @@ Adapted from microc/class slides*)
 let () =
         let usage_msg = "usage: ./toplevel.native [file.olh]" in
         let channel = ref stdin in
-        Arg.parse []] (fun filename -> channel := open_in filename) usage_msg;
+        Arg.parse [] (fun filename -> channel := open_in filename) usage_msg;
         let lexbuf = Lexing.from_channel !channel in
-        let _ (*ast*) = Parser.program Scanner.token lexbuf in
+        let _ (*ast*) = Parser.program Scanner.tokenize lexbuf in
         print_endline "valid program!"

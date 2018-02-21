@@ -35,7 +35,7 @@ rule tokenize = parse
 | ">=" { GEQ }
 | "&&" { AND }
 | "||" { OR }
-| "->" { MAPSTO }
+| "->" { MAPTO }
 | "return" { RET }
 | "print" { PRINT }
 | "exit" { EXIT }
