@@ -1,9 +1,9 @@
 /*
-Negative test.
-Meant to create players and set up their first turn.
-*/
+ * Negative test.
+ * Meant to create players and set up their first turn.
+ */
 
-Player p1 = new Player();
+Player p1 = fresh Player();
 p1.turn = true;
-Player p2 = fresh Player();
+Player p2 = new Player();
 p2.turn = false;

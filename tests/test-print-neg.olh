@@ -1,7 +1,7 @@
 /*
-Negative test.
-Meant to print strings and ints.
-*/
+ * Negative test.
+ * Meant to print strings and ints.
+ */
 
 print "This is a string printed correctly.";
 print 42;
