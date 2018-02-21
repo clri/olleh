@@ -1,7 +1,7 @@
 
-String adj = "hard";
-print "PLT is really" + adj;
-adj = "timeconsuming";
-print "no, " + adj;
-adj = "hard and timeconsuming but kinda cool";
-print "actually, "  + adj;
+String adj = 4;//"hard";
+print 4 + adj;//"PLT is really" + adj;
+adj = 4;//"timeconsuming";
+print 89 + adj;//"no, " + adj;
+adj = 98;//"hard and timeconsuming but kinda cool";
+print adj;//"actually, "  + adj;

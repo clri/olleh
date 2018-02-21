@@ -30,6 +30,7 @@ type expr =
     | Newtobj of typ * typ
     | Newobj of typ * expr list
     | Call of string * expr list
+    | Callm of string * string * expr list
     | Noexpr
 
 type stmt =

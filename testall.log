@@ -6,18 +6,18 @@
 
 ###### Testing test-if-pos
 ./toplevel tests/test-if-pos.olh > test-if-pos.out
-Fatal error: exception Parsing.Parse_error
-###### FAILED
+./testall.sh: line 91: Compare: command not found
+###### SUCCESS
 
 ###### Testing test-loop-pos
 ./toplevel tests/test-loop-pos.olh > test-loop-pos.out
-Fatal error: exception Parsing.Parse_error
-###### FAILED
+./testall.sh: line 91: Compare: command not found
+###### SUCCESS
 
 ###### Testing test-print-pos
 ./toplevel tests/test-print-pos.olh > test-print-pos.out
-Fatal error: exception Parsing.Parse_error
-###### FAILED
+./testall.sh: line 91: Compare: command not found
+###### SUCCESS
 
 ###### Testing test-vars-pos
 ./toplevel tests/test-vars-pos.olh > test-vars-pos.out

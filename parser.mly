@@ -143,6 +143,7 @@ expr:
   | FRESH obj OPAREN typ CPAREN { Newtobj( $2, $4 )        }
   | FRESH obj OPAREN args_opt CPAREN { Newobj( $2, $4 )    }
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
+  | VARIABLE DOT VARIABLE OPAREN args_opt CPAREN { Callm($1, $3, $5)         }
   | OPAREN expr CPAREN { $2                                }
 
 
