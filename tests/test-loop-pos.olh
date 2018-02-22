@@ -5,21 +5,12 @@
 Board brd = fresh Board(1,5);
 
 foreach x brd.subStrings():
-<<<<<<< HEAD
-    if checkWord(x): print "plt is great";
-    end; 
-=======
     if (checkWord(x)):
     print pltIsGreat;
     end;
->>>>>>> dafce60fc3c33f85f044fc7237f672599aa2f226
 end;
 
 int turns = 5;
 for (turns):
-<<<<<<< HEAD
-	print "Townsend vs Edwards"; 
-=======
 	print tve;
->>>>>>> dafce60fc3c33f85f044fc7237f672599aa2f226
 end;
