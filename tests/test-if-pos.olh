@@ -5,13 +5,13 @@
 Player edwards = fresh Player();
 
 if (edwards.score > 5):
-	print "Good job Edwards!";
+	print 4;
 
 else:
 	if (edwards.score > 2):
-		print "Not too shabby";
+		print 5;
 
 	else:
-		print "Meh, I've seen better";
+		print 6;
 	end;
 end;

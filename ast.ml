@@ -27,21 +27,22 @@ type expr =
     | Assign of string * expr
     | Rem of string * expr
     | Assignm of string * string * expr
-    | Call of string * expr list
     | Newtobj of typ * typ
     | Newobj of typ * expr list
+    | Call of string * expr list
+    | Callm of string * string * expr list
     | Noexpr
 
 type stmt =
       Expr of expr
     | Return of expr
+    | Print of expr
     | If of expr * (stmt list) * (stmt list)
     | While of expr * (stmt list)
     | For of expr * (stmt list)
     | Foreach of string * expr * (stmt list)
     | Bind of typ * string
     | Assignd of typ * string * expr
-    | Print of expr
     | Exit of int
 
 type func_decl = {
