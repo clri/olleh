@@ -6,11 +6,11 @@ Board brd = fresh Board(1,5);
 
 foreach x brd.subStrings():
     if (checkWord(x)):
-    print pltIsGreat;
+    print "asdf sdfklj\n sldkjf\t sdlkjf";
     end;
 end;
 
 int turns = 5;
 for (turns):
-	print tve;
+	print "";
 end;

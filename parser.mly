@@ -116,7 +116,7 @@ expr:
     LITI             { Literali($1)                        }
   | LITC	     { Literalc($1)                        }
   | LITB             { Literalb($1)                        }
-  | LITS             { Literals($1)                        }
+  | LITS          { Literals($1)                        }
   | NULL             { Null                                }
   | VARIABLE         { Variable($1)                        }
   | VARIABLE DOT VARIABLE { Vmember($1, $3)                } /*member of obj*/

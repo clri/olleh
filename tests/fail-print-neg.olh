@@ -5,4 +5,4 @@
 
 print "This is a string printed correctly.";
 print 42;
-print "September " + 19;
+print if (true) print x end;; //print expr

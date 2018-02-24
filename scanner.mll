@@ -56,12 +56,10 @@ rule tokenize = parse
 | ['\'']['0'-'9' 'a'-'z' 'A'-'Z']['\''] as lit { LITC(lit.[1]) }
 | ['a'-'z']['0'-'9' 'a'-'z' 'A'-'Z']* as lit { VARIABLE(lit) }
 | "\'\'" { LITC(Char.chr 0) }
+| ['"'][^ '"']*['"'] as lit { LITS(lit) }
 | eof { EOF }
-| '"' { sliteral lexbuf }
 | "/*" { comment lexbuf }
 | "//" { sincomment lexbuf }
-and sliteral = parse ['"'] { tokenize lexbuf }
-| ['0'-'9' 'a'-'z' 'A'-'Z' ' ' '\t' '\n' '\'' ',' '.' '!' '?']* as lit { LITS(lit) }
 and comment = parse "*/" { tokenize lexbuf }
 | _ { comment lexbuf }
 and sincomment = parse ['\n'] { tokenize lexbuf }
