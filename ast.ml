@@ -52,9 +52,13 @@ type func_decl = {
     body        : stmt list;
 }
 
-type program = stmt list * func_decl list
+type program = (*stmt list **) func_decl list
 
 
 
 
-(**)
+(*@TODO: implement printing functions better*)
+let string_of_typ _ = "TYP"
+let string_of_expr _ = "EXPR"
+let string_of_uop _ = "UOP"
+let string_of_op _ = "OP"
