@@ -1,40 +1,6 @@
+/usr/local/opt/llvm/bin/lli
 
-###### Testing test-func-pos
-./toplevel tests/test-func-pos.olh > test-func-pos.out
-./testall.sh: line 91: Compare: command not found
-###### SUCCESS
-
-###### Testing test-if-pos
-./toplevel tests/test-if-pos.olh > test-if-pos.out
-Fatal error: exception Parsing.Parse_error
-###### FAILED
-
-###### Testing test-loop-pos
-./toplevel tests/test-loop-pos.olh > test-loop-pos.out
-Fatal error: exception Failure("lexing: empty token")
-###### FAILED
-
-###### Testing test-vars-pos
-./toplevel tests/test-vars-pos.olh > test-vars-pos.out
-Fatal error: exception Parsing.Parse_error
-###### FAILED
-
-###### Testing fail-foreach-neg
-./toplevel < tests/fail-foreach-neg.olh 2> fail-foreach-neg.out >> testall.log
-###### SUCCESS
-
-###### Testing fail-func-neg
-./toplevel < tests/fail-func-neg.olh 2> fail-func-neg.out >> testall.log
-###### SUCCESS
-
-###### Testing fail-if-neg
-./toplevel < tests/fail-if-neg.olh 2> fail-if-neg.out >> testall.log
-###### SUCCESS
-
-###### Testing fail-players-neg
-./toplevel < tests/fail-players-neg.olh 2> fail-players-neg.out >> testall.log
-###### SUCCESS
-
-###### Testing fail-print-neg
-./toplevel < tests/fail-print-neg.olh 2> fail-print-neg.out >> testall.log
+###### Testing hello
+./toplevel tests/hello.olh > hello.ll
+llc hello.ll > hello.s
 ###### SUCCESS
