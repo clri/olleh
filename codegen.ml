@@ -24,7 +24,7 @@ let translate (globals, functions) =
       A.Int   -> i32_t
     | A.Bool  -> i1_t
     | A.Char  -> i8_t
-    | A.String -> L.pointer_type i8_t (*???*)
+    | A.String -> (*L.pointer_type*) i8_t (*???*)
     | A.Void  -> void_t
     | _ -> void_t (*temp; @TODO: add for structs*)
   in
@@ -90,19 +90,17 @@ let translate (globals, functions) =
     (* Return the value for a variable or formal argument. First check
      * locals, then globals *)
 
-    (*@TODO: add back in when we use it
     let lookup n = try StringMap.find n local_vars
                    with Not_found -> StringMap.find n global_vars
-    in*)
+    in
 
 
     (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
 	SLiterali i -> L.const_int i32_t i
-      | _ -> raise (Failure "FAIL")
-      (*| SLiteralc c -> L.const_int i8_t
+      | SLiteralc c -> L.const_int i8_t (int_of_char c)
       | SLiteralb b -> L.const_int i1_t (if b then 1 else 0)
-      | SLiterals s -> L.build_global_stringptr s
+      | SLiterals s -> L.const_stringz context s
       | SNoexpr -> L.const_int i32_t 0
       | Null -> L.const_int i32_t 0
       | SVariable s -> L.build_load (lookup s) s builder
@@ -136,7 +134,7 @@ let translate (globals, functions) =
 	  else raise (Failure "internal error: binop for non int not (yet) implemented")
           (*@TODO: IMPLEMENT FURTHER*)
       | SUnop(op, e) ->
-	  let (t, _) = e in
+	  let _ = e in
           let e' = expr builder e in
 	  (match op with
             A.Neg                  -> L.build_neg
@@ -157,7 +155,7 @@ let translate (globals, functions) =
         let result = (match fdecl.styp with
                            A.Void -> ""
                          | _ -> f ^ "_result") in
-            L.build_call fdef (Array.of_list llargs) result builder*)
+            L.build_call fdef (Array.of_list llargs) result builder
     in
 
     (* Each basic block in a program ends with a "terminator" instruction i.e.

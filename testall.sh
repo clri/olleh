@@ -93,11 +93,11 @@ Check() {
     #generatedfiles=""
 
     #generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
-    Run "$OLLEH" "$1" ">" "${basename}.out" &&
+    Run "$OLLEH" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "${basename}.ll" ">" "${basename}.s" &&
-    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
-    Run "./${basename}.exe" > "${basename}.out" &&
-    Compare ${basename}.out ${reffile} ${basename}.diff
+    #Run "$CC" "-o" "${basename}.exe" "${basename}.s" &&
+    #Run "./${basename}.exe" > "${basename}.out" &&
+    #Compare ${basename}.out ${reffile} ${basename}.diff
 
     # Report the status and clean up the generated files
 
@@ -166,18 +166,14 @@ LLIFail() {
 
 which "$LLI" >> $globallog || LLIFail
 
-if [ ! -f printbig.o ]
-then
-    echo "Could not find printbig.o"
-    echo "Try \"make printbig.o\""
-    exit 1
-fi
+
 
 if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/test-*.olh tests/fail-*.olh"
+    #files="tests/test-*.olh tests/fail-*.olh"
+    files="tests/hello.olh"
 fi
 
 for file in $files
@@ -189,6 +185,9 @@ do
 	*fail-*)
 	    CheckFail $file 2>> $globallog
 	    ;;
+        *hello*)
+            Check $file 2>> $globallog
+            ;;
 	*)
 	    echo "unknown file type $file"
 	    globalerror=1
