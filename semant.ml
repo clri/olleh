@@ -72,7 +72,7 @@ let check functions (*(globals, functions)*) =
     with Not_found -> raise (Failure ("unrecognized function " ^ s))
   in
 
-  let _ = find_func "_start" in (* no spoofed programs please *)
+  let _ = find_func "main" in (* no spoofed programs please *)
 
   let check_function func =
     (* Make sure no formals are void or duplicates *)

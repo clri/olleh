@@ -30,7 +30,7 @@ program:
   /*decls EOF { $1 }*/
 
 pgm:
-  decls EOF { { typ = Void; fname = "_start"; formals = []; body = fst $1} :: snd $1 }
+  decls EOF { { typ = Void; fname = "main"; formals = []; body = fst $1} :: snd $1 }
 
 decls:
    /* nothing */ { ([], [])               }

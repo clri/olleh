@@ -100,7 +100,7 @@ let translate (globals, functions) =
 	SLiterali i -> L.const_int i32_t i
       | SLiteralc c -> L.const_int i8_t (int_of_char c)
       | SLiteralb b -> L.const_int i1_t (if b then 1 else 0)
-      | SLiterals s -> L.const_stringz context s
+      | SLiterals s -> L.build_global_stringptr s "" builder
       | SNoexpr -> L.const_int i32_t 0
       | Null -> L.const_int i32_t 0
       | SVariable s -> L.build_load (lookup s) s builder

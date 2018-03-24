@@ -1,5 +1,7 @@
 OBJS = ast.cmx sast.cmx codegen.cmx parser.cmx scanner.cmx semant.cmx toplevel.cmx
 
+all : toplevel ostdlib.o
+
 toplevel : $(OBJS)
 	ocamlfind ocamlopt -linkpkg -package llvm -package llvm.analysis $(OBJS) -o toplevel
 
