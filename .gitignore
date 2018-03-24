@@ -9,3 +9,4 @@ parser.ml
 y.*
 toplevel
 *.cmx
+*.o
