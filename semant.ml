@@ -232,4 +232,4 @@ let check functions (*(globals, functions)*) =
       sformals = formals';
       sbody = check_stmt_list func.body (*no err since no block *)
     }
-  in List.map check_function functions (*(globals', List.map check_function functions)*)
+  in (*List.map check_function functions*) (globals', List.map check_function functions)
