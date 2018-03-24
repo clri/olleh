@@ -1,4 +1,3 @@
-
 (* We'll refer to Llvm and Ast constructs with module names *)
 module L = Llvm
 module A = Ast
@@ -31,10 +30,11 @@ let translate (globals, functions) =
   in
 
   (* Declare each global variable; remember its value in a map *)
+
   let global_vars : L.llvalue StringMap.t =
     let global_var m (t, n) =
       let init = match t with
-        | _ -> L.const_int (ltype_of_typ t) 0
+          _ -> L.const_int (ltype_of_typ t) 0 (*@TODO: IMPLEMENT*)
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
 
@@ -42,31 +42,31 @@ let translate (globals, functions) =
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue =
      L.declare_function "printf" printf_t the_module in
-   (*@TODO: DECLARE OTHER BUILITNS HERE*)
 
   (* Define each function (arguments and return type) so we can
    * define it's body and call it later *)
-  let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
-    let function_decl m fdecl =
-      let name = fdecl.sfname
-      and formal_types =
-	Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
-      in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
-      StringMap.add name (L.define_function name ftype the_module, fdecl) m in
-    List.fold_left function_decl StringMap.empty functions in
+   let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
+     let function_decl m fdecl =
+       let name = fdecl.sfname
+       and formal_types =
+ 	Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
+       in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
+       StringMap.add name (L.define_function name ftype the_module, fdecl) m in
+     List.fold_left function_decl StringMap.empty functions in
 
-  (* Fill in the body of the given function *)
-  let build_function_body fdecl =
-    let (the_function, _) = StringMap.find fdecl.sfname function_decls in
-    let builder = L.builder_at_end context (L.entry_block the_function) in
+   (* Fill in the body of the given function *)
+   let build_function_body fdecl =
+     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
+     let builder = L.builder_at_end context (L.entry_block the_function) in
 
-    let str_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
-    (*@TODO: do we need this?
-    and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in*)
+     let str_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
+     (*@TODO: do we need this?
+     and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in*)
 
-    (* Construct the function's "locals": formal arguments and locally
-       declared variables.  Allocate each on the stack, initialize their
-       value, if appropriate, and remember their values in the "locals" map *)
+     (* Construct the function's "locals": formal arguments and locally
+        declared variables.  Allocate each on the stack, initialize their
+        value, if appropriate, and remember their values in the "locals" map *)
+
     let local_vars =
       let add_formal m (t, n) p =
         let () = L.set_value_name n p in
@@ -83,21 +83,24 @@ let translate (globals, functions) =
       in
 
       let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
-          (Array.to_list (L.params the_function)) (*in
-      List.fold_left add_local formals fdecl.slocals @TODO: add back in once locals fixed*)
+          (Array.to_list (L.params the_function)) in
+      List.fold_left add_local formals [] (*@TODO: ADD LATERfdecl.slocals*)
     in
 
     (* Return the value for a variable or formal argument. First check
      * locals, then globals *)
+
+    (*@TODO: add back in when we use it
     let lookup n = try StringMap.find n local_vars
                    with Not_found -> StringMap.find n global_vars
-    in
+    in*)
 
 
     (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
 	SLiterali i -> L.const_int i32_t i
-      | SLiteralc c -> L.const_int i8_t
+      | _ -> raise (Failure "FAIL")
+      (*| SLiteralc c -> L.const_int i8_t
       | SLiteralb b -> L.const_int i1_t (if b then 1 else 0)
       | SLiterals s -> L.build_global_stringptr s
       | SNoexpr -> L.const_int i32_t 0
@@ -148,13 +151,13 @@ let translate (globals, functions) =
                         A.Void -> ""
                       | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
-      | SCallm (_ f, args) -> (*@TODO: IMPLEMENT *)
+      | SCallm (_, f, args) -> (*@TODO: IMPLEMENT *)
             let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (expr builder) (List.rev args)) in
         let result = (match fdecl.styp with
                            A.Void -> ""
                          | _ -> f ^ "_result") in
-            L.build_call fdef (Array.of_list llargs) result builder
+            L.build_call fdef (Array.of_list llargs) result builder*)
     in
 
     (* Each basic block in a program ends with a "terminator" instruction i.e.
@@ -169,18 +172,19 @@ let translate (globals, functions) =
 	Some _ -> ()
       | None -> ignore (instr builder) in
 
+
+
     (* Build the code for the given statement; return the builder for
        the statement's successor (i.e., the next instruction will be built
        after the one generated by this call) *)
     (* Imperative nature of statement processing entails imperative OCaml *)
     let rec stmt builder = function
-	SBlock sl -> List.fold_left stmt builder sl
-        (* Generate code for this expression, return resulting builder *)
-      | SExpr e -> let _ = expr builder e in builder
+        SExpr e -> let _ = expr builder e in builder
       | SPrint e ->
-	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
-	    "printf" builder
-      | SReturn e -> let _ = match fdecl.styp with
+	  let _ = L.build_call printf_func [| str_format_str ; (expr builder e) |]
+	    "printf" builder in builder
+      | _ -> raise (Failure "internal error: not (yet) implemented")
+      (*| SReturn e -> let _ = match fdecl.styp with
                               (* Special "return nothing" instr *)
                               A.Void -> L.build_ret_void builder
                               (* Build return statement *)
@@ -244,16 +248,19 @@ let translate (globals, functions) =
       (* Implement for loops as while loops! *)
       | SFor (e1, e2, e3, body) -> stmt builder
 	    ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )
+            @TODO: IMPLEMENT ALL OF THIS COMMENT BLOCK*)
     in
 
     (* Build the code for each statement in the function *)
-    let builder = stmt builder (SBlock fdecl.sbody) in
+    let builder = List.fold_left stmt builder fdecl.sbody
+     in
 
     (* Add a return if the last block falls off the end *)
     add_terminal builder (match fdecl.styp with
         A.Void -> L.build_ret_void
-      | A.Float -> L.build_ret (L.const_float float_t 0.0)
-      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
+      | _ -> raise (Failure "internal error: return type not (yet) implemented"))
+      (*| A.Float -> L.build_ret (L.const_float float_t 0.0)
+      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0)) @TODO: IMPLEMENT*)
   in
 
   List.iter build_function_body functions;
