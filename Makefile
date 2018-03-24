@@ -29,12 +29,12 @@ clean :
 
 ast.cmo :
 ast.cmx :
-codegen.cmo : ast.cmo
-codegen.cmx : ast.cmx
+codegen.cmo: ast.cmo
+codegen.cmx: ast.cmx
 toplevel.cmo : semant.cmo scanner.cmo parser.cmi codegen.cmo ast.cmo
-toplevel.cmx : semant.cmx scanner.cmx parser.cmx codegen.cmx ast.cmo
+toplevel.cmx : semant.cmx scanner.cmx parser.cmx codegen.cmx ast.cmx
 parser.cmo : ast.cmo parser.cmi
-parser.cmx : ast.cmo parser.cmi
+parser.cmx : ast.cmx parser.cmi
 scanner.cmo : parser.cmi
 scanner.cmx : parser.cmx
 semant.cmo : ast.cmo
@@ -51,5 +51,6 @@ TESTS = \
 TESTFILES = $(TESTS:%=test-%.olh) $(TESTS:%=test-%.out)
 
 TARFILES = README \
-    ast.ml Makefile parser.mly scanner.mll testall.sh \
+    ast.ml sast.ml codegen.ml olleh.ml Makefile parser.mly \
+     scanner.mll semant.ml testall.sh printOlh.olh\
     $(TESTFILES:%=tests/%)
