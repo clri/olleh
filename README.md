@@ -17,8 +17,9 @@ system installed on your system.
 The compiler compiles from hello.olh in the tests folder.  testall.sh runs the olleh executable on each testcase (.olh file) to produce a .ll file, invokes
 "llc" (the LLVM compiler) and produces a .s (assembly) file, then
 invokes "cc" (the stock C compiler) to assemble the .s file, link in
-the hello, and generate an executable.  See testall.sh for details.
-------------------------------
+the hello and generate an executable. See testall.sh for details.
+
+-------------------------------
 Installation under Ubuntu 16.04
 
 LLVM 3.8 is the default under 16.04. Install the matching version of
