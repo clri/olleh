@@ -16,7 +16,6 @@ and sx =
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr
   | SAssign of string * sexpr
-  | SRem of string * sexpr
   | SAssignm of string * string * sexpr
   | SNewtobj of typ * typ
   | SNewobj of typ * sexpr list

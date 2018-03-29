@@ -155,8 +155,6 @@ let check functions (*(globals, functions)*) =
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
-      | Rem(va, e) ->
-         (Void, SRem(va, expr e)) (*@TODO: IMPLEMENT BETTER*)
       | Assignm(var, mem, e) as ex ->
           let lt = type_of_identifier var
           and (rt, e') = expr e in

@@ -105,7 +105,6 @@ let translate (globals, functions) =
       | SVmember (v, _) -> L.build_load (lookup v) v builder (*@TODO: IMPLEMENT*)
       | SLiterall _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
-      | SRem _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SAssignm (s, _, e) -> let e' = expr builder e in
                           let _  = L.build_store e' (lookup s) builder in e' (*@TODO: IMPLEMENT/UNDERSTAND*)
       | SAssign (s, e) -> let e' = expr builder e in

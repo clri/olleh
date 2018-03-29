@@ -25,7 +25,6 @@ type expr =
     | Binop of expr * op * expr
     | Unop of uop * expr
     | Assign of string * expr
-    | Rem of string * expr
     | Assignm of string * string * expr
     | Newtobj of typ * typ
     | Newobj of typ * expr list

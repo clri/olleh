@@ -2,9 +2,6 @@
 Once item is done/tested, remove it from the list
 
 Parser/Scanner
--remove quotes from string literal representation
--naming an identifier "main" is illegal
--remove is just a normal function, don't single it out
 -figure out global variables
 
 LRM
