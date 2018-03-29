@@ -1,6 +1,10 @@
 %{ open Ast %}
+<<<<<<< HEAD
 %token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT REMOVE NULL
 %token INTV CHARV STRINGV BOOLV VOID BOARD MAPV LISTV PLAYER
+=======
+%token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT NULL EXIT
+>>>>>>> c529e5fba77c7b4bc03b1b7a240ea995717b8447
 %token EQUALS LESS GREATER NOT NEQ LEQ GEQ AND OR
 %token RET END IF ELSE FOR FOREACH WHILE
 %token <int> LITI
@@ -30,7 +34,11 @@
 %%
 
 program:
-  decls EOF { $1 }
+  pgm { $1 }
+  /*decls EOF { $1 }*/
+
+pgm:
+  decls EOF { { typ = Void; fname = "main"; formals = []; body = fst $1} :: snd $1 }
 
 decls:
    /* nothing */ { ([], [])               }
@@ -141,7 +149,6 @@ expr:
   | MINUS expr %prec NEG { Unop(Neg, $2)                   }
   | NOT expr         { Unop(Not, $2)                       }
   | VARIABLE ASSIGN expr { Assign($1, $3)                  }
-  | VARIABLE DOT REMOVE OPAREN expr CPAREN { Rem($1, $5)   }
   | VARIABLE DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
   | FRESH obj OPAREN typ CPAREN { Newtobj( $2, $4 )        }

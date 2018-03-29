@@ -9,3 +9,9 @@ y.*
 toplevel
 *.cmx
 *.o
+*.exe*
+*.diff
+*.cmx
+hello.ll
+*.s
+

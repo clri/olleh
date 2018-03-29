@@ -3,4 +3,6 @@
 ###### Testing hello
 ./toplevel tests/hello.olh > hello.ll
 llc hello.ll > hello.s
+cc -o hello.exe hello.s ostdlib.o
+./hello.exe
 ###### SUCCESS

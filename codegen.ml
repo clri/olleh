@@ -60,8 +60,6 @@ let translate (globals, functions) =
      let builder = L.builder_at_end context (L.entry_block the_function) in
 
      let str_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
-     (*@TODO: do we need this?
-     and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in*)
 
      (* Construct the function's "locals": formal arguments and locally
         declared variables.  Allocate each on the stack, initialize their
@@ -100,14 +98,13 @@ let translate (globals, functions) =
 	SLiterali i -> L.const_int i32_t i
       | SLiteralc c -> L.const_int i8_t (int_of_char c)
       | SLiteralb b -> L.const_int i1_t (if b then 1 else 0)
-      | SLiterals s -> L.const_stringz context s
+      | SLiterals s -> L.build_global_stringptr s "" builder
       | SNoexpr -> L.const_int i32_t 0
       | Null -> L.const_int i32_t 0
       | SVariable s -> L.build_load (lookup s) s builder
       | SVmember (v, _) -> L.build_load (lookup v) v builder (*@TODO: IMPLEMENT*)
       | SLiterall _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
-      | SRem _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SAssignm (s, _, e) -> let e' = expr builder e in
                           let _  = L.build_store e' (lookup s) builder in e' (*@TODO: IMPLEMENT/UNDERSTAND*)
       | SAssign (s, e) -> let e' = expr builder e in

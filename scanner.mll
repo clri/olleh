@@ -49,14 +49,14 @@ rule tokenize = parse
 | "Player" { PLAYER }
 | "Board" { BOARD }
 | "fresh" { FRESH }
-| "remove" { REMOVE }
 | "true" { LITB(true) }
 | "false" { LITB(false) }
+| "main" { raise Not_found }
 | ['0'-'9']+ as lit { LITI(int_of_string lit) }
 | ['\'']['0'-'9' 'a'-'z' 'A'-'Z']['\''] as lit { LITC(lit.[1]) }
-| ['a'-'z']['0'-'9' 'a'-'z' 'A'-'Z']+ as lit { VARIABLE(lit) }
-| ['"']['0'-'9' 'a'-'z' 'A'-'Z']*['"'] as lit { LITS(lit) }
+| ['a'-'z']['0'-'9' 'a'-'z' 'A'-'Z' '_']* as lit { VARIABLE(lit) }
 | "\'\'" { LITC(Char.chr 0) }
+| ['"'][^ '"']*['"'] as lit { LITS(String.sub lit 1 (String.length lit - 2)) }
 | eof { EOF }
 | "/*" { comment lexbuf }
 | "//" { sincomment lexbuf }
