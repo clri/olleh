@@ -105,6 +105,11 @@ let check functions (*(globals, functions)*) =
     (*@TODO: LIST TYPE CHECKING, MAP TYPE CHECKING*)
     (*@TODO: REMOVE AND OTHER FUNCTIONS ON OBJECTS*)
 
+    (*tuple mapper helper function*)
+    let rec map_tup f (x, y) =
+        (f x, f y)
+    in
+
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
         Literali  l -> (Int, SLiterali l)
@@ -115,8 +120,8 @@ let check functions (*(globals, functions)*) =
       | Null       -> (Void, Null)
       | Variable s       -> (type_of_identifier s, SVariable s)
       | Vmember(s, m) -> (type_of_vmember s m, SVmember(s, m))
-      | Literall l -> (List, SLiterall []) (*@TODO: IMPLEMENT*)
-      | Literalm m -> (Map, SLiteralm []) (*@TODO: IMPLEMENT*)
+      | Literall l -> (List, SLiterall (List.map expr l))
+      | Literalm m -> (Map, SLiteralm (List.map (map_tup expr) m))
       | Assign(var, e) as ex ->
           let lt = type_of_identifier var
           and (rt, e') = expr e in

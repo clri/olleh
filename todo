@@ -1,0 +1,48 @@
+@TODO
+Once item is done/tested, remove it from the list
+
+Parser/Scanner
+-remove quotes from string literal representation
+-naming an identifier "main" is illegal
+-remove is just a normal function, don't single it out
+-figure out global variables
+
+LRM
+-decide what is builtin and what is stdlib
+-flesh out definitions/avoid ambiguity
+
+BUILTINS (ostdlib.c)
+-rename file
+-list builtins to be added below...
+
+Semantic Checker (due 4/9)
+-implement globals (& tracking locals) once they're fixed in parser/scanner
+-type-check lists and maps
+-type-check functions on objects (such as x.remove(y))
+-string concatenation with + operator (if we want to implement it)
+-assigning to a member of an object (x.y = z)
+-calling a function on an object
+-new object creation
+-for loops, foreach
+-binding
+
+Compiler (codegen.ml)
+-add structs and other builtin types (line 17/29)
+-global variables
+-SVmember (members of objects)
+-SLiterall (literal lists)
+-SLiteralm (literal maps)
+-SAssignm (member assigning)
+-SAssign (variable assigning)
+-SBinop for non-integers (if needed)
+-SNewobj/SNewtobj (allocating space for new objects)
+-SCallm (calling a function on an object)
+-SFor
+-SReturn
+-SIf
+-SForeach
+-build_ret for all return types
+
+
+
+.

@@ -60,8 +60,6 @@ let translate (globals, functions) =
      let builder = L.builder_at_end context (L.entry_block the_function) in
 
      let str_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
-     (*@TODO: do we need this?
-     and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in*)
 
      (* Construct the function's "locals": formal arguments and locally
         declared variables.  Allocate each on the stack, initialize their
