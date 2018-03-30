@@ -1,5 +1,5 @@
 /*
- * Positive: testing function
+ * Positive: testing function 
  */
 function void setTurn(Player townsend, Player edwards):
 
@@ -7,3 +7,5 @@ function void setTurn(Player townsend, Player edwards):
 	edwards.turn = true;
 
 end;
+
+

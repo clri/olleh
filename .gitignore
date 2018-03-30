@@ -1,7 +1,6 @@
 scanner.ml
 *.DS_Store
-*.out
-*log
+a.out
 *.cmi
 *.mli
 parser.ml

@@ -1,17 +1,20 @@
 %{ open Ast %}
-%token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT NULL EXIT
+%token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT REMOVE NULL
+%token INTV CHARV STRINGV BOOLV VOID BOARD MAPV LISTV PLAYER
 %token EQUALS LESS GREATER NOT NEQ LEQ GEQ AND OR
 %token RET END IF ELSE FOR FOREACH WHILE
-%token INTV CHARV STRINGV BOOLV VOID BOARD MAPV LISTV PLAYER
 %token <int> LITI
 %token <bool> LITB
-%token <string> LITS VARIABLE
+%token <string> LITS
+%token <string> VARIABLE
 %token <char> LITC
+%token EXIT
 %token EOF
 
 %start program
 %type <Ast.program> program
 
+%left COMMA
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN
@@ -22,6 +25,7 @@
 %left PLUS MINUS
 %left TIMES DIVIDE MODULO
 %right NOT NEG
+%nonassoc PRINT
 
 %%
 
@@ -81,6 +85,23 @@ obj:
   | BOARD   { Board }
 
 
+fdecl:
+  FUNCT typ VARIABLE OPAREN formals_opt CPAREN COLON stmt_list END SEMI
+     { { typ = $2;
+         fname = $3;
+         formals = $5;
+         body = List.rev $8 } }
+
+
+formals_opt:
+    /* nothing */ { [] }
+  | formal_list   { List.rev $1 }
+
+formal_list:
+    typ VARIABLE                   { [($1,$2)]     }
+  | formal_list COMMA typ VARIABLE { ($3,$4) :: $1 }
+
+
 stmt_list:
     /* nothing */ { [] }
   | stmt_list stmt { $2 :: $1 }
@@ -110,18 +131,19 @@ stmt:
   | ifs END SEMI                            { $1 }
   | FOR OPAREN expr CPAREN COLON stmt_list END SEMI { For($3, $6)   }
   | WHILE OPAREN expr CPAREN COLON stmt_list END SEMI
-                                            { While($3, $6)         }
+                                             { While($3, $6)         }
   | FOREACH VARIABLE expr COLON stmt_list END SEMI
-                                            { Foreach($2, $3, $5)   }
+                                             { Foreach($2, $3, $5)   }
   | typ VARIABLE SEMI                          { Bind( $1, $2) }
   | typ VARIABLE ASSIGN expr SEMI      { Assignd( $1, $2, $4) }
   | EXIT SEMI                               { Exit(0) }
 
+
 ifs:
-  IF OPAREN expr CPAREN COLON stmt_list %prec NOELSE
-                                          { If($3, $6, [])        }
-  | IF OPAREN expr CPAREN COLON stmt_list ELSE COLON stmt_list
-                                          { If($3, $6, $9)        }
+   IF OPAREN expr CPAREN COLON stmt_list %prec NOELSE
+                                            { If($3, $6, [])        }
+   | IF OPAREN expr CPAREN COLON stmt_list ELSE COLON stmt_list
+                                            { If($3, $6, $9)        }
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -149,7 +171,7 @@ expr:
     LITI             { Literali($1)                        }
   | LITC	     { Literalc($1)                        }
   | LITB             { Literalb($1)                        }
-  | LITS          { Literals($1)                        }
+  | LITS             { Literals($1)                        }
   | NULL             { Null                                }
   | VARIABLE         { Variable($1)                        }
   | VARIABLE DOT VARIABLE { Vmember($1, $3)                } /*member of obj*/
@@ -172,10 +194,9 @@ expr:
   | NOT expr         { Unop(Not, $2)                       }
   | VARIABLE ASSIGN expr { Assign($1, $3)                  }
   | VARIABLE DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
+  | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
   | FRESH obj OPAREN typ CPAREN { Newtobj( $2, $4 )        }
   | FRESH obj OPAREN args_opt CPAREN { Newobj( $2, $4 )    }
-  | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
-  | VARIABLE DOT VARIABLE OPAREN args_opt CPAREN { Callm($1, $3, $5)         }
   | OPAREN expr CPAREN { $2                                }
 
 

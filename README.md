@@ -184,12 +184,9 @@ IF THE PREVIOUS STEPS DO NOT SOLVE THE ISSUE, it may be a problem
 ------------------------------
 
 HOW TO COMPILE AND RUN:
-
 $ make
 $ ./testall.sh
 $ ./hello.exe
 
 You should get the hello, world printed on your console!
-Soon, you should be able to play some word games too! 
-
-
+Soon, you should be able to play some word games too!
