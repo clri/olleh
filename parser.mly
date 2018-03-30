@@ -27,22 +27,33 @@
 
 program:
   pgm { $1 }
-  /*decls EOF { $1 }*/
 
+/*synthesize global statements/declarations into the "main" function And
+ give it garbage collecting*/
 pgm:
-  decls EOF { { typ = Void; fname = "main"; formals = []; body = fst $1} :: snd $1 }
+  decls EOF { { typ = Void;
+                fname = "main";
+                formals = [];
+                body = ( (Expr (Call("InitializeLocalGarbage",[])))
+                                :: List.rev (fst $1))
+                                @ [ (Expr (Call("CollectLocalGarbage",[]))) ] }
+                        :: snd $1 }
 
 decls:
    /* nothing */ { ([], [])               }
   | decls stmt { (($2 :: fst $1), snd $1) }
   | decls fdecl { (fst $1, ($2 :: snd $1)) }
+  /*
+  | decls vdecl { (($2 :: fst $1), snd $1) }
+  @TODO: Handle the global vaariables And
+  the var x = axv; case*/
 
 fdecl:
   FUNCT typ VARIABLE OPAREN formals_opt CPAREN COLON stmt_list END SEMI
      { { typ = $2;
          fname = $3;
          formals = $5;
-         body = List.rev $8 } }
+         body = (Expr (Call("InitializeLocalGarbage",[]))) :: List.rev $8 } }
 
 formals_opt:
     /* nothing */ { [] }
@@ -73,11 +84,29 @@ obj:
 stmt_list:
     /* nothing */ { [] }
   | stmt_list stmt { $2 :: $1 }
+  | stmt_list rstmt { snd $2 :: fst $2 :: $1 }
+  /*| stmt_list dastmt { snd $2 :: fst $2 :: $1 }*/
+
+/*for return statements, add call to garbage collection. since this is not
+ stmt, the main function cannot call return explicitly. */
+rstmt:
+   RET expr_opt SEMI { ( Expr (Call("CollectLocalGarbage",[])), Return $2 ) }
+
+/*declare/assign statement, gets partitioned into two*/
+/*
+dastmt:
+   typ VARIABLE ASSIGN expr SEMI { (Bind($1, $2), Assign ($2, $3)) }*/
+
+/*
+vdecl:
+    typ VARIABLE SEMI { Bind( $1, $2) }
+    (have stmt be xtstmt | vdecl)
+*/
 
 stmt:
   expr SEMI                                 { Expr $1               }
   | PRINT expr SEMI { Print($2) }
-  | RET expr_opt SEMI                       { Return $2             }
+  /*| RET expr_opt SEMI                       { Return $2             }*/
   | ifs END SEMI                            { $1 }
   | FOR OPAREN expr CPAREN COLON stmt_list END SEMI { For($3, $6)   }
   | WHILE OPAREN expr CPAREN COLON stmt_list END SEMI

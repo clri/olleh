@@ -41,10 +41,15 @@ let check functions (*(globals, functions)*) =
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
-    let add_bind map (name, ty) = StringMap.add name {
+    let add_bind map (name, ty) =
+      match ty with Void -> StringMap.add name { typ = Void; fname = name; formals = []; body = [] } map
+      | _ -> StringMap.add name {
       typ = Void; fname = name;
       formals = [(ty, "x")]; body = [] } map
-    in List.fold_left add_bind StringMap.empty [ ("print", Int)
+    (*@TODO: ADD BUILTINS*)
+    in List.fold_left add_bind StringMap.empty [ ("print", Int);
+                                                 ("CollectLocalGarbage", Void);
+                                                 ("InitializeLocalGarbage", Void)
 			                         (*("printb", Bool);
 			                         ("printf", Float);
 			                         ("printbig", Int)*) ]
@@ -145,7 +150,7 @@ let check functions (*(globals, functions)*) =
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
             Add | Sub | Mult | Div | Mod when same && t1 = Int   -> Int
-            (*@TODO: STRING CONCATENATION FOR ADD *)
+          | Add when same && t1 = String -> String
           | Equal | Neq            when same               -> Bool
           | Less | Leq | Greater | Geq
                      when same && (t1 = Int) -> Bool

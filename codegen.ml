@@ -43,6 +43,13 @@ let translate (globals, functions) =
   let printf_func : L.llvalue =
      L.declare_function "printf" printf_t the_module in
 
+  let garbage_t : L.lltype =
+      L.function_type void_t [| |] in
+  let garbagei_func : L.llvalue =
+      L.declare_function "InitializeLocalGarbage" garbage_t the_module in
+  let garbagec_func : L.llvalue =
+      L.declare_function "CollectLocalGarbage" garbage_t the_module in
+
   (* Define each function (arguments and return type) so we can
    * define it's body and call it later *)
    let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
@@ -139,6 +146,12 @@ let translate (globals, functions) =
       (*| SCall("nameOfBuiltin") ...: implement for our builtins*)
       | SNewtobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SNewobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
+      | SCall ("InitializeLocalGarbage",[]) ->
+        L.build_call garbagei_func [| |]
+        "" builder
+      | SCall ("CollectLocalGarbage",[]) ->
+         L.build_call garbagec_func [| |]
+         "" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in

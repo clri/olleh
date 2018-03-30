@@ -5,25 +5,40 @@ Parser/Scanner
 -figure out global variables
 
 LRM
--decide what is builtin and what is stdlib
--flesh out definitions/avoid ambiguity
+-add section explaining the garbage collection
+-code out the olleh standard library
+-how to compile olleh files with the standard library included? cat that to an intermediate file lol
 
 BUILTINS (ostdlib.c)
 -rename file
--list builtins to be added below...
+-implement constants if necessary
+-anagram()
+-scramble()
+-readDict()
+-map.destroy()
+-map.contains()
+-map.getLength()
+-listToString()
+-intToString()
+-subStrings()
+-once everything has been tested, remove commented-out test code
 
-Semantic Checker (due 4/9)
--implement globals (& tracking locals) once they're fixed in parser/scanner
+Garbage collection
+-Test functionality further?
+
+Semantic Checker
+-add builtin functions
+-implement globals (& tracking locals) once they're fixed in parser/scanner; add builtin globals (seed, etc)
 -type-check lists and maps
 -type-check functions on objects (such as x.remove(y))
--string concatenation with + operator (if we want to implement it)
 -assigning to a member of an object (x.y = z)
 -calling a function on an object
--new object creation
+-new object creation--pattern matching (ie fresh x(type) can be like list(string))
 -for loops, foreach
 -binding
 
 Compiler (codegen.ml)
+-add builtin constants (seed, dictionary)
 -add structs and other builtin types (line 17/29)
 -global variables
 -SVmember (members of objects)
@@ -40,6 +55,9 @@ Compiler (codegen.ml)
 -SForeach
 -build_ret for all return types
 
+
+-testing:
+code with reserved keywords/buildin functions redefined
 
 
 .

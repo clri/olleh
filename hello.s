@@ -8,10 +8,12 @@ _main:                                  ## @main
 	pushq	%rax
 Lcfi0:
 	.cfi_def_cfa_offset 16
+	callq	_InitializeLocalGarbage
 	leaq	L_fmt(%rip), %rdi
 	leaq	L___unnamed_1(%rip), %rsi
 	xorl	%eax, %eax
 	callq	_printf
+	callq	_CollectLocalGarbage
 	popq	%rax
 	retq
 	.cfi_endproc
@@ -21,7 +23,7 @@ L_fmt:                                  ## @fmt
 	.asciz	"%s\n"
 
 L___unnamed_1:                          ## @0
-	.asciz	"\"hello, world!\""
+	.asciz	"hello, world!"
 
 
 .subsections_via_symbols
