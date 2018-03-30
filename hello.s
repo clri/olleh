@@ -5,16 +5,23 @@
 _main:                                  ## @main
 	.cfi_startproc
 ## BB#0:                                ## %entry
-	pushq	%rax
+	pushq	%rbx
 Lcfi0:
 	.cfi_def_cfa_offset 16
+Lcfi1:
+	.cfi_offset %rbx, -16
 	callq	_InitializeLocalGarbage
-	leaq	L_fmt(%rip), %rdi
+	leaq	L_fmt(%rip), %rbx
 	leaq	L___unnamed_1(%rip), %rsi
 	xorl	%eax, %eax
+	movq	%rbx, %rdi
+	callq	_printf
+	leaq	L___unnamed_2(%rip), %rsi
+	xorl	%eax, %eax
+	movq	%rbx, %rdi
 	callq	_printf
 	callq	_CollectLocalGarbage
-	popq	%rax
+	popq	%rbx
 	retq
 	.cfi_endproc
                                         ## -- End function
@@ -24,6 +31,9 @@ L_fmt:                                  ## @fmt
 
 L___unnamed_1:                          ## @0
 	.asciz	"hello, world!"
+
+L___unnamed_2:                          ## @1
+	.asciz	"!dlrow ,olleh"
 
 
 .subsections_via_symbols

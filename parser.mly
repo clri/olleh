@@ -39,18 +39,20 @@ pgm:
                 fname = "main";
                 formals = [];
                 body = ( (Expr (Call("InitializeLocalGarbage",[])))
-                                :: List.rev (fst $1))
+                                :: List.rev (snd (fst $1)))
                                 @ [ (Expr (Call("CollectLocalGarbage",[]))) ] }
                         :: snd $1 }
 
+/*((global vars, global stmts), functs)--keep globals separate
+so we can allocate space for them. */
 decls:
-   /* nothing */ { ([], [])               }
-  | decls stmt { (($2 :: fst $1), snd $1) }
+   /* nothing */ { ( ([], []), [])               }
+  | decls stmt { ( (fst (fst $1), ($2 :: snd (fst $1)) ), snd $1) }
   | decls fdecl { (fst $1, ($2 :: snd $1)) }
-  /*
-  | decls vdecl { (($2 :: fst $1), snd $1) }
-  @TODO: Handle the global vaariables And
-  the var x = axv; case*/
+  | decls vdecl { ( ($2 :: (fst (fst $1)), ($2 :: snd (fst $1)) ), snd $1) }
+  | decls dastmt { ( ( fst $2 :: (fst (fst $1)),
+                       (snd $2 :: (fst $2 :: snd (fst $1))) ),
+                     snd $1) }
 
 fdecl:
   FUNCT typ VARIABLE OPAREN formals_opt CPAREN COLON stmt_list END SEMI
@@ -105,8 +107,9 @@ formal_list:
 stmt_list:
     /* nothing */ { [] }
   | stmt_list stmt { $2 :: $1 }
+  | stmt_list vdecl { $2 :: $1 }
   | stmt_list rstmt { snd $2 :: fst $2 :: $1 }
-  /*| stmt_list dastmt { snd $2 :: fst $2 :: $1 }*/
+  | stmt_list dastmt { snd $2 :: fst $2 :: $1 }
 
 /*for return statements, add call to garbage collection. since this is not
  stmt, the main function cannot call return explicitly. */
@@ -114,15 +117,11 @@ rstmt:
    RET expr_opt SEMI { ( Expr (Call("CollectLocalGarbage",[])), Return $2 ) }
 
 /*declare/assign statement, gets partitioned into two*/
-/*
 dastmt:
-   typ VARIABLE ASSIGN expr SEMI { (Bind($1, $2), Assign ($2, $3)) }*/
+   typ VARIABLE ASSIGN expr SEMI { ( Bind($1, $2), Expr (Assign ($2, $4)) ) }
 
-/*
 vdecl:
     typ VARIABLE SEMI { Bind( $1, $2) }
-    (have stmt be xtstmt | vdecl)
-*/
 
 stmt:
   expr SEMI                                 { Expr $1               }
@@ -134,8 +133,8 @@ stmt:
                                              { While($3, $6)         }
   | FOREACH VARIABLE expr COLON stmt_list END SEMI
                                              { Foreach($2, $3, $5)   }
-  | typ VARIABLE SEMI                          { Bind( $1, $2) }
-  | typ VARIABLE ASSIGN expr SEMI      { Assignd( $1, $2, $4) }
+  /*| typ VARIABLE SEMI                          { Bind( $1, $2) }*/
+  /*| typ VARIABLE ASSIGN expr SEMI      { Assignd( $1, $2, $4) }*/
   | EXIT SEMI                               { Exit(0) }
 
 

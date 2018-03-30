@@ -1,8 +1,8 @@
 @TODO
 Once item is done/tested, remove it from the list
 
-Parser/Scanner
--figure out global variables
+Parser/Scanner/Ast
+-pass globals to semantic checker
 
 LRM
 -add section explaining the garbage collection
@@ -25,6 +25,10 @@ BUILTINS (ostdlib.c)
 
 Garbage collection
 -Test functionality further?
+
+Standard Library (.olh)
+-Write standard library functions
+-Hook them into code we write via the compiler (how?)
 
 Semantic Checker
 -add builtin functions
