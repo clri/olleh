@@ -10,7 +10,7 @@ module StringMap = Map.Make(String)
 
    Check each statement, then check each function *)
 
-let check functions (*(globals, functions)*) =
+let check (*functions*) (globals, functions) =
 
   (* Check if a certain kind of binding has void type or is a duplicate
      of another, previously checked binding. If the stmt is NOT a binding

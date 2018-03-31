@@ -40,9 +40,9 @@ type stmt =
     | While of expr * (stmt list)
     | For of expr * (stmt list)
     | Foreach of string * expr * (stmt list)
-    | Bind of typ * string
     | Assignd of typ * string * expr
     | Exit of int
+    | Bind of typ * string
 
 type func_decl = {
     typ         : typ;
@@ -51,7 +51,7 @@ type func_decl = {
     body        : stmt list;
 }
 
-type program = (*stmt list **) func_decl list
+type program = stmt list * func_decl list
 
 
 

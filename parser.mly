@@ -35,13 +35,14 @@ program:
 /*synthesize global statements/declarations into the "main" function And
  give it garbage collecting*/
 pgm:
-  decls EOF { { typ = Void;
+  decls EOF { ((fst (fst $1)),
+                { typ = Void;
                 fname = "main";
                 formals = [];
                 body = ( (Expr (Call("InitializeLocalGarbage",[])))
                                 :: List.rev (snd (fst $1)))
                                 @ [ (Expr (Call("CollectLocalGarbage",[]))) ] }
-                        :: snd $1 }
+                        :: snd $1) }
 
 /*((global vars, global stmts), functs)--keep globals separate
 so we can allocate space for them. */

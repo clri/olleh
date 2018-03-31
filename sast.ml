@@ -36,6 +36,7 @@ type sstmt =
   | SAssignd of typ * string * sexpr
   | SExit of int
 
+
 type sfunc_decl = {
     styp : typ;
     sfname : string;
@@ -43,4 +44,4 @@ type sfunc_decl = {
     sbody : sstmt list;
   }
 
-type sprogram = (*sstmt list **) sfunc_decl list
+type sprogram = sstmt list * sfunc_decl list
