@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 //dictionary, letterScores, and seeds--must they exist here as constants as
 //well or shall we pass them in fron codegen.ml?
@@ -14,7 +15,7 @@
  * will insert the InitializeLocalGarbage() code at the beginning of each
  * function, and will insert the CollectLocalGarbage() code at the end of each
  * function. For more on how the garbage collection mechanism works, please read
- * the manual.
+ * the LRM.
  */
 typedef struct GarbageLL {
         char *payload;
@@ -41,6 +42,15 @@ void InitializeLocalGarbage(void) {
         tstack = t;
 }
 
+void AddToGarbage(char *pl) {
+        RecycleBin *tmp = trash;
+        while (tmp->next != NULL) tmp = tmp->next;
+        tmp->next = malloc(sizeof(struct GarbageLL));
+        tmp->payload = pl;
+        tmp->next->payload = NULL;
+        tmp->next->next = NULL;
+}
+
 void CollectLocalGarbage(void) {
         RecycleBin *tmp;
         TStack *t;
@@ -57,28 +67,63 @@ void CollectLocalGarbage(void) {
         free(t);
 }
 
-void AddToGarbage(char *pl) {
-        RecycleBin *tmp = trash;
-        while (tmp->next != NULL) tmp = tmp->next;
-        tmp->next = malloc(sizeof(struct GarbageLL));
-        tmp->payload = pl;
-        tmp->next->payload = NULL;
-        tmp->next->next = NULL;
+void CollectLocalGarbageWithReturn(char *returnVal) {
+        RecycleBin *tmp;
+        TStack *t = tstack;
+
+        if (returnVal == NULL) {
+                CollectLocalGarbage();
+                return;
+        }
+
+        while (trash->next != NULL) {
+                tmp = trash->next;
+                if (trash->payload != returnVal) {
+                        free(trash->payload);
+                }
+                free(trash);
+                trash = tmp;
+        }
+        free(trash);
+        tstack = tstack->next; //pop off the stack
+        AddToGarbage(returnVal);
+        free(t);
 }
 
 
+//called once at the beginning of each program
+//to initialize the RNG
+void InitializeRandom(void) {
+        srand(time(NULL));
+}
 
+int OllehRandom(int max) {
+        return rand() % max;
+}
 
-int getLength(char* w) {
-        return strlen(w);
+char *scramble(char* w) {
+        int r;
+        int i = 0;
+        int len = strlen(w);
+        char *ans = malloc(len + 1);
+
+        memset(ans, 0, len+1);
+        AddToGarbage(ans);
+
+        while (i < len) {
+                r = OllehRandom(len);
+                if (ans[r] == 0)
+                        ans[r] = w[i++];
+        }
+        return ans;
 }
 
 char* reverse(char* w) {
         int i;
         int len = strlen(w);
         char *ans = malloc(len + 1);
-        AddToGarbage(ans);
 
+        AddToGarbage(ans);
         for (i = 0; i < len; i++) {
                 ans[i] = w[len - i - 1];
         }
@@ -86,7 +131,8 @@ char* reverse(char* w) {
         return ans;
 };
 
-char* readInput(void) {
+//returns a line without newline char, helper function for readDict
+char* ReadInput(void) {
         char *ans = NULL;
         size_t len = 0;
         ssize_t err = getline(&ans, &len, stdin);
@@ -98,9 +144,7 @@ char* readInput(void) {
 
 
 //@TODO: IMPLEMENT BELOW
-//random??
 char* anagram(char* w); //may take additional param for dictionary
-char* scramble(char* w);
 int readDict(char* filename); //bool return val, may take additional param for dictionary
 //void map.destroy(map<type> k) how to implement?
 //int map.contains(map<type> k) bool return val, how to implement?

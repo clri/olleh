@@ -38,17 +38,33 @@ let translate (globals, functions) =
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
 
+  (*builtins: print*)
   let printf_t : L.lltype =
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue =
      L.declare_function "printf" printf_t the_module in
 
-  let garbage_t : L.lltype =
+  (*builtins: getLength of a string*)
+  let intchar_t : L.lltype =
+      L.function_type i32_t [| L.pointer_type i8_t |] in
+  let getLength_func : L.llvalue =
+     L.declare_function "strlen" intchar_t the_module in
+
+  (*builtins: random*)
+  let intvoid_t : L.lltype =
+      L.function_type i32_t [| |] in
+  let rand_funct : L.llvalue =
+     L.declare_function "OllehRandom" intvoid_t the_module in
+
+  (*builtins: functions the user cannot explicitly call*)
+  let voidvoid_t : L.lltype =
       L.function_type void_t [| |] in
   let garbagei_func : L.llvalue =
-      L.declare_function "InitializeLocalGarbage" garbage_t the_module in
+      L.declare_function "InitializeLocalGarbage" voidvoid_t the_module in
   let garbagec_func : L.llvalue =
-      L.declare_function "CollectLocalGarbage" garbage_t the_module in
+      L.declare_function "CollectLocalGarbage" voidvoid_t the_module in
+  let randi_func : L.llvalue =
+      L.declare_function "InitializeRandom" voidvoid_t the_module in
 
   (* Define each function (arguments and return type) so we can
    * define it's body and call it later *)

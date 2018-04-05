@@ -49,7 +49,9 @@ let check (*functions*) (globals, functions) =
     (*@TODO: ADD BUILTINS*)
     in List.fold_left add_bind StringMap.empty [ ("print", Int);
                                                  ("CollectLocalGarbage", Void);
-                                                 ("InitializeLocalGarbage", Void)
+                                                 ("InitializeLocalGarbage", Void);
+                                                 ("InitializeRandom", Void);
+                                                 ("random", Int)
 			                         (*("printb", Bool);
 			                         ("printf", Float);
 			                         ("printbig", Int)*) ]

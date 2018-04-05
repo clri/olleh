@@ -33,14 +33,15 @@ program:
   pgm { $1 }
 
 /*synthesize global statements/declarations into the "main" function And
- give it garbage collecting*/
+ give it garbage collecting and random initialization*/
 pgm:
   decls EOF { ((fst (fst $1)),
                 { typ = Void;
                 fname = "main";
                 formals = [];
-                body = ( (Expr (Call("InitializeLocalGarbage",[])))
-                                :: List.rev (snd (fst $1)))
+                body = ( (Expr (Call("InitializeRandom",[])))
+                                :: ((Expr (Call("InitializeLocalGarbage",[])))
+                                :: List.rev (snd (fst $1))))
                                 @ [ (Expr (Call("CollectLocalGarbage",[]))) ] }
                         :: snd $1) }
 
