@@ -45,10 +45,10 @@ let translate (globals, functions) =
      L.declare_function "printf" printf_t the_module in
 
   (*builtins: getLength of a string*)
-  let intchar_t : L.lltype =
+  let intstr_t : L.lltype =
       L.function_type i32_t [| L.pointer_type i8_t |] in
   let getLength_func : L.llvalue =
-     L.declare_function "strlen" intchar_t the_module in
+     L.declare_function "strlen" intstr_t the_module in
 
   (*builtins: random*)
   let intvoid_t : L.lltype =
@@ -65,6 +65,11 @@ let translate (globals, functions) =
       L.declare_function "CollectLocalGarbage" voidvoid_t the_module in
   let randi_func : L.llvalue =
       L.declare_function "InitializeRandom" voidvoid_t the_module in
+
+  let voidchar_t : L.lltype =
+      L.function_type void_t [| L.pointer_type i8_t |] in
+  let garbagei_func : L.llvalue =
+      L.declare_function "CollectLocalGarbageWithReturn" voidchar_t the_module in
 
   (* Define each function (arguments and return type) so we can
    * define it's body and call it later *)

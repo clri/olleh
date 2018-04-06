@@ -44,4 +44,4 @@ type sfunc_decl = {
     sbody : sstmt list;
   }
 
-type sprogram = sstmt list * sfunc_decl list
+type sprogram = (*sstmt list*) formalbind list * sfunc_decl list

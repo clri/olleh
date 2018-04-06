@@ -16,7 +16,7 @@ let check (*functions*) (globals, functions) =
      of another, previously checked binding. If the stmt is NOT a binding
      then we ignore it. If it matches SBind(), SAssignd() then it is a
      bind and we need to do stuff *)
-  let check_binds (kind : string) (to_check : 'a (*bind*) list) =
+  let check_binds (kind : string) (to_check : (*'a*) formalbind list) =
     let check_it checked binding =
       let void_err = "illegal void " ^ kind ^ " " ^ snd binding
       and dup_err = "duplicate " ^ kind ^ " " ^ snd binding
@@ -32,9 +32,13 @@ let check (*functions*) (globals, functions) =
   in
 
   (**** Checking Global Variables ****)
+  let bind_to_formalbind = function
+      Bind(t, x) -> (t, x)
+      | _ -> raise (Failure "Error: Illegal stmt treated as bind")
+  in
 
-  (*let globals' = check_binds "global" globals in*)
-  let globals' = [] in (*@TODO: FIGURE OUT DYNAMIC DECLARATION*)
+  let globals' = check_binds "global" (List.map bind_to_formalbind globals) in
+  (*let globals' = [] in (*@TODO: FIGURE OUT DYNAMIC DECLARATION*)*)
 
   (**** Checking Functions ****)
 
@@ -42,19 +46,19 @@ let check (*functions*) (globals, functions) =
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     let add_bind map (name, ty) =
-      match ty with Void -> StringMap.add name { typ = Void; fname = name; formals = []; body = [] } map
-      | _ -> StringMap.add name {
-      typ = Void; fname = name;
-      formals = [(ty, "x")]; body = [] } map
-    (*@TODO: ADD BUILTINS*)
+      StringMap.add name { typ = ty; fname = name; formals = []; body = [] } map
     in List.fold_left add_bind StringMap.empty [ ("print", Int);
                                                  ("CollectLocalGarbage", Void);
                                                  ("InitializeLocalGarbage", Void);
                                                  ("InitializeRandom", Void);
+                                                 ("scramble", String);
+                                                 ("reverse", String);
+                                                 ("anagram", String);
+                                                 ("readDict", String);
+                                                 ("listToString", String);
+                                                 ("subStrings", Map);
                                                  ("random", Int)
-			                         (*("printb", Bool);
-			                         ("printf", Float);
-			                         ("printbig", Int)*) ]
+                                                  ]
   in
 
   (* Add function name to symbol table *)
@@ -79,12 +83,18 @@ let check (*functions*) (globals, functions) =
     with Not_found -> raise (Failure ("unrecognized function " ^ s))
   in
 
-  let _ = find_func "main" in (* no spoofed programs please *)
+  (*let global_context = find_func "main" in (* no spoofed programs please *)
+  let check_main =
+        (*no formals. check the usage of locals*)
+        let in_context = [] in
+
+        ()
+  in*)
 
   let check_function func =
     (* Make sure no formals are void or duplicates *)
-    let formals' = check_binds "formal" func.formals in
-    let locals' = [] in
+    let formals' = check_binds "formal" (func.formals @ globals') in
+    let locals' = formals' (*(check_binds "formal" (func.formals)) @ gic*) in
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
@@ -93,50 +103,63 @@ let check (*functions*) (globals, functions) =
     in
 
     (* Build local symbol table of variables for this function *)
-    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-	                StringMap.empty (globals' @ formals' @ locals' )
+    let symbolz = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+	                StringMap.empty (locals' )
+    in
+    let add_local_symbol (ty, name) symbols = StringMap.add name ty symbols
     in
 
     (* Return a variable from our local symbol table *)
-    let type_of_identifier s =
+    let type_of_identifier s symbols =
       try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
-    let type_of_vmember s m =
+    let type_of_vmember s m symbols =
       let tvs = try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
       match tvs, m with (*@TODO: Make more robust*)
-        Board, "rows" -> Int
-        | _ -> raise (Failure ("Object " ^ s ^ " has no attribute " ^ m))
+          Board, "rows" -> Int
+        | Board, "cols" -> Int
+        | Board, "letters" -> List
+        | Player, "Score" -> Int
+        | Player, "turn" -> Bool
+        | Player, "guessedWords" -> Map
+        | Player, "letters" -> List
+        | _ -> raise (Failure ("Object " ^ s ^ " of type " ^ (string_of_typ tvs) ^ " has no attribute " ^ m))
     in
 
-    (*@TODO: LIST TYPE CHECKING, MAP TYPE CHECKING*)
     (*@TODO: REMOVE AND OTHER FUNCTIONS ON OBJECTS*)
 
     (*tuple mapper helper function*)
-    let rec map_tup f (x, y) =
-        (f x, f y)
+    let rec map_tup f s (x, y) =
+        (f s x, f s y)
+    in
+    let rec map_over_two f syms lis =
+        match lis with
+          [] -> []
+        | a :: b -> (f syms a) :: (map_over_two f syms b)
     in
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    let rec expr = function
+    let rec expr symbols exx =
+      match exx with
         Literali  l -> (Int, SLiterali l)
       | Literalc l -> (Char, SLiteralc l)
       | Literals l -> (String, SLiterals l)
       | Literalb l -> (Bool, SLiteralb l)
       | Noexpr     -> (Void, SNoexpr)
       | Null       -> (Void, Null)
-      | Variable s       -> (type_of_identifier s, SVariable s)
-      | Vmember(s, m) -> (type_of_vmember s m, SVmember(s, m))
-      | Literall l -> (List, SLiterall (List.map expr l))
-      | Literalm m -> (Map, SLiteralm (List.map (map_tup expr) m))
+      | Variable s       -> (type_of_identifier s symbols, SVariable s)
+      | Vmember(s, m) -> (type_of_vmember s m symbols, SVmember(s, m))
+      | Literall l -> (List, SLiterall (map_over_two expr symbols l))
+      | Literalm m -> (Map, SLiteralm (map_over_two (map_tup expr) symbols m))
       | Assign(var, e) as ex ->
-          let lt = type_of_identifier var
-          and (rt, e') = expr e in
+          let lt = type_of_identifier var symbols
+          and (rt, e') = expr symbols e in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
             string_of_typ rt ^ " in " ^ string_of_expr ex
           in (check_assign lt rt err, SAssign(var, (rt, e')))
       | Unop(op, e) as ex ->
-          let (t, e') = expr e in
+          let (t, e') = expr symbols e in
           let ty = match op with
             Neg when t = Int -> t
           | Not when t = Bool -> Bool
@@ -145,8 +168,8 @@ let check (*functions*) (globals, functions) =
                                  " in " ^ string_of_expr ex))
           in (ty, SUnop(op, (t, e')))
       | Binop(e1, op, e2) as e ->
-          let (t1, e1') = expr e1
-          and (t2, e2') = expr e2 in
+          let (t1, e1') = expr symbols e1
+          and (t2, e2') = expr symbols e2 in
           (* All binary operators require operands of the same type *)
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)
@@ -163,8 +186,8 @@ let check (*functions*) (globals, functions) =
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
       | Assignm(var, mem, e) as ex ->
-          let lt = type_of_identifier var
-          and (rt, e') = expr e in
+          let lt = type_of_identifier var symbols
+          and (rt, e') = expr symbols e in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
             string_of_typ rt ^ " in " ^ string_of_expr ex
           in (check_assign lt rt err, SAssignm(var, mem, (rt, e'))) (*@TODO: IMPLEMENT BETTER*)
@@ -175,7 +198,7 @@ let check (*functions*) (globals, functions) =
             raise (Failure ("expecting " ^ string_of_int param_length ^
                             " arguments in " ^ string_of_expr call))
           else let check_call (ft, _) e =
-            let (et, e') = expr e in
+            let (et, e') = expr symbols e in
             let err = "illegal argument found " ^ string_of_typ et ^
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
             in (check_assign ft et err, e')
@@ -190,7 +213,7 @@ let check (*functions*) (globals, functions) =
             raise (Failure ("expecting " ^ string_of_int param_length ^
                             " arguments in " ^ string_of_expr call))
           else let check_call (ft, _) e =
-            let (et, e') = expr e in
+            let (et, e') = expr symbols e in
             let err = "illegal argument found " ^ string_of_typ et ^
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
             in (check_assign ft et err, e')
@@ -202,44 +225,65 @@ let check (*functions*) (globals, functions) =
 
     in
 
-    let check_bool_expr e =
-      let (t', e') = expr e
+    let check_bool_expr symbols e =
+      let (t', e') = expr symbols e
       and err = "expected Boolean expression in " ^ string_of_expr e
       in if t' != Bool then raise (Failure err) else (t', e')
     in
+    let check_int_expr symbols e =
+      let (t', e') = expr symbols e
+      and err = "expected Int expression in " ^ string_of_expr e
+      in if t' != Int then raise (Failure err) else (t', e')
+    in
 
     (* Return a semantically-checked statement i.e. containing sexprs *)
-    let rec check_stmt = function
-        Expr e -> SExpr (expr e)
-      | Print(e) -> SPrint( expr e )
-      | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt_list b1, check_stmt_list b2)
+    let rec check_stmt symbols sstm = match sstm with
+        Expr e -> (SExpr (expr symbols e), symbols)
+      | Print(e) -> (SPrint( expr symbols e ), symbols)
+      | If(p, b1, b2) -> (*keep track of any new variables introduced for conflicts*)
+          let sifs = check_bool_expr symbols p in
+          let (sths, stm') = check_stmt_list symbols b1 in
+          let (sels, stm'') = check_stmt_list stm' b2
+          in (SIf(sifs, sths, sels), stm'')
       | For(e1, st) -> (*@TODO: Make sure e1 evaluates to an int *)
-	  SFor(expr e1, check_stmt_list st)
-      | While(p, s) -> SWhile(check_bool_expr p, check_stmt_list s)
-      | Foreach(v, e, sl) -> SForeach(v, expr e, check_stmt_list sl)
-      | Exit(i) -> SExit(i)
-      | Bind(ty, var) -> SBind(ty, var) (*@TODO: IMPLEMENT*)
-      | Assignd(ty, var, e) -> SAssignd(ty, var, expr e) (*@TODO: IMPLEMENT*)
-      | Return e -> let (t, e') = expr e in
-        if t = func.typ then SReturn (t, e')
+          let sfo = check_int_expr symbols e1 in
+          let (sbo, stm') = check_stmt_list symbols st in
+	  (SFor(sfo, sbo), stm')
+      | While(p, s) ->
+          let sifs = check_bool_expr symbols p in
+          let (sths, stm') = check_stmt_list symbols s in
+          (SWhile(sifs, sths), stm')
+      | Foreach(v, e, sl) ->
+          let (t, e') = expr symbols e in
+          if t != List && t != Map then raise (Failure "Can't foreach if it's not a list or map")
+            else
+          let syms = add_local_symbol (t, v) symbols in
+          let (sths, stm') = check_stmt_list syms sl in
+          (SForeach(v, (t, e'), sths), stm')
+      | Exit(i) -> (SExit(i), symbols)
+      | Bind(ty, var) -> (SBind(ty, var), symbols) (*@TODO: IMPLEMENT*)
+      | Assignd(ty, var, e) -> (SAssignd(ty, var, expr symbols e), symbols) (*@TODO: IMPLEMENT*)
+      | Return e -> let (t, e') = expr symbols e in
+        if t = func.typ then (SReturn (t, e'), symbols)
         else raise (
 	  Failure ("return gives " ^ string_of_typ t ^ " expected " ^
 		   string_of_typ func.typ ^ " in " ^ string_of_expr e))
 
-	    (* A block is correct if each statement is correct and nothing
-	       follows any Return statement.  Nested blocks are flattened. *)
 
-      and check_stmt_list = function
-              [Return _ as s] -> [check_stmt s]
+      and check_stmt_list symbols stms =
+          match stms with
+              [Return _ as s] ->  ([fst (check_stmt symbols s)], symbols)
             | Return _ :: _   -> raise (Failure "nothing may follow a return")
-            | s :: ss         -> check_stmt s :: check_stmt_list ss
-            | []              -> []
+            | s :: ss         -> let (sast, symbols') = check_stmt symbols s
+                                 in let (slis, symbols'') = check_stmt_list symbols' ss
+                                 in (sast :: slis, symbols'')
+            | []              -> ([], symbols)
 
 
     in (* body of check_function *)
     { styp = func.typ;
       sfname = func.fname;
       sformals = formals';
-      sbody = check_stmt_list func.body (*no err since no block *)
+      sbody = fst (check_stmt_list symbolz func.body) (*no err since no block *)
     }
-  in (*List.map check_function functions*) (globals', List.map check_function functions)
+  in (*List.map check_function functions*) (globals', List.map check_function functions )

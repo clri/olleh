@@ -101,7 +101,7 @@ int OllehRandom(int max) {
         return rand() % max;
 }
 
-char *scramble(char* w) {
+char* scramble(char* w) {
         int r;
         int i = 0;
         int len = strlen(w);

@@ -165,7 +165,7 @@ lis:
 
 maplis:
     /* nothing */ { [] }
-  | expr MAPTO expr { [($1, $3)] } /*how to store?*/
+  | expr MAPTO expr { [($1, $3)] } 
   | maplis COMMA expr MAPTO expr { ($3, $5) :: $1 }
 
 expr:
@@ -176,7 +176,7 @@ expr:
   | NULL             { Null                                }
   | VARIABLE         { Variable($1)                        }
   | VARIABLE DOT VARIABLE { Vmember($1, $3)                } /*member of obj*/
-  | OBRACK lis CBRACK { Literall($2)                       } /*list literal*/
+  | OBRACK lis CBRACK { Literall( List.rev $2 )            } /*list literal*/
   | OCURLY maplis CCURLY { Literalm($2)                    } /*map literal*/
   | expr PLUS   expr { Binop($1, Add,   $3)                }
   | expr MINUS  expr { Binop($1, Sub,   $3)                }
