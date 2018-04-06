@@ -261,8 +261,7 @@ let check (*functions*) (globals, functions) =
           let (sths, stm') = check_stmt_list syms sl in
           (SForeach(v, (t, e'), sths), stm')
       | Exit(i) -> (SExit(i), symbols)
-      | Bind(ty, var) -> (SBind(ty, var), symbols) (*@TODO: IMPLEMENT*)
-      | Assignd(ty, var, e) -> (SAssignd(ty, var, expr symbols e), symbols) (*@TODO: IMPLEMENT*)
+      | Bind(ty, var) -> (SBind(ty, var), add_local_symbol (ty, var) symbols)
       | Return e -> let (t, e') = expr symbols e in
         if t = func.typ then (SReturn (t, e'), symbols)
         else raise (

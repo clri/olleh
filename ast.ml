@@ -40,7 +40,6 @@ type stmt =
     | While of expr * (stmt list)
     | For of expr * (stmt list)
     | Foreach of string * expr * (stmt list)
-    | Assignd of typ * string * expr
     | Exit of int
     | Bind of typ * string
 

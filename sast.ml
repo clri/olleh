@@ -33,7 +33,6 @@ type sstmt =
   | SFor of sexpr * (sstmt list)
   | SForeach of string * sexpr * (sstmt list)
   | SBind of typ * string
-  | SAssignd of typ * string * sexpr
   | SExit of int
 
 

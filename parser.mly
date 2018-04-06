@@ -135,8 +135,6 @@ stmt:
                                              { While($3, $6)         }
   | FOREACH VARIABLE expr COLON stmt_list END SEMI
                                              { Foreach($2, $3, $5)   }
-  /*| typ VARIABLE SEMI                          { Bind( $1, $2) }*/
-  /*| typ VARIABLE ASSIGN expr SEMI      { Assignd( $1, $2, $4) }*/
   | EXIT SEMI                               { Exit(0) }
 
 
@@ -165,7 +163,7 @@ lis:
 
 maplis:
     /* nothing */ { [] }
-  | expr MAPTO expr { [($1, $3)] } 
+  | expr MAPTO expr { [($1, $3)] }
   | maplis COMMA expr MAPTO expr { ($3, $5) :: $1 }
 
 expr:
