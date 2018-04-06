@@ -45,19 +45,19 @@ let check (*functions*) (globals, functions) =
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
-    let add_bind map (name, ty) =
-      StringMap.add name { typ = ty; fname = name; formals = []; body = [] } map
-    in List.fold_left add_bind StringMap.empty [ ("print", Int);
-                                                 ("CollectLocalGarbage", Void);
-                                                 ("InitializeLocalGarbage", Void);
-                                                 ("InitializeRandom", Void);
-                                                 ("scramble", String);
-                                                 ("reverse", String);
-                                                 ("anagram", String);
-                                                 ("readDict", String);
-                                                 ("listToString", String);
-                                                 ("subStrings", Map);
-                                                 ("random", Int)
+    let add_bind map (name, ty, argus) =
+      StringMap.add name { typ = ty; fname = name; formals = argus; body = [] } map
+    in List.fold_left add_bind StringMap.empty [ ("CollectLocalGarbage", Void, []);
+                                                 ("InitializeLocalGarbage", Void, []);
+                                                 ("InitializeRandom", Void, []);
+                                                 ("scramble", String, [(String, "w")]);
+                                                 ("reverse", String, [(String, "w")]);
+                                                 ("anagram", String, [(String, "w")]);
+                                                 ("readDict", String, [(String, "filename")]);
+                                                 ("listToString", String, [(List, "lis")]);
+                                                 ("subStrings", Map, [(String, "w")]);
+                                                 ("random", Int, [(Int, "x")])
+                                                 (*@TODO: add builtins for objects, of the form "MapgetLength" etc*)
                                                   ]
   in
 
@@ -142,7 +142,7 @@ let check (*functions*) (globals, functions) =
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr symbols exx =
       match exx with
-        Literali  l -> (Int, SLiterali l)
+        Literali l -> (Int, SLiterali l)
       | Literalc l -> (Char, SLiteralc l)
       | Literals l -> (String, SLiterals l)
       | Literalb l -> (Bool, SLiteralb l)
@@ -176,6 +176,7 @@ let check (*functions*) (globals, functions) =
           let ty = match op with
             Add | Sub | Mult | Div | Mod when same && t1 = Int   -> Int
           | Add when same && t1 = String -> String
+          | Add when t1 = String && t2 = Int -> String
           | Equal | Neq            when same               -> Bool
           | Less | Leq | Greater | Geq
                      when same && (t1 = Int) -> Bool
@@ -186,11 +187,11 @@ let check (*functions*) (globals, functions) =
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
       | Assignm(var, mem, e) as ex ->
-          let lt = type_of_identifier var symbols
+          let lt = type_of_vmember var mem symbols
           and (rt, e') = expr symbols e in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
             string_of_typ rt ^ " in " ^ string_of_expr ex
-          in (check_assign lt rt err, SAssignm(var, mem, (rt, e'))) (*@TODO: IMPLEMENT BETTER*)
+          in (check_assign lt rt err, SAssignm(var, mem, (rt, e')))
       | Call(fname, args) as call ->
           let fd = find_func fname in
           let param_length = List.length fd.formals in
@@ -205,12 +206,12 @@ let check (*functions*) (globals, functions) =
           in
           let args' = List.map2 check_call fd.formals args
           in (fd.typ, SCall(fname, args'))
-      (*@TODO: IMPLEMENT BELOW *)
-      | Callm(fname, mname, args) as call ->
-          let fd = find_func fname in
+      | Callm(vname, fname, args) as call ->
+          let ty = type_of_identifier vname in
+          let fd = find_func ((string_of_typ ty) ^ fname) in
           let param_length = List.length fd.formals in
-          if List.length args != param_length then
-            raise (Failure ("expecting " ^ string_of_int param_length ^
+          if List.length args != param_length - 1 then
+            raise (Failure ("expecting " ^ string_of_int (param_length - 1) ^
                             " arguments in " ^ string_of_expr call))
           else let check_call (ft, _) e =
             let (et, e') = expr symbols e in
@@ -218,8 +219,8 @@ let check (*functions*) (globals, functions) =
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
             in (check_assign ft et err, e')
           in
-          let args' = List.map2 check_call fd.formals args
-          in (fd.typ, SCallm(fname, mname, args'))
+          let args' = List.map2 check_call fd.formals (Variable(vname) :: args)
+          in (fd.typ, SCall((string_of_typ ty) ^ fname, args'))
       | Newtobj(t1, t2) -> (t1, SNewtobj (t1, t2)) (*@TODO: IMPLEMENT*)
       | Newobj(t1, _) -> (t1, SNewobj (t1, [])) (*@TODO: IMPLEMENT*)
 
@@ -283,6 +284,6 @@ let check (*functions*) (globals, functions) =
     { styp = func.typ;
       sfname = func.fname;
       sformals = formals';
-      sbody = fst (check_stmt_list symbolz func.body) (*no err since no block *)
+      sbody = fst (check_stmt_list (if func.fname = "main" then StringMap.empty else symbolz) func.body) (*no err since no block *)
     }
   in (*List.map check_function functions*) (globals', List.map check_function functions )

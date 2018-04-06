@@ -13,7 +13,6 @@ BUILTINS (ostdlib.c)
 -rename file
 -implement constants if necessary
 -anagram()
--scramble()
 -readDict()
 -map.destroy()
 -map.contains()
@@ -23,8 +22,11 @@ BUILTINS (ostdlib.c)
 -subStrings()
 -once everything has been tested, remove commented-out test code
 
+SCANNEr/PRASER
+-make sure variable names/identifiers are correct
+
 Garbage collection
--Test functionality further?
+-Test functionality further for the return type stuff
 
 Standard Library (.olh)
 -Write standard library functions
@@ -32,14 +34,13 @@ Standard Library (.olh)
 
 Semantic Checker
 -add builtin functions
--implement globals (& tracking locals) once they're fixed in parser/scanner; add builtin globals (seed, etc)
+-add builtin globals (seed, etc)
 -type-check lists and maps
 -type-check functions on objects (such as x.remove(y))
 -assigning to a member of an object (x.y = z)
 -calling a function on an object
 -new object creation--pattern matching (ie fresh x(type) can be like list(string))
--for loops, foreach
--binding
+-exprs
 
 Compiler (codegen.ml)
 -add builtin constants (seed, dictionary)
