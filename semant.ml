@@ -38,7 +38,6 @@ let check (*functions*) (globals, functions) =
   in
 
   let globals' = check_binds "global" (List.map bind_to_formalbind globals) in
-  (*let globals' = [] in (*@TODO: FIGURE OUT DYNAMIC DECLARATION*)*)
 
   (**** Checking Functions ****)
 
@@ -116,7 +115,7 @@ let check (*functions*) (globals, functions) =
     let type_of_vmember s m symbols =
       let tvs = try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
-      match tvs, m with (*@TODO: Make more robust*)
+      match tvs, m with
           Board, "rows" -> Int
         | Board, "cols" -> Int
         | Board, "letters" -> List
@@ -127,7 +126,6 @@ let check (*functions*) (globals, functions) =
         | _ -> raise (Failure ("Object " ^ s ^ " of type " ^ (string_of_typ tvs) ^ " has no attribute " ^ m))
     in
 
-    (*@TODO: REMOVE AND OTHER FUNCTIONS ON OBJECTS*)
 
     (*tuple mapper helper function*)
     let rec map_tup f s (x, y) =
@@ -150,6 +148,7 @@ let check (*functions*) (globals, functions) =
       | Null       -> (Void, Null)
       | Variable s       -> (type_of_identifier s symbols, SVariable s)
       | Vmember(s, m) -> (type_of_vmember s m symbols, SVmember(s, m))
+      (*@TODO: for list and map, make sure all exprs are acceptable, ie same type, maps are string/char: int, etc*)
       | Literall l -> (List, SLiterall (map_over_two expr symbols l))
       | Literalm m -> (Map, SLiteralm (map_over_two (map_tup expr) symbols m))
       | Assign(var, e) as ex ->
@@ -221,8 +220,20 @@ let check (*functions*) (globals, functions) =
           in
           let args' = List.map2 check_call fd.formals (Variable(vname) :: args)
           in (fd.typ, SCall((string_of_typ ty) ^ fname, args'))
-      | Newtobj(t1, t2) -> (t1, SNewtobj (t1, t2)) (*@TODO: IMPLEMENT*)
-      | Newobj(t1, _) -> (t1, SNewobj (t1, [])) (*@TODO: IMPLEMENT*)
+      | Newtobj(t1, t2) ->
+          if ((t1 = Map && (t2 = String || t2 = Char)) ||
+               (t1 = List && (t2 = Char || t2 = Int))) then (*@TODO: CHECK LIST TYPES*)
+                 (t1, SNewtobj(t1, t2))
+          else raise (Failure ("Object cannot be initialized like this"))
+      | Newobj(t1, argus)  ->
+          match t1 with (*@TODO: check these types*)
+              Player ->
+                let sargus = map_over_two expr symbols argus in
+                  (t1, SNewobj(t1, sargus))
+              | Board ->
+                let sargus = map_over_two expr symbols argus in
+                  (t1, SNewobj(t1, sargus))
+              | _ -> raise (Failure ("Object needs type initialization"))
 
     in
 
