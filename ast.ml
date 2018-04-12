@@ -27,7 +27,7 @@ type expr =
     | Assign of string * expr
     | Assignm of string * string * expr
     | Newtobj of typ * typ
-    | Newobj of typ * expr list
+    | Newobj of typ * (expr * expr) list
     | Call of string * expr list
     | Callm of string * string * expr list
     | Noexpr

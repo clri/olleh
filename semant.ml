@@ -148,9 +148,24 @@ let check (*functions*) (globals, functions) =
       | Null       -> (Void, Null)
       | Variable s       -> (type_of_identifier s symbols, SVariable s)
       | Vmember(s, m) -> (type_of_vmember s m symbols, SVmember(s, m))
-      (*@TODO: for list and map, make sure all exprs are acceptable, ie same type, maps are string/char: int, etc*)
-      | Literall l -> (List, SLiterall (map_over_two expr symbols l))
-      | Literalm m -> (Map, SLiteralm (map_over_two (map_tup expr) symbols m))
+      | Literall l ->
+          let l' = map_over_two expr symbols l in
+          let is_int b (t, _) = b && (t = Int) in
+          let lint = List.fold_left is_int true l' in
+          let is_char b (t, _) = b && (t = Char) in
+          let lchar = List.fold_left is_char true l' in
+          let is_list b (t, _) = b && (t = List) in
+            (*@TODO: enforce 2d list of char only*)
+          let llist = List.fold_left is_list true l' in
+          let lempty = List.length l = 0 in
+          if lempty then (List, SLiterall(Void, l')) else
+            if lint then (List, SLiterall(Int, l')) else
+              if lchar then (List, SLiterall(Char, l')) else
+                if llist then (List, SLiterall(List, l')) else
+                raise (Failure ("List of improper type"))
+      | Literalm m ->
+          (*@TODO: implement*)
+           (Map, SLiteralm(Void, []))
       | Assign(var, e) as ex ->
           let lt = type_of_identifier var symbols
           and (rt, e') = expr symbols e in
@@ -223,16 +238,32 @@ let check (*functions*) (globals, functions) =
       | Newtobj(t1, t2) ->
           if ((t1 = Map && (t2 = String || t2 = Char)) ||
                (t1 = List && (t2 = Char || t2 = Int))) then (*@TODO: CHECK LIST TYPES*)
-                 (t1, SNewtobj(t1, t2))
-          else raise (Failure ("Object cannot be initialized like this"))
+                 (t1, SNewtobj(t2))
+          else raise (Failure ("Object needs argument initialization"))
       | Newobj(t1, argus)  ->
           match t1 with (*@TODO: check these types*)
               Player ->
-                let sargus = map_over_two expr symbols argus in
-                  (t1, SNewobj(t1, sargus))
+                let rec pla ars = match ars with
+                    [] -> []
+                  | (v, ex) :: ars' ->
+                      let sv va = match va with Variable(x) -> SVariable(x)
+                       | _ -> raise (Failure "compiler error") in
+                      let (t, ex') = expr symbols ex in
+                        if ((v = Variable("score") && t = Int) ||
+                            (v = Variable("turn") && t = Bool) ||
+                            (v = Variable("guessedWords") && t = Map (*&&
+                              (fst ex' = String || fst ex' = Void)*)) ||
+                            (v = Variable("letters") && t = List (*&&
+                              (fst ex' = Char ||
+                                (fst ex' = Void))*)))
+                        then ((t, sv v), (t, ex')) :: pla ars'
+                        else raise (Failure "Illegal argument to Player")
+                  | _ -> raise (Failure "Illegal argument to Player")
+                in
+                let sargus = pla argus in
+                  (t1, SNewobj(sargus))
               | Board ->
-                let sargus = map_over_two expr symbols argus in
-                  (t1, SNewobj(t1, sargus))
+                (t1, SNewobj([])) (*@TODO: IMPLEMENT*)
               | _ -> raise (Failure ("Object needs type initialization"))
 
     in

@@ -11,14 +11,14 @@ and sx =
   | Null
   | SVariable of string
   | SVmember of string * string
-  | SLiterall of sexpr list (*typ * (sexpr list)*)
-  | SLiteralm of (sexpr * sexpr) list (*typ * ((sexpr * sexpr) list)*)
+  | SLiterall of (*sexpr list*) typ * (sexpr list)
+  | SLiteralm of (*(sexpr * sexpr) list*) typ * ((sexpr * sexpr) list)
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr
   | SAssign of string * sexpr
   | SAssignm of string * string * sexpr
-  | SNewtobj of typ * typ
-  | SNewobj of typ * sexpr list
+  | SNewtobj of typ
+  | SNewobj of (sexpr * sexpr) list
   | SCall of string * sexpr list
   | SCallm of string * string * sexpr list
   | SNoexpr
@@ -43,4 +43,4 @@ type sfunc_decl = {
     sbody : sstmt list;
   }
 
-type sprogram = (*sstmt list*) formalbind list * sfunc_decl list
+type sprogram = formalbind list * sfunc_decl list
