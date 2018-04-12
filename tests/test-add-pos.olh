@@ -1,0 +1,5 @@
+/*
+ * Positive test: adding two integers
+ */
+
+print 5 + 5;

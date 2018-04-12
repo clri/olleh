@@ -2,16 +2,9 @@
  * Positive: if/else
  */
 
-Player edwards = fresh Player();
 
-if (edwards.score > 5):
-	print "Good job Edwards!";
-
+if (true):
+	print "Printing from true!";
 else:
-	if (edwards.score > 2):
-		print "Not too shabby";
-
-	else:
-		print "Meh, I've seen better";
-	end;
+	print "Printing from false!";
 end;

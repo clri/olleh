@@ -8,10 +8,13 @@ let () =
         let channel = ref stdin in
         Arg.parse [] (fun filename -> channel := open_in filename) usage_msg;
         let lexbuf = Lexing.from_channel !channel in
+        (*let _ = print_endline "passed lexer" in*)
         let ast = Parser.program Scanner.tokenize lexbuf in
+        (*let _ = print_endline "passed parser" in*)
         let sast = Semant.check ast in
+        (*let _ = print_endline "passed semant" in*)
         let m = Codegen.translate sast in
     	  Llvm_analysis.assert_valid_module m;
     	  print_string (Llvm.string_of_llmodule m)
-        
+
         (*print_endline "valid program!"*)

@@ -173,7 +173,7 @@ then
     files=$@
 else
     #files="tests/test-*.olh tests/fail-*.olh"
-    files="tests/hello.olh"
+    files="tests/test-list-pos.olh"
 fi
 
 for file in $files

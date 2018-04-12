@@ -1,8 +1,6 @@
 /usr/local/opt/llvm/bin/lli
 
-###### Testing hello
-./toplevel tests/hello.olh > hello.ll
-llc hello.ll > hello.s
-cc -o hello.exe hello.s ostdlib.o
-./hello.exe
+###### Testing test-list-pos
+./toplevel tests/test-list-pos.olh > test-list-pos.ll
+Fatal error: exception Failure("internal error: not (yet) implemented")
 ###### SUCCESS

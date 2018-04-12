@@ -1,9 +1,0 @@
-/*
- * Negative test.
- * Meant to be foreach loop.
- */
-
-Board b = fresh Board(1,5);
-
-foreach x b.subStrings():
-    if checkWord(x): print "PLT is great!";

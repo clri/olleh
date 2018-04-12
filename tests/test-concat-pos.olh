@@ -1,0 +1,5 @@
+/*
+ * Positive test: cocatenate two strings
+ */
+
+print "hello " + "world!";

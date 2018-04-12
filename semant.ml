@@ -282,7 +282,7 @@ let check (*functions*) (globals, functions) =
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt symbols sstm = match sstm with
         Expr e -> (SExpr (expr symbols e), symbols)
-      | Print(e) -> (SPrint( expr symbols e ), symbols)
+      | Print(e) -> (SPrint( expr symbols e ), symbols) (*@TODO: type checking*)
       | If(p, b1, b2) -> (*keep track of any new variables introduced for conflicts*)
           let sifs = check_bool_expr symbols p in
           let (sths, stm') = check_stmt_list symbols b1 in

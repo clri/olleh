@@ -1,8 +1,6 @@
 /*
  * Negative test.
- * Meant to print strings and ints.
+ * Semantic failure: binop of int/bool not supported
  */
 
-print "This is a string printed correctly.";
-print 42;
-print "September " + 19;
+print "September " + false;

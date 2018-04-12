@@ -1,0 +1,6 @@
+/*
+ * Semantic failure on: subtraction of strings not allowed
+ */
+
+print "trees" - "es";
+

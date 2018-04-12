@@ -1,11 +1,9 @@
 /*
- * Positive: testing function 
+ * Positive: testing function call
  */
-function void setTurn(Player townsend, Player edwards):
 
-	townsend.turn = false;
-	edwards.turn = true;
-
+function void printFun():
+        print "printing from a function";
 end;
 
-
+printFun();

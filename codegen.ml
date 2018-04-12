@@ -10,10 +10,10 @@ module StringMap = Map.Make(String)
 let translate (globals, functions) =
   let context    = L.global_context () in
   (* Add types to the context so we can use them in our LLVM code *)
-  let i32_t      = L.i32_type    context (*int*)
-  and i8_t       = L.i8_type     context (*char/string*)
-  and i1_t       = L.i1_type     context (*bool*)
-  and void_t     = L.void_type   context (*void*)
+  let i32_t      = L.i32_type          context (*int*)
+  and i8_t       = L.i8_type           context (*char/string*)
+  and i1_t       = L.i1_type           context (*bool*)
+  and void_t     = L.void_type         context (*void*)
   (*@TODO: add structs/other stuff*)
   (* Create an LLVM module -- this is a "container" into which we'll
      generate actual code *)
@@ -44,11 +44,13 @@ let translate (globals, functions) =
   let printf_func : L.llvalue =
      L.declare_function "printf" printf_t the_module in
 
-  (*builtins: getLength of a string*)
+  (*builtins: getLength of a string and convert int to string*)
   let intstr_t : L.lltype =
       L.function_type i32_t [| L.pointer_type i8_t |] in
   let getLength_func : L.llvalue =
      L.declare_function "strlen" intstr_t the_module in
+  let intToString_func : L.llvalue =
+     L.declare_function "IntToS" intstr_t the_module in
 
   (*builtins: random*)
   let intvoid_t : L.lltype =
@@ -71,6 +73,16 @@ let translate (globals, functions) =
   let garbagei_func : L.llvalue =
       L.declare_function "CollectLocalGarbageWithReturn" voidchar_t the_module in
 
+  let charcharchar_t : L.lltype =
+      L.function_type (L.pointer_type i8_t) [| L.pointer_type i8_t; L.pointer_type i8_t |] in
+  let strcati_func : L.llvalue =
+      L.declare_function "SConcat" charcharchar_t the_module in
+
+  let strintlis_t : L.lltype =
+     L.function_type void_t [| L.pointer_type i32_t;  i32_t |] in
+  let printil_func : L.llvalue =
+     L.declare_function "ListOfIntsToString" strintlis_t the_module in
+
   (* Define each function (arguments and return type) so we can
    * define it's body and call it later *)
    let function_decls : (L.llvalue * sfunc_decl) StringMap.t =
@@ -88,6 +100,7 @@ let translate (globals, functions) =
      let builder = L.builder_at_end context (L.entry_block the_function) in
 
      let str_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
+     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
 
      (* Construct the function's "locals": formal arguments and locally
         declared variables.  Allocate each on the stack, initialize their
@@ -131,14 +144,19 @@ let translate (globals, functions) =
       | Null -> L.const_int i32_t 0
       | SVariable s -> L.build_load (lookup s) s builder
       | SVmember (v, _) -> L.build_load (lookup v) v builder (*@TODO: IMPLEMENT*)
-      | SLiterall _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
+      | SLiterall (t, l) ->
+         if t = Int then
+           L.const_array i32_t (Array.of_list (List.map (expr builder) l))
+         else if t = Char then
+           L.const_array i8_t (Array.of_list (List.map (expr builder) l))
+         else raise (Failure "build error")
       | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SAssignm (s, _, e) -> let e' = expr builder e in
                           let _  = L.build_store e' (lookup s) builder in e' (*@TODO: IMPLEMENT/UNDERSTAND*)
       | SAssign (s, e) -> let e' = expr builder e in
                           let _  = L.build_store e' (lookup s) builder in e' (*@TODO: IMPLEMENT/UNDERSTAND*)
       | SBinop (e1, op, e2) ->
-	  let (t, _) = e1
+	  let (t, _) = e1 and (tt, _) = e2
 	  and e1' = expr builder e1
 	  and e2' = expr builder e2 in
 	  if t = A.Int then (match op with
@@ -156,7 +174,18 @@ let translate (globals, functions) =
 	  | A.Greater -> L.build_icmp L.Icmp.Sgt
 	  | A.Geq     -> L.build_icmp L.Icmp.Sge
 	      ) e1' e2' "tmp" builder
-	  else raise (Failure "internal error: binop for non int not (yet) implemented")
+          else if t = A.String then
+            if op = A.Add then
+              if tt = A.Int then
+                let resultt = "strcatt_result" in
+                  L.build_call strcati_func [| e1'; (let r2 = "ITOS_result" in
+                    L.build_call intToString_func [| e2' |] r2 builder) |] resultt builder
+              else
+            let result = "strcat_result" in
+              L.build_call strcati_func [| e1'; e2' |]
+              result builder
+          else raise (Failure "internal error: not binop for string")
+          else raise (Failure "internal error: binop for non int not (yet) implemented")
           (*@TODO: IMPLEMENT FURTHER*)
       | SUnop(op, e) ->
 	  let _ = e in
@@ -173,8 +202,11 @@ let translate (globals, functions) =
       | SCall ("CollectLocalGarbage",[]) ->
          L.build_call garbagec_func [| |]
          "" builder
+      | SCall ("InitializeRandom",[]) ->
+         L.build_call randi_func [| |]
+         "" builder
       | SCall (f, args) ->
-         let (fdef, fdecl) = StringMap.find f function_decls in
+         let (fdef, fdecl) = try StringMap.find f function_decls with Not_found -> raise (Failure ("FAIL " ^ f)) in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
 	 let result = (match fdecl.styp with
                         A.Void -> ""
@@ -209,9 +241,14 @@ let translate (globals, functions) =
     (* Imperative nature of statement processing entails imperative OCaml *)
     let rec stmt builder = function
         SExpr e -> let _ = expr builder e in builder
-      | SPrint e ->
-	  let _ = L.build_call printf_func [| str_format_str ; (expr builder e) |]
+      | SPrint (t, e) ->
+          if t = String then let _ = L.build_call printf_func [| str_format_str ; (expr builder (t,e)) |]
 	    "printf" builder in builder
+         else if t = List then let _ = L.build_call printil_func [| (expr builder (t,e)); (L.const_int i32_t 4) |]
+            "ListOfIntsToString" builder in builder
+         else if t = Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder (t,e)) |]
+           "printf" builder in builder
+          else raise (Failure "internal error: print not (yet) implemented")
       | _ -> raise (Failure "internal error: not (yet) implemented")
       (*| SReturn e -> let _ = match fdecl.styp with
                               (* Special "return nothing" instr *)

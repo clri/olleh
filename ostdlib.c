@@ -90,6 +90,75 @@ void CollectLocalGarbageWithReturn(char *returnVal) {
         free(t);
 }
 
+char * SConcat(char *a, char*b) {
+        char *ans;
+        int n = strlen(a) + strlen(b) +1;
+
+        ans = malloc(n);
+        AddToGarbage(ans);
+        strcpy(ans, a);
+        strcat(ans, b);
+        return ans;
+}
+
+//helper functions
+
+int GetElemSpace(int e) {
+        int ans = 9;
+        int powers[] = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
+
+        while (e / powers[ans] == 0)
+                ans--;
+        return ans;
+}
+char *IntToS(int e) {
+        char *ans;
+        int s = GetElemSpace(e) + 1;
+        ans = malloc(s);
+        AddToGarbage(ans);
+        sprintf(ans, "%d", e);
+        ans[s - 1] = 0;
+        return ans;
+}
+
+/*
+int GetListSpace(int * lis, int n) {
+        int i;
+        int ans = 0;
+
+        for (i = 0; i < n; i++)
+                ans += getElemSpace(lis[i]);
+        return ans;
+}*/
+
+//print a list of ints
+void ListOfIntsToString(int *lis, int n) {
+        int i;
+        printf("[");
+        for (i = 0; i < n - 1; i++)
+                printf("%d, ", lis[i]);
+        printf("%d]\n", lis[i]);
+        /*int i = 0;
+        int j;
+        char *ans = malloc (2 * n + 1 + getListSpace(lis, n));
+
+        ans[i++] = '[';
+        for (j = 0; j < n - 1; j++) {
+                itoa(lis[j], ans[i], 10);
+                i += getElemSpace(lis[j]);
+                ans[i++] = ',';
+                ans[i++] = ' ';
+        }
+        itoa(lis[j], ans[i], 10);
+        ans[i++] = ']';
+        ans[i] = '\0';
+
+        printf("%s\n", ans);
+        free(ans);*/
+}
+
+//@TODO: print a list of chars
+
 
 //called once at the beginning of each program
 //to initialize the RNG
