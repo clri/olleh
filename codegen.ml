@@ -49,8 +49,10 @@ let translate (globals, functions) =
       L.function_type i32_t [| L.pointer_type i8_t |] in
   let getLength_func : L.llvalue =
      L.declare_function "strlen" intstr_t the_module in
+  let strint_t : L.lltype =
+      L.function_type (L.pointer_type i8_t) [| i32_t |] in
   let intToString_func : L.llvalue =
-     L.declare_function "IntToS" intstr_t the_module in
+     L.declare_function "IntToS" strint_t the_module in
 
   (*builtins: random*)
   let intvoid_t : L.lltype =
@@ -70,7 +72,7 @@ let translate (globals, functions) =
 
   let voidchar_t : L.lltype =
       L.function_type void_t [| L.pointer_type i8_t |] in
-  let garbagei_func : L.llvalue =
+  let garbagecc_func : L.llvalue =
       L.declare_function "CollectLocalGarbageWithReturn" voidchar_t the_module in
 
   let charcharchar_t : L.lltype =
@@ -145,10 +147,17 @@ let translate (globals, functions) =
       | SVariable s -> L.build_load (lookup s) s builder
       | SVmember (v, _) -> L.build_load (lookup v) v builder (*@TODO: IMPLEMENT*)
       | SLiterall (t, l) ->
+         let l' = List.map (expr builder) l in
          if t = Int then
-           L.const_array i32_t (Array.of_list (List.map (expr builder) l))
-         else if t = Char then
-           L.const_array i8_t (Array.of_list (List.map (expr builder) l))
+           let x = L.build_array_malloc i32_t (L.const_int i32_t 20) "a1" builder
+           in let x = L.build_pointercast x (L.pointer_type i32_t) "a2" builder
+           in let addtoar index elem =
+             let xx = L.build_gep x [| L.const_int i32_t index |] "a3" builder
+             in ignore (L.build_store elem xx builder)
+           in let _ = List.iteri addtoar l'
+           in x
+         else if t = Char then (*@TODO: implement*)
+           L.const_array i8_t (Array.of_list l')
          else raise (Failure "build error")
       | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SAssignm (s, _, e) -> let e' = expr builder e in
@@ -244,18 +253,13 @@ let translate (globals, functions) =
       | SPrint (t, e) ->
           if t = String then let _ = L.build_call printf_func [| str_format_str ; (expr builder (t,e)) |]
 	    "printf" builder in builder
-         else if t = List then let _ = L.build_call printil_func [| (expr builder (t,e)); (L.const_int i32_t 4) |]
-            "ListOfIntsToString" builder in builder
+         else if t = List then
+           (*let _ = expr builder (t, e) in raise(Failure "no!!")*)
+           let _ = L.build_call printil_func [| (expr builder (t,e)); (L.const_int i32_t 4) |]
+            "" builder in builder
          else if t = Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder (t,e)) |]
            "printf" builder in builder
           else raise (Failure "internal error: print not (yet) implemented")
-      | _ -> raise (Failure "internal error: not (yet) implemented")
-      (*| SReturn e -> let _ = match fdecl.styp with
-                              (* Special "return nothing" instr *)
-                              A.Void -> L.build_ret_void builder
-                              (* Build return statement *)
-                            | _ -> L.build_ret (expr builder e) builder
-                     in builder
       (* The order that we create and add the basic blocks for an If statement
       doesnt 'really' matter (seemingly). What hooks them up in the right order
       are the build_br functions used at the end of the then and else blocks (if
@@ -271,14 +275,15 @@ let translate (globals, functions) =
          (* Same for "then" basic block *)
 	 let then_bb = L.append_block context "then" the_function in
          (* Position builder in "then" block and build the statement *)
-         let then_builder = stmt (L.builder_at_end context then_bb) then_stmt in
+
+         let then_builder = List.fold_left stmt (L.builder_at_end context then_bb) then_stmt in
          (* Add a branch to the "then" block (to the merge block)
            if a terminator doesn't already exist for the "then" block *)
 	 let () = add_terminal then_builder branch_instr in
 
          (* Identical to stuff we did for "then" *)
 	 let else_bb = L.append_block context "else" the_function in
-         let else_builder = stmt (L.builder_at_end context else_bb) else_stmt in
+         let else_builder = List.fold_left stmt (L.builder_at_end context else_bb) else_stmt in
 	 let () = add_terminal else_builder branch_instr in
 
          (* Generate initial branch instruction perform the selection of "then"
@@ -287,7 +292,18 @@ let translate (globals, functions) =
 	 let _ = L.build_cond_br bool_val then_bb else_bb builder in
          (* Move to the merge block for further instruction building *)
 	 L.builder_at_end context merge_bb
-
+     (*| SBind(t, s) ->
+       let add_local m (t, n) =
+        let local_var = L.build_alloca (ltype_of_typ t) n builder
+        in StringMap.add n local_var m
+       in let local_vars = add_local local_vars (t, s)*)
+     | _ -> raise (Failure "internal error: not (yet) implemented")
+     (*| SReturn e -> let _ = match fdecl.styp with
+                              (* Special "return nothing" instr *)
+                              A.Void -> L.build_ret_void builder
+                              (* Build return statement *)
+                            | _ -> L.build_ret (expr builder e) builder
+                     in builder
       | SWhile (predicate, body) ->
           (* First create basic block for condition instructions -- this will
           serve as destination in the case of a loop *)

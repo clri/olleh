@@ -90,14 +90,15 @@ void CollectLocalGarbageWithReturn(char *returnVal) {
         free(t);
 }
 
-char * SConcat(char *a, char*b) {
+char *SConcat(char *a, char *b) {
         char *ans;
-        int n = strlen(a) + strlen(b) +1;
+        int n = strlen(a) + strlen(b) + 1;
 
         ans = malloc(n);
         AddToGarbage(ans);
         strcpy(ans, a);
-        strcat(ans, b);
+        strcpy(ans + strlen(a), b);
+        ans[n-1] = 0;
         return ans;
 }
 
@@ -113,7 +114,7 @@ int GetElemSpace(int e) {
 }
 char *IntToS(int e) {
         char *ans;
-        int s = GetElemSpace(e) + 1;
+        int s = GetElemSpace(e) + 2;
         ans = malloc(s);
         AddToGarbage(ans);
         sprintf(ans, "%d", e);
@@ -132,7 +133,7 @@ int GetListSpace(int * lis, int n) {
 }*/
 
 //print a list of ints
-void ListOfIntsToString(int *lis, int n) {
+void ListOfIntsToString(int lis[], int n) {
         int i;
         printf("[");
         for (i = 0; i < n - 1; i++)

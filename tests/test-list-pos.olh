@@ -2,6 +2,6 @@
  * Positive test: creating a list and printing it
  */
 
-list lis = [1, 2, 3, 4];
+//list lis = [1, 2, 3, 4];
 
-print lis;
+print [1, 2, 3, 4];

@@ -1,6 +1,68 @@
 /usr/local/opt/llvm/bin/lli
 
+###### Testing test-add-pos
+./toplevel tests/test-add-pos.olh > test-add-pos.ll
+llc test-add-pos.ll > test-add-pos.s
+cc -o test-add-pos.exe test-add-pos.s ostdlib.o
+./test-add-pos.exe
+###### SUCCESS
+
+###### Testing test-concat-pos
+./toplevel tests/test-concat-pos.olh > test-concat-pos.ll
+llc test-concat-pos.ll > test-concat-pos.s
+cc -o test-concat-pos.exe test-concat-pos.s ostdlib.o
+./test-concat-pos.exe
+###### SUCCESS
+
+###### Testing test-func-pos
+./toplevel tests/test-func-pos.olh > test-func-pos.ll
+llc test-func-pos.ll > test-func-pos.s
+cc -o test-func-pos.exe test-func-pos.s ostdlib.o
+./test-func-pos.exe
+###### SUCCESS
+
+###### Testing test-if-pos
+./toplevel tests/test-if-pos.olh > test-if-pos.ll
+llc test-if-pos.ll > test-if-pos.s
+cc -o test-if-pos.exe test-if-pos.s ostdlib.o
+./test-if-pos.exe
+###### SUCCESS
+
 ###### Testing test-list-pos
 ./toplevel tests/test-list-pos.olh > test-list-pos.ll
-Fatal error: exception Failure("internal error: not (yet) implemented")
+llc test-list-pos.ll > test-list-pos.s
+cc -o test-list-pos.exe test-list-pos.s ostdlib.o
+./test-list-pos.exe
 ###### SUCCESS
+
+###### Testing test-print-pos
+./toplevel tests/test-print-pos.olh > test-print-pos.ll
+llc test-print-pos.ll > test-print-pos.s
+cc -o test-print-pos.exe test-print-pos.s ostdlib.o
+./test-print-pos.exe
+###### SUCCESS
+
+###### Testing test-printbasic-pos
+./toplevel tests/test-printbasic-pos.olh > test-printbasic-pos.ll
+llc test-printbasic-pos.ll > test-printbasic-pos.s
+cc -o test-printbasic-pos.exe test-printbasic-pos.s ostdlib.o
+./test-printbasic-pos.exe
+###### SUCCESS
+
+###### Testing fail-list-neg
+./toplevel < tests/fail-list-neg.olh 2> fail-list-neg.out >> testall.log
+diff -b fail-list-neg.err tests/fail-list-neg.err > fail-list-neg.diff
+FAILED fail-list-neg.err differs from tests/fail-list-neg.err
+###### FAILED
+
+###### Testing fail-print-neg
+./toplevel < tests/fail-print-neg.olh 2> fail-print-neg.out >> testall.log
+diff -b fail-print-neg.err tests/fail-print-neg.err > fail-print-neg.diff
+FAILED fail-print-neg.err differs from tests/fail-print-neg.err
+###### FAILED
+
+###### Testing fail-subtract-neg
+./toplevel < tests/fail-subtract-neg.olh 2> fail-subtract-neg.out >> testall.log
+diff -b fail-subtract-neg.err tests/fail-subtract-neg.err > fail-subtract-neg.diff
+FAILED fail-subtract-neg.err differs from tests/fail-subtract-neg.err
+###### FAILED

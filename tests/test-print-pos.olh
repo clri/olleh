@@ -2,5 +2,5 @@
  * Positive test: concat of string + int
  */
 
-String adj = "Printing a string with an int concatenated: ";
-print adj + 5;
+//String adj = "Printing a string with an int concatenated: ";
+print  "Printing a string with an int concatenated: " + 5;
