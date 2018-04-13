@@ -167,7 +167,14 @@ void ListOfIntsToString(int lis[]) {
         free(ans);*/
 }
 
-//@TODO: print a list of chars
+void PrintCharLis(char *lis) {
+        int i;
+        printf("[");
+        int n = strlen(lis);
+        for (i = 0; i < n - 1; i++)
+                printf("%c, ", lis[i]);
+        printf("%c]\n", lis[i]);
+}
 
 
 //called once at the beginning of each program

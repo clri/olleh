@@ -40,7 +40,9 @@ cc -o test-list-pos.exe test-list-pos.s ostdlib.o
 llc test-print-pos.ll > test-print-pos.s
 cc -o test-print-pos.exe test-print-pos.s ostdlib.o
 ./test-print-pos.exe
-###### SUCCESS
+diff -b test-print-pos.out reffile > test-print-pos.diff
+FAILED test-print-pos.out differs from reffile
+###### FAILED
 
 ###### Testing test-printbasic-pos
 ./toplevel tests/test-printbasic-pos.olh > test-printbasic-pos.ll

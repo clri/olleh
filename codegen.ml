@@ -81,9 +81,9 @@ let translate (globals, functions) =
       L.declare_function "SConcat" charcharchar_t the_module in
 
   let strintlis_t : L.lltype =
-     L.function_type void_t [| L.pointer_type i32_t |] in
+     L.function_type void_t [| L.pointer_type i8_t |] in
   let printil_func : L.llvalue =
-     L.declare_function "ListOfIntsToString" strintlis_t the_module in
+     L.declare_function "PrintCharLis" strintlis_t the_module in
 
   (* Define each function (arguments and return type) so we can
    * define it's body and call it later *)
@@ -160,7 +160,14 @@ let translate (globals, functions) =
            in let _ = addtoar (len - 1) (L.const_int i32_t sentinel)
            in x
          else if t = Char then (*@TODO: implement*)
-           L.const_array i8_t (Array.of_list l')
+           let y = L.build_array_malloc i8_t (L.const_int i32_t len) "a1" builder
+           in let x = L.build_pointercast y (L.pointer_type i8_t) "a2" builder
+           in let addtoar index elem =
+             let xx = L.build_gep x [| L.const_int i32_t index |] "a3" builder
+             in ignore (L.build_store elem xx builder)
+           in let _ = List.iteri addtoar l'
+           in let _ = addtoar (len - 1) (L.const_int i8_t 0)
+         in x
          else raise (Failure "build error")
       | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SAssignm (s, _, e) -> let e' = expr builder e in

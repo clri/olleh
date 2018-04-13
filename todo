@@ -10,6 +10,7 @@ Test Suite (due 4/18):
 LRM
 -add section explaining the garbage collection
 -explain array sentinels/integer limits
+-variable scope (clarify)
 
 BUILTINS (ostdlib.c)
 -rename file?
@@ -50,6 +51,8 @@ Compiler (codegen.ml)
 -add structs and other builtin types
 -printing lists
 -global variables
+-variable scope
+-garbage collection for string return values
 -SVmember (members of objects)
 -SLiteralm (literal maps)
 -SAssignm (member assigning)

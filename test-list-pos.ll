@@ -22,25 +22,24 @@ declare void @CollectLocalGarbageWithReturn(i8*)
 
 declare i8* @SConcat(i8*, i8*)
 
-declare void @ListOfIntsToString(i32*)
+declare void @PrintCharLis(i8*)
 
 define void @main() {
 entry:
   call void @InitializeRandom()
   call void @InitializeLocalGarbage()
-  %malloccall = tail call i8* @malloc(i32 mul (i32 ptrtoint (i32* getelementptr (i32, i32* null, i32 1) to i32), i32 5))
-  %a1 = bitcast i8* %malloccall to i32*
-  %a3 = getelementptr i32, i32* %a1, i32 0
-  store i32 1, i32* %a3
-  %a31 = getelementptr i32, i32* %a1, i32 1
-  store i32 2, i32* %a31
-  %a32 = getelementptr i32, i32* %a1, i32 2
-  store i32 3, i32* %a32
-  %a33 = getelementptr i32, i32* %a1, i32 3
-  store i32 4, i32* %a33
-  %a34 = getelementptr i32, i32* %a1, i32 4
-  store i32 1073741823, i32* %a34
-  call void @ListOfIntsToString(i32* %a1)
+  %a1 = tail call i8* @malloc(i32 mul (i32 ptrtoint (i8* getelementptr (i8, i8* null, i32 1) to i32), i32 5))
+  %a3 = getelementptr i8, i8* %a1, i32 0
+  store i8 97, i8* %a3
+  %a31 = getelementptr i8, i8* %a1, i32 1
+  store i8 98, i8* %a31
+  %a32 = getelementptr i8, i8* %a1, i32 2
+  store i8 99, i8* %a32
+  %a33 = getelementptr i8, i8* %a1, i32 3
+  store i8 100, i8* %a33
+  %a34 = getelementptr i8, i8* %a1, i32 4
+  store i8 0, i8* %a34
+  call void @PrintCharLis(i8* %a1)
   call void @CollectLocalGarbage()
   ret void
 }
