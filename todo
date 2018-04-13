@@ -1,6 +1,12 @@
 @TODO
 Once item is done/tested, remove it from the list
 
+Test Suite (due 4/18):
+-update the test script if necessary
+-create output files for expected output of each positive test
+-update README with instructions on how to run, what the tests are testing, etc
+
+
 LRM
 -add section explaining the garbage collection
 -explain array sentinels/integer limits
@@ -59,9 +65,5 @@ Compiler (codegen.ml)
 -build_ret for all return types
 
 
-Test Suite (due 4/18):
--update the test script if necessary
--create output files for expected output of each positive test
--update README with instructions on how to run, what the tests are testing, etc
 
 .
