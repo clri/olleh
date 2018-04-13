@@ -132,10 +132,19 @@ int GetListSpace(int * lis, int n) {
         return ans;
 }*/
 
+int MAXINT = 1073741823;
+
+int GetLengthOfIList(int lis[]) {
+        int i = 0;
+        while (lis[i] != MAXINT) i++;
+        return i;
+}
+
 //print a list of ints
-void ListOfIntsToString(int lis[], int n) {
+void ListOfIntsToString(int lis[]) {
         int i;
         printf("[");
+        int n = GetLengthOfIList(lis);
         for (i = 0; i < n - 1; i++)
                 printf("%d, ", lis[i]);
         printf("%d]\n", lis[i]);

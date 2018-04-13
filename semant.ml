@@ -236,10 +236,9 @@ let check (*functions*) (globals, functions) =
           let args' = List.map2 check_call fd.formals (Variable(vname) :: args)
           in (fd.typ, SCall((string_of_typ ty) ^ fname, args'))
       | Newtobj(t1, t2) ->
-          if ((t1 = Map && (t2 = String || t2 = Char)) ||
-               (t1 = List && (t2 = Char || t2 = Int))) then (*@TODO: CHECK LIST TYPES*)
+          if t1 = Map && (t2 = String || t2 = Char) then (*@TODO: add list?*)
                  (t1, SNewtobj(t2))
-          else raise (Failure ("Object needs argument initialization"))
+          else raise (Failure ("Object cannot be initialized with type"))
       | Newobj(t1, argus)  ->
           match t1 with (*@TODO: check these types*)
               Player ->

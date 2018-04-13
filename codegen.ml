@@ -81,7 +81,7 @@ let translate (globals, functions) =
       L.declare_function "SConcat" charcharchar_t the_module in
 
   let strintlis_t : L.lltype =
-     L.function_type void_t [| L.pointer_type i32_t;  i32_t |] in
+     L.function_type void_t [| L.pointer_type i32_t |] in
   let printil_func : L.llvalue =
      L.declare_function "ListOfIntsToString" strintlis_t the_module in
 
@@ -135,6 +135,7 @@ let translate (globals, functions) =
                    with Not_found -> StringMap.find n global_vars
     in
 
+    let sentinel = Int32.to_int (Int32.div Int32.max_int (Int32.of_int 2)) in
 
     (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
@@ -148,13 +149,15 @@ let translate (globals, functions) =
       | SVmember (v, _) -> L.build_load (lookup v) v builder (*@TODO: IMPLEMENT*)
       | SLiterall (t, l) ->
          let l' = List.map (expr builder) l in
+         let len = (List.length l) + 1 in
          if t = Int then
-           let x = L.build_array_malloc i32_t (L.const_int i32_t 20) "a1" builder
-           in let x = L.build_pointercast x (L.pointer_type i32_t) "a2" builder
+           let y = L.build_array_malloc i32_t (L.const_int i32_t len) "a1" builder
+           in let x = L.build_pointercast y (L.pointer_type i32_t) "a2" builder
            in let addtoar index elem =
              let xx = L.build_gep x [| L.const_int i32_t index |] "a3" builder
              in ignore (L.build_store elem xx builder)
            in let _ = List.iteri addtoar l'
+           in let _ = addtoar (len - 1) (L.const_int i32_t sentinel)
            in x
          else if t = Char then (*@TODO: implement*)
            L.const_array i8_t (Array.of_list l')
@@ -254,8 +257,9 @@ let translate (globals, functions) =
           if t = String then let _ = L.build_call printf_func [| str_format_str ; (expr builder (t,e)) |]
 	    "printf" builder in builder
          else if t = List then
-           (*let _ = expr builder (t, e) in raise(Failure "no!!")*)
-           let _ = L.build_call printil_func [| (expr builder (t,e)); (L.const_int i32_t 4) |]
+           let ex = expr builder (t, e) in
+           (*let n = 4 (L.array_length (L.type_of ex)) in*)
+           let _ = L.build_call printil_func [| ex |]
             "" builder in builder
          else if t = Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder (t,e)) |]
            "printf" builder in builder

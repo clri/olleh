@@ -3,27 +3,25 @@ Once item is done/tested, remove it from the list
 
 LRM
 -add section explaining the garbage collection
--code out the olleh standard library
--how to compile olleh files with the standard library included? cat that to an intermediate file lol
+-explain array sentinels/integer limits
 
 BUILTINS (ostdlib.c)
--rename file
+-rename file?
 -implement constants if necessary
 -anagram()
 -readDict()
 -map.destroy()
 -map.contains()
 -map.getLength()
+-list.getLength() for chars
 -listToString()
--intToString()
 -subStrings()
 -once everything has been tested, remove commented-out test code
 
-SCANNEr/PRASER
+SCANNER/PRASER
 -make sure variable names/identifiers are correct
--how to do list.get()/map.get()
+-how to get elements of a map/list
 -translate map.destroy() etc into CALL(mapdestroy) etc
--overhaul the fresh constructor so that it takes args in order?
 
 Garbage collection
 -Test functionality further for the return type stuff
@@ -34,35 +32,36 @@ Standard Library (.olh)
 
 Semantic Checker
 -add builtin functions
--add builtin globals (seed, etc)
+-add builtin globals (dictionary, etc--have call to readdict initialize dictionary)
 -type-check lists and maps
 -type-check functions on objects (such as x.remove(y))
 -assigning to a member of an object (x.y = z)
 -calling a function on an object
--new object creation--pattern matching (ie fresh x(type) can be like list(string))
--exprs
+-new object creation--board
 
 Compiler (codegen.ml)
--add builtin constants (seed, dictionary)
--add structs and other builtin types (line 17/29)
+-add builtin constants (dictionary)
+-add structs and other builtin types
+-printing lists
 -global variables
 -SVmember (members of objects)
--SLiterall (literal lists)
 -SLiteralm (literal maps)
 -SAssignm (member assigning)
 -SAssign (variable assigning)
--SBinop for non-integers (if needed)
+-SBinop for booleans (if needed?)
 -SNewobj/SNewtobj (allocating space for new objects)
 -SCallm (calling a function on an object)
 -SFor
 -SReturn
 -SIf
 -SForeach
+-SBind (variable creation)
 -build_ret for all return types
 
 
--testing:
-code with reserved keywords/buildin functions redefined
-
+Test Suite (due 4/18):
+-update the test script if necessary
+-create output files for expected output of each positive test
+-update README with instructions on how to run, what the tests are testing, etc
 
 .
