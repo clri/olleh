@@ -14,18 +14,21 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type           context (*char/string*)
   and i1_t       = L.i1_type           context (*bool*)
   and void_t     = L.void_type         context (*void*)
+  and p_t  = L.pointer_type (L.i8_type (context)) (*pointer type*)
+  (*and cnode_t    = L.struct_type       context [| i8_t; (p_t cnode_t) |]*) (*char node*)
   (*@TODO: add structs/other stuff*)
   (* Create an LLVM module -- this is a "container" into which we'll
      generate actual code *)
   and the_module = L.create_module context "Olleh" in
 
-  (* Convert MicroC types to LLVM types *)
+  (* Convert Olleh types to LLVM types *)
   let ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
     | A.Char  -> i8_t
     | A.String -> (*L.pointer_type*) i8_t (*???*)
     | A.Void  -> void_t
+    | A.List -> L.struct_type context [| i8_t; L.pointer_type (ltype_of_typ (A.Char)) |]
     | _ -> void_t (*temp; @TODO: add for structs*)
   in
 
