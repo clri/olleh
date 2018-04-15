@@ -3,13 +3,13 @@ used zentut.com's linked list tutorial to implement. */
 
 #define NULL 0
 
-struct charnode{
+struct cnode{
     char data;
-    struct charnode *next;
+    struct cnode *next;
 };
 
 //typedef struct listnode{
 
 int main() {
-    struct charnode c = {'a', NULL};
+    struct cnode *head = NULL;
 }
