@@ -82,7 +82,7 @@ Check() {
     error=0
     basename=`echo $1 | sed 's/.*\\///
                              s/.olh//'`
-    reffile="reffile"
+    reffile=`echo $1 | sed 's/.olh$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
     echo -n "$basename..."
@@ -97,14 +97,14 @@ Check() {
     Run "$LLC" "${basename}.ll" ">" "${basename}.s" &&
     Run "$CC" "-o" "${basename}.exe" "${basename}.s" "ostdlib.o" &&
     Run "./${basename}.exe" > "${basename}.out" &&
-    Compare ${basename}.out ${reffile} ${basename}.diff
+    Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
 
     if [ $error -eq 0 ] ; then
-	if [ $keep -eq 0 ] ; then
-	    rm -f $generatedfiles
-	fi
+	#if [ $keep -eq 0 ] ; then
+	#    rm -f $generatedfiles
+	#fi
 	echo "OK"
 	echo "###### SUCCESS" 1>&2
     else
@@ -128,15 +128,15 @@ CheckFail() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
-    RunFail "$OLLEH" "<" $1 "2>" "${basename}.out" ">>" $globallog #&&
+    RunFail "$OLLEH" "<" $1 "2>" "${basename}.err" ">>" $globallog #&&
     Compare ${basename}.err ${reffile}.err ${basename}.diff
 
     # Report the status and clean up the generated files
 
     if [ $error -eq 0 ] ; then
-	if [ $keep -eq 0 ] ; then
-	    rm -f $generatedfiles
-	fi
+	#if [ $keep -eq 0 ] ; then
+	#    rm -f $generatedfiles
+	#fi
 	echo "OK"
 	echo "###### SUCCESS" 1>&2
     else

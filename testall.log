@@ -40,9 +40,8 @@ cc -o test-list-pos.exe test-list-pos.s ostdlib.o
 llc test-print-pos.ll > test-print-pos.s
 cc -o test-print-pos.exe test-print-pos.s ostdlib.o
 ./test-print-pos.exe
-diff -b test-print-pos.out reffile > test-print-pos.diff
-FAILED test-print-pos.out differs from reffile
-###### FAILED
+diff -b test-print-pos.out tests/test-print-pos.out > test-print-pos.diff
+###### SUCCESS
 
 ###### Testing test-printbasic-pos
 ./toplevel tests/test-printbasic-pos.olh > test-printbasic-pos.ll
@@ -52,19 +51,16 @@ cc -o test-printbasic-pos.exe test-printbasic-pos.s ostdlib.o
 ###### SUCCESS
 
 ###### Testing fail-list-neg
-./toplevel < tests/fail-list-neg.olh 2> fail-list-neg.out >> testall.log
+./toplevel < tests/fail-list-neg.olh 2> fail-list-neg.err >> testall.log
 diff -b fail-list-neg.err tests/fail-list-neg.err > fail-list-neg.diff
-FAILED fail-list-neg.err differs from tests/fail-list-neg.err
-###### FAILED
+###### SUCCESS
 
 ###### Testing fail-print-neg
-./toplevel < tests/fail-print-neg.olh 2> fail-print-neg.out >> testall.log
+./toplevel < tests/fail-print-neg.olh 2> fail-print-neg.err >> testall.log
 diff -b fail-print-neg.err tests/fail-print-neg.err > fail-print-neg.diff
-FAILED fail-print-neg.err differs from tests/fail-print-neg.err
-###### FAILED
+###### SUCCESS
 
 ###### Testing fail-subtract-neg
-./toplevel < tests/fail-subtract-neg.olh 2> fail-subtract-neg.out >> testall.log
+./toplevel < tests/fail-subtract-neg.olh 2> fail-subtract-neg.err >> testall.log
 diff -b fail-subtract-neg.err tests/fail-subtract-neg.err > fail-subtract-neg.diff
-FAILED fail-subtract-neg.err differs from tests/fail-subtract-neg.err
-###### FAILED
+###### SUCCESS

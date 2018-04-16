@@ -221,7 +221,7 @@ let check (*functions*) (globals, functions) =
           let args' = List.map2 check_call fd.formals args
           in (fd.typ, SCall(fname, args'))
       | Callm(vname, fname, args) as call ->
-          let ty = type_of_identifier vname in
+          let ty = type_of_identifier vname symbols in
           let fd = find_func ((string_of_typ ty) ^ fname) in
           let param_length = List.length fd.formals in
           if List.length args != param_length - 1 then

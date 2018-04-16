@@ -56,7 +56,24 @@ type program = stmt list * func_decl list
 
 
 (*@TODO: implement printing functions better*)
-let string_of_typ _ = "TYP"
+let string_of_typ x = match x with
+      String -> "String"
+    | Int -> "Int"
+    | List -> "List"
+    | Map -> "Map"
+    | Bool -> "Bool"
+    | Char -> "Char"
+    | Player -> "Player"
+    | Board -> "Board"
+    | Void -> "Void"
+
 let string_of_expr _ = "EXPR"
 let string_of_uop _ = "UOP"
-let string_of_op _ = "OP"
+let string_of_op x = match x with 
+      Add -> "Add"
+    | Sub -> "Sub"
+    | _ -> "OP"
+
+
+
+(**)
