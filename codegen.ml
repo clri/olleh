@@ -45,20 +45,20 @@ let translate (globals, functions) =
      L.declare_function "printf" printf_t the_module in
 
   (*builtins: getLength of a string and convert int to string*)
-  let intstr_t : L.lltype =
+  (*let intstr_t : L.lltype =
       L.function_type i32_t [| L.pointer_type i8_t |] in
   let getLength_func : L.llvalue =
-     L.declare_function "strlen" intstr_t the_module in
+     L.declare_function "strlen" intstr_t the_module in*)
   let strint_t : L.lltype =
       L.function_type (L.pointer_type i8_t) [| i32_t |] in
   let intToString_func : L.llvalue =
      L.declare_function "IntToS" strint_t the_module in
 
   (*builtins: random*)
-  let intvoid_t : L.lltype =
+  (*let intvoid_t : L.lltype =
       L.function_type i32_t [| |] in
   let rand_funct : L.llvalue =
-     L.declare_function "OllehRandom" intvoid_t the_module in
+     L.declare_function "OllehRandom" intvoid_t the_module in*)
 
   (*builtins: functions the user cannot explicitly call*)
   let voidvoid_t : L.lltype =
@@ -70,10 +70,10 @@ let translate (globals, functions) =
   let randi_func : L.llvalue =
       L.declare_function "InitializeRandom" voidvoid_t the_module in
 
-  let voidchar_t : L.lltype =
+  (*let voidchar_t : L.lltype =
       L.function_type void_t [| L.pointer_type i8_t |] in
   let garbagecc_func : L.llvalue =
-      L.declare_function "CollectLocalGarbageWithReturn" voidchar_t the_module in
+      L.declare_function "CollectLocalGarbageWithReturn" voidchar_t the_module in*)
 
   let charcharchar_t : L.lltype =
       L.function_type (L.pointer_type i8_t) [| L.pointer_type i8_t; L.pointer_type i8_t |] in

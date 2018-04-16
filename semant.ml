@@ -128,9 +128,9 @@ let check (*functions*) (globals, functions) =
 
 
     (*tuple mapper helper function*)
-    let rec map_tup f s (x, y) =
+    (*let rec map_tup f s (x, y) =
         (f s x, f s y)
-    in
+    in*)
     let rec map_over_two f syms lis =
         match lis with
           [] -> []
@@ -257,7 +257,6 @@ let check (*functions*) (globals, functions) =
                                 (fst ex' = Void))*)))
                         then ((t, sv v), (t, ex')) :: pla ars'
                         else raise (Failure "Illegal argument to Player")
-                  | _ -> raise (Failure "Illegal argument to Player")
                 in
                 let sargus = pla argus in
                   (t1, SNewobj(sargus))

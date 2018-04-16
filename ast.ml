@@ -69,10 +69,21 @@ let string_of_typ x = match x with
 
 let string_of_expr _ = "EXPR"
 let string_of_uop _ = "UOP"
-let string_of_op x = match x with 
+let string_of_op x = match x with
       Add -> "Add"
     | Sub -> "Sub"
-    | _ -> "OP"
+    | Mult -> "Mult"
+    | Div -> "Div"
+    | Equal -> "Equals"
+    | Mod -> "Modulo"
+    | Neq -> "Not Equal To"
+    | Less -> "Less Than"
+    | Leq -> "Less Than or Equal To"
+    | Greater -> "Greater Than"
+    | Geq -> "Greater Than or Equal To"
+    | And -> "And"
+    | Or -> "Or"
+    
 
 
 
