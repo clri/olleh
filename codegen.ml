@@ -22,7 +22,7 @@ let translate (globals, functions) =
   and the_module = L.create_module context "Olleh" in
 
   (* Convert Olleh types to LLVM types *)
-  let ltype_of_typ = function
+  let rec ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
     | A.Char  -> i8_t
@@ -162,14 +162,14 @@ let translate (globals, functions) =
            in let _ = List.iteri addtoar l'
            in let _ = addtoar (len - 1) (L.const_int i32_t sentinel)
            in x
-         else if t = Char then (*@TODO: implement*)
+         else if t = Char then
            let y = L.build_array_malloc i8_t (L.const_int i32_t len) "a1" builder
            in let x = L.build_pointercast y (L.pointer_type i8_t) "a2" builder
            in let addtoar index elem =
              let xx = L.build_gep x [| L.const_int i32_t index |] "a3" builder
              in ignore (L.build_store elem xx builder)
            in let _ = List.iteri addtoar l'
-           in let _ = addtoar (len - 1) (L.const_int i8_t 0)
+           in let _ = addtoar (len - 1) (L.const_int i8_t 0) (*sentinel*)
          in x
          else raise (Failure "build error")
       | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
