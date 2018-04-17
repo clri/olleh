@@ -68,12 +68,15 @@ let string_of_typ x = match x with
     | Void -> "Void"
 
 let string_of_expr _ = "EXPR"
-let string_of_uop _ = "UOP"
+let string_of_uop x = match x with
+      Not -> "Not"
+    | Neg -> "Negative"
+
 let string_of_op x = match x with
-      Add -> "Add"
-    | Sub -> "Sub"
-    | Mult -> "Mult"
-    | Div -> "Div"
+      Add -> "Plus"
+    | Sub -> "Minus"
+    | Mult -> "Times"
+    | Div -> "Divided by"
     | Equal -> "Equals"
     | Mod -> "Modulo"
     | Neq -> "Not Equal To"
@@ -83,8 +86,3 @@ let string_of_op x = match x with
     | Geq -> "Greater Than or Equal To"
     | And -> "And"
     | Or -> "Or"
-    
-
-
-
-(**)

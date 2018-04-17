@@ -32,17 +32,14 @@
 program:
   pgm { $1 }
 
-/*synthesize global statements/declarations into the "main" function And
- give it garbage collecting and random initialization*/
+/*synthesize global statements/declarations into the "main" function*/
 pgm:
   decls EOF { ((fst (fst $1)),
                 { typ = Void;
                 fname = "main";
                 formals = [];
                 body = ( (Expr (Call("InitializeRandom",[])))
-                                :: ((Expr (Call("InitializeLocalGarbage",[])))
-                                :: List.rev (snd (fst $1))))
-                                @ [ (Expr (Call("CollectLocalGarbage",[]))) ] }
+                                :: List.rev (snd (fst $1))) }
                         :: snd $1) }
 
 /*((global vars, global stmts), functs)--keep globals separate
@@ -61,7 +58,7 @@ fdecl:
      { { typ = $2;
          fname = $3;
          formals = $5;
-         body = (Expr (Call("InitializeLocalGarbage",[]))) :: List.rev $8 } }
+         body = List.rev $8 } }
 
 formals_opt:
     /* nothing */ { [] }
@@ -110,13 +107,13 @@ stmt_list:
     /* nothing */ { [] }
   | stmt_list stmt { $2 :: $1 }
   | stmt_list vdecl { $2 :: $1 }
-  | stmt_list rstmt { snd $2 :: fst $2 :: $1 }
+  | stmt_list rstmt { $2 :: $1 }
   | stmt_list dastmt { snd $2 :: fst $2 :: $1 }
 
-/*for return statements, add call to garbage collection. since this is not
- stmt, the main function cannot call return explicitly. */
+/*for return statements. had been implemented separately from regular statements
+ due to a deprecated feature*/
 rstmt:
-   RET expr_opt SEMI { ( Expr (Call("CollectLocalGarbage",[])), Return $2 ) }
+   RET expr_opt SEMI { Return $2  }
 
 /*declare/assign statement, gets partitioned into two*/
 dastmt:

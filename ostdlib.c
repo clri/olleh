@@ -16,7 +16,9 @@
  * function, and will insert the CollectLocalGarbage() code at the end of each
  * function. For more on how the garbage collection mechanism works, please read
  * the LRM.
+ * NOTE: DEPRECATED AS OF 4/16 CLASS
  */
+ /*
 typedef struct GarbageLL {
         char *payload;
         struct GarbageLL *next;
@@ -88,14 +90,14 @@ void CollectLocalGarbageWithReturn(char *returnVal) {
         tstack = tstack->next; //pop off the stack
         AddToGarbage(returnVal);
         free(t);
-}
+}*/
 
 char *SConcat(char *a, char *b) {
         char *ans;
         int n = strlen(a) + strlen(b) + 1;
 
         ans = malloc(n);
-        AddToGarbage(ans);
+        //AddToGarbage(ans);
         strcpy(ans, a);
         strcpy(ans + strlen(a), b);
         ans[n-1] = 0;
@@ -116,7 +118,7 @@ char *IntToS(int e) {
         char *ans;
         int s = GetElemSpace(e) + 2;
         ans = malloc(s);
-        AddToGarbage(ans);
+        //AddToGarbage(ans);
         sprintf(ans, "%d", e);
         ans[s - 1] = 0;
         return ans;
@@ -194,7 +196,7 @@ char* scramble(char* w) {
         char *ans = malloc(len + 1);
 
         memset(ans, 0, len+1);
-        AddToGarbage(ans);
+        //AddToGarbage(ans);
 
         while (i < len) {
                 r = OllehRandom(len);
@@ -209,7 +211,7 @@ char* reverse(char* w) {
         int len = strlen(w);
         char *ans = malloc(len + 1);
 
-        AddToGarbage(ans);
+        //AddToGarbage(ans);
         for (i = 0; i < len; i++) {
                 ans[i] = w[len - i - 1];
         }
@@ -223,7 +225,7 @@ char* ReadInput(void) {
         size_t len = 0;
         ssize_t err = getline(&ans, &len, stdin);
         if (!err) return "";
-        AddToGarbage(ans);
+        //AddToGarbage(ans);
         ans[strlen(ans) - 1] = 0; //remove newline
         return ans;
 }

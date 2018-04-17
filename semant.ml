@@ -46,9 +46,7 @@ let check (*functions*) (globals, functions) =
   let built_in_decls =
     let add_bind map (name, ty, argus) =
       StringMap.add name { typ = ty; fname = name; formals = argus; body = [] } map
-    in List.fold_left add_bind StringMap.empty [ ("CollectLocalGarbage", Void, []);
-                                                 ("InitializeLocalGarbage", Void, []);
-                                                 ("InitializeRandom", Void, []);
+    in List.fold_left add_bind StringMap.empty [ ("InitializeRandom", Void, []);
                                                  ("scramble", String, [(String, "w")]);
                                                  ("reverse", String, [(String, "w")]);
                                                  ("anagram", String, [(String, "w")]);

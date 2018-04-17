@@ -63,10 +63,10 @@ let translate (globals, functions) =
   (*builtins: functions the user cannot explicitly call*)
   let voidvoid_t : L.lltype =
       L.function_type void_t [| |] in
-  let garbagei_func : L.llvalue =
+  (*let garbagei_func : L.llvalue =
       L.declare_function "InitializeLocalGarbage" voidvoid_t the_module in
   let garbagec_func : L.llvalue =
-      L.declare_function "CollectLocalGarbage" voidvoid_t the_module in
+      L.declare_function "CollectLocalGarbage" voidvoid_t the_module in*)
   let randi_func : L.llvalue =
       L.declare_function "InitializeRandom" voidvoid_t the_module in
 
@@ -215,12 +215,12 @@ let translate (globals, functions) =
       (*| SCall("nameOfBuiltin") ...: implement for our builtins*)
       | SNewtobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SNewobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
-      | SCall ("InitializeLocalGarbage",[]) ->
+      (*| SCall ("InitializeLocalGarbage",[]) ->
         L.build_call garbagei_func [| |]
         "" builder
       | SCall ("CollectLocalGarbage",[]) ->
          L.build_call garbagec_func [| |]
-         "" builder
+         "" builder*)
       | SCall ("InitializeRandom",[]) ->
          L.build_call randi_func [| |]
          "" builder

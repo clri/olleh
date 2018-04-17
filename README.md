@@ -1,5 +1,5 @@
 The Olleh compiler
-  
+
 Amnah Ahmad: aza2111@barnard.edu
 Mahika Bhalla: mmb2276@columbia.edu
 Caroline Roig-Irwin: clr2176@columbia.edu
@@ -19,14 +19,28 @@ The compiler compiles from hello.olh in the tests folder.  testall.sh runs the o
 invokes "cc" (the stock C compiler) to assemble the .s file, link in
 the hello and generate an executable. See testall.sh for details.
 
+
+* Test Suite Deliverable 4/18--see \*.olh in tests folder (run ./testall.sh to see output)
+1. fail-list-neg.olh: Negative test. Semantic checker does not allow lists of mixed integers and characters.
+2. fail-print-neg.olh: Negative test. Semantic checker does not allow concatenation of strings and booleans.
+3. fail-subtract-neg.olh: Negative test. Semantic checker does not allow subtraction of two strings.
+4. test-add-pos.olh: Positive test. Sums two integers and prints the results (tests addition and printing integers).
+5. test-concat-pos.olh: Positive test. Concatenates two strings and prints the result (tests concatenation of strings). MicroC does not process or concatenate strings.
+6. test-func-pos.olh: Positive test. Defines a function that prints a string and calls the function (tests function definition and call).
+7. test-if-pos.olh: Positive test. Conditional that prints one string if the condition is true and another if false; condition is always true here (tests conditional evaluation and branching).
+8. test-list-pos.olh: Positive test. Prints a list of four characters (tests list creation and printing lists). MicroC does not implement lists of chars.
+9. test-print-pos.olh: Positive test. Concatenates a string to an int and prints it (tests string/int concatenation). MicroC does not allow binops on expressions of different types.
+10. test-printbasic-pos.olh: Positive test. Prints two strings in sequence (tests string printing).
+
+
 -------------------------------
 Installation under Ubuntu 16.04
 
 LLVM 3.8 is the default under 16.04. Install the matching version of
-the OCaml LLVM bindings: 
-          
+the OCaml LLVM bindings:
+
 sudo apt install ocaml llvm llvm-runtime m4 opam
-opam init 
+opam init
 opam install llvm.3.8
 eval `opam config env`
 
@@ -37,8 +51,8 @@ make
 Installation under Ubuntu 15.10
 
 LLVM 3.6 is the default under 15.10, so we ask for a matching version of the
-OCaml library. 
-    
+OCaml library.
+
 sudo apt-get install -y ocaml m4 llvm opam
 opam init
 opam install llvm.3.6 ocamlfind
