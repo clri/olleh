@@ -66,17 +66,8 @@ let translate (globals, functions) =
   (*builtins: functions the user cannot explicitly call*)
   let voidvoid_t : L.lltype =
       L.function_type void_t [| |] in
-  (*let garbagei_func : L.llvalue =
-      L.declare_function "InitializeLocalGarbage" voidvoid_t the_module in
-  let garbagec_func : L.llvalue =
-      L.declare_function "CollectLocalGarbage" voidvoid_t the_module in*)
   let randi_func : L.llvalue =
       L.declare_function "InitializeRandom" voidvoid_t the_module in
-
-  (*let voidchar_t : L.lltype =
-      L.function_type void_t [| L.pointer_type i8_t |] in
-  let garbagecc_func : L.llvalue =
-      L.declare_function "CollectLocalGarbageWithReturn" voidchar_t the_module in*)
 
   let charcharchar_t : L.lltype =
       L.function_type (L.pointer_type i8_t) [| L.pointer_type i8_t; L.pointer_type i8_t |] in

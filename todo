@@ -6,8 +6,6 @@ Builtins
 -getsetters possibly? add to semant, codegen, ostdlib if necessary
 
 Parser
--fresh list(expr)
--fresh list(expr, expr)
 -empty 2d list? nah just check and make sure it checks out
 
 Semantic Checker
@@ -17,7 +15,6 @@ Semantic Checker
 -enforce no assignment in list/map Literals
 -no list/map polymorphism
 -1d or 2d list only (and how to distinguish)
--fresh list in new/newtobj
 
 Legitimate Test Suite
 -write down tests
