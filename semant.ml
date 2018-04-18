@@ -271,6 +271,7 @@ let check (*functions*) (globals, functions) =
           if t1 = Map && (t2 = String || t2 = Char) then
                  ((t1, SNewtobj(t2)), symbols)
           else raise (Failure ("Object cannot be initialized with type"))
+      | Newlis(e1, e2) -> ((List, SNewlis([])), symbols) (*@TODO: IMPLEMENT*)
       | Newobj(t1, argus)  ->
           match t1 with
               Player ->

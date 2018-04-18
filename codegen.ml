@@ -218,12 +218,7 @@ let translate (globals, functions) =
       (*| SCall("nameOfBuiltin") ...: implement for our builtins*)
       | SNewtobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SNewobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
-      (*| SCall ("InitializeLocalGarbage",[]) ->
-        L.build_call garbagei_func [| |]
-        "" builder
-      | SCall ("CollectLocalGarbage",[]) ->
-         L.build_call garbagec_func [| |]
-         "" builder*)
+      | SNewlis _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SCall ("InitializeRandom",[]) ->
          L.build_call randi_func [| |]
          "" builder

@@ -19,6 +19,7 @@ and sx =
   | SAssignm of string * string * sexpr
   | SNewtobj of typ
   | SNewobj of (sexpr * sexpr) list
+  | SNewlis of sexpr list
   | SCall of string * sexpr list
   | SCallm of string * string * sexpr list
   | SNoexpr

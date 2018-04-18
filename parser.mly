@@ -193,6 +193,8 @@ expr:
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
   | FRESH obj OPAREN typ CPAREN { Newtobj( $2, $4 )        }
   | FRESH obj OCURLY maplis CCURLY   { Newobj( $2, $4 )    }
+  | FRESH LISTV OPAREN expr CCURLY { Newlis(List, ($4 :: [])) }
+  | FRESH LISTV OPAREN expr COMMA expr CCURLY { Newlis(List, ($4 :: ($6 :: []))) }
   | OPAREN expr CPAREN { $2                                }
 
 
