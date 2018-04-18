@@ -2,5 +2,7 @@
  * Positive test: concat of string + int
  */
 
+int x = 5;
+
 //String adj = "Printing a string with an int concatenated: ";
-print  "Printing a string with an int concatenated: " + 5;
+print  "Printing a string with an int concatenated: " + x;

@@ -73,17 +73,8 @@ let translate (globals, functions) =
   (*builtins: functions the user cannot explicitly call*)
   let voidvoid_t : L.lltype =
       L.function_type void_t [| |] in
-  (*let garbagei_func : L.llvalue =
-      L.declare_function "InitializeLocalGarbage" voidvoid_t the_module in
-  let garbagec_func : L.llvalue =
-      L.declare_function "CollectLocalGarbage" voidvoid_t the_module in*)
   let randi_func : L.llvalue =
       L.declare_function "InitializeRandom" voidvoid_t the_module in
-
-  (*let voidchar_t : L.lltype =
-      L.function_type void_t [| L.pointer_type i8_t |] in
-  let garbagecc_func : L.llvalue =
-      L.declare_function "CollectLocalGarbageWithReturn" voidchar_t the_module in*)
 
   let charcharchar_t : L.lltype =
       L.function_type (L.pointer_type i8_t) [| L.pointer_type i8_t; L.pointer_type i8_t |] in
@@ -225,12 +216,7 @@ let translate (globals, functions) =
       (*| SCall("nameOfBuiltin") ...: implement for our builtins*)
       | SNewtobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SNewobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
-      (*| SCall ("InitializeLocalGarbage",[]) ->
-        L.build_call garbagei_func [| |]
-        "" builder
-      | SCall ("CollectLocalGarbage",[]) ->
-         L.build_call garbagec_func [| |]
-         "" builder*)
+      | SNewlis _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SCall ("InitializeRandom",[]) ->
          L.build_call randi_func [| |]
          "" builder
@@ -313,11 +299,11 @@ let translate (globals, functions) =
 	 let _ = L.build_cond_br bool_val then_bb else_bb builder in
          (* Move to the merge block for further instruction building *)
 	 L.builder_at_end context merge_bb
-     (*| SBind(t, s) ->
+     | SBind(t, s) ->
        let add_local m (t, n) =
         let local_var = L.build_alloca (ltype_of_typ t) n builder
         in StringMap.add n local_var m
-       in let local_vars = add_local local_vars (t, s)*)
+       in let local_vars = add_local local_vars (t, s) in builder
      | _ -> raise (Failure "internal error: not (yet) implemented")
      (*| SReturn e -> let _ = match fdecl.styp with
                               (* Special "return nothing" instr *)
