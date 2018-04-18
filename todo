@@ -1,50 +1,39 @@
 @TODO
 Once item is done/tested, remove it from the list
 
-Test Suite (due 4/18):
--update the test script if necessary
--create output files for expected output of each positive test
--update README with instructions on how to run, what the tests are testing, etc
+
+
+Semantic Checker
+-add builtin functions (Mapdestroy, etc)
+-add builtin globals (dictionary, etc)
+-type-check maps
+-new object creation--board
 
 
 LRM
--add section explaining the garbage collection
 -explain array sentinels/integer limits
 -variable scope (clarify)
+-limits on string literals (can they have newlines?)
 
 BUILTINS (ostdlib.c)
 -rename file?
 -implement constants if necessary
 -anagram()
 -readDict()
--map.destroy()
+-map.destroy() -> "Mapdestroy"
 -map.contains()
 -map.getLength()
--list.getLength() for chars
--listToString()
+-map.get()
+-list.get()
+-Initialize_dictionary()
+-list.getLength() for chars and lists
 -subStrings()
 -once everything has been tested, remove commented-out test code
 
-SCANNER/PRASER
--make sure variable names/identifiers are correct
--how to get elements of a map/list
--translate map.destroy() etc into CALL(mapdestroy) etc
-
-Garbage collection
--Test functionality further for the return type stuff
 
 Standard Library (.olh)
 -Write standard library functions
 -Hook them into code we write via the compiler (how?)
-
-Semantic Checker
--add builtin functions
--add builtin globals (dictionary, etc--have call to readdict initialize dictionary)
--type-check lists and maps
--type-check functions on objects (such as x.remove(y))
--assigning to a member of an object (x.y = z)
--calling a function on an object
--new object creation--board
 
 Compiler (codegen.ml)
 -add builtin constants (dictionary)

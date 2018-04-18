@@ -11,8 +11,8 @@ and sx =
   | Null
   | SVariable of string
   | SVmember of string * string
-  | SLiterall of (*sexpr list*) typ * (sexpr list)
-  | SLiteralm of (*(sexpr * sexpr) list*) typ * ((sexpr * sexpr) list)
+  | SLiterall of typ * (sexpr list)
+  | SLiteralm of typ * ((sexpr * sexpr) list)
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr
   | SAssign of string * sexpr

@@ -96,7 +96,11 @@ let check (*functions*) (globals, functions) =
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
     let check_assign lvaluet rvaluet err =
-       if lvaluet = rvaluet then lvaluet else raise (Failure err)
+       if lvaluet = rvaluet then lvaluet
+       else if (lvaluet = Map && (rvaluet = Stringmap || rvaluet = Charmap))
+         || (lvaluet = List && (rvaluet = Listlist || rvaluet = Charlist))
+         then rvaluet
+       else raise (Failure err)
     in
 
     (* Build local symbol table of variables for this function *)
@@ -116,11 +120,11 @@ let check (*functions*) (globals, functions) =
       match tvs, m with
           Board, "rows" -> Int
         | Board, "cols" -> Int
-        | Board, "letters" -> List
+        | Board, "letters" -> Charlist
         | Player, "Score" -> Int
         | Player, "turn" -> Bool
-        | Player, "guessedWords" -> Map
-        | Player, "letters" -> List
+        | Player, "guessedWords" -> Stringmap
+        | Player, "letters" -> Charlist
         | _ -> raise (Failure ("Object " ^ s ^ " of type " ^ (string_of_typ tvs) ^ " has no attribute " ^ m))
     in
 
@@ -136,52 +140,55 @@ let check (*functions*) (globals, functions) =
     in
 
     (* Return a semantically-checked expression, i.e., with a type *)
+    (*@TODO: return (sexpr, symbols)*)
     let rec expr symbols exx =
       match exx with
-        Literali l -> (Int, SLiterali l)
-      | Literalc l -> (Char, SLiteralc l)
-      | Literals l -> (String, SLiterals l)
-      | Literalb l -> (Bool, SLiteralb l)
-      | Noexpr     -> (Void, SNoexpr)
-      | Null       -> (Void, Null)
-      | Variable s       -> (type_of_identifier s symbols, SVariable s)
-      | Vmember(s, m) -> (type_of_vmember s m symbols, SVmember(s, m))
+        Literali l -> ((Int, SLiterali l), symbols)
+      | Literalc l -> ((Char, SLiteralc l), symbols)
+      | Literals l -> ((String, SLiterals l), symbols)
+      | Literalb l -> ((Bool, SLiteralb l), symbols)
+      | Noexpr     -> ((Void, SNoexpr), symbols)
+      | Null       -> ((Void, Null), symbols)
+      | Variable s       -> ((type_of_identifier s symbols, SVariable s), symbols)
+      | Vmember(s, m) -> ((type_of_vmember s m symbols, SVmember(s, m)), symbols)
       | Literall l ->
           let l' = map_over_two expr symbols l in
-          let is_int b (t, _) = b && (t = Int) in
-          let lint = List.fold_left is_int true l' in
-          let is_char b (t, _) = b && (t = Char) in
+          let is_char b ((t, _), _) = b && (t = Char) in
           let lchar = List.fold_left is_char true l' in
-          let is_list b (t, _) = b && (t = List) in
-            (*@TODO: enforce 2d list of char only*)
+          let is_list b ((t, _), _) = b && (t = List) in
+            (*@TODO: enforce 2d list of char only? possibly.
+            MUST ENFORCE: no assignment in list literal*)
           let llist = List.fold_left is_list true l' in
+          let l'' = List.map fst l' in
           let lempty = List.length l = 0 in
-          if lempty then (List, SLiterall(Void, l')) else
-            if lint then (List, SLiterall(Int, l')) else
-              if lchar then (List, SLiterall(Char, l')) else
-                if llist then (List, SLiterall(List, l')) else
+          if lempty then ((List, SLiterall(Void, l'')), symbols) else
+            if lchar then ((Charlist, SLiterall(Char, l'')), symbols) else
+              if llist then ((Listlist, SLiterall(List, l'')), symbols) else
                 raise (Failure ("List of improper type"))
       | Literalm m ->
           (*@TODO: implement*)
-           (Map, SLiteralm(Void, []))
+           ((Map, SLiteralm(Void, [])), symbols)
       | Assign(var, e) as ex ->
           let lt = type_of_identifier var symbols
-          and (rt, e') = expr symbols e in
+          and ((rt, e'), symbols') = expr symbols e in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
             string_of_typ rt ^ " in " ^ string_of_expr ex
-          in (check_assign lt rt err, SAssign(var, (rt, e')))
+          in let fty = check_assign lt rt err
+          in let symbols'' = if fty != lt then StringMap.add var fty symbols'
+            else symbols'
+          in ((fty, SAssign(var, (rt, e'))), symbols'')
       | Unop(op, e) as ex ->
-          let (t, e') = expr symbols e in
+          let ((t, e'), symbols') = expr symbols e in
           let ty = match op with
             Neg when t = Int -> t
           | Not when t = Bool -> Bool
           | _ -> raise (Failure ("illegal unary operator " ^
                                  string_of_uop op ^ string_of_typ t ^
                                  " in " ^ string_of_expr ex))
-          in (ty, SUnop(op, (t, e')))
+          in ((ty, SUnop(op, (t, e'))), symbols)
       | Binop(e1, op, e2) as e ->
-          let (t1, e1') = expr symbols e1
-          and (t2, e2') = expr symbols e2 in
+          let ((t1, e1'), symbols') = expr symbols e1
+          in let ((t2, e2'), symbols'') = expr symbols' e2 in
           (* All binary operators require operands of the same type *)
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)
@@ -197,13 +204,16 @@ let check (*functions*) (globals, functions) =
 	      Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
-          in (ty, SBinop((t1, e1'), op, (t2, e2')))
+          in ((ty, SBinop((t1, e1'), op, (t2, e2'))), symbols'')
       | Assignm(var, mem, e) as ex ->
-          let lt = type_of_vmember var mem symbols
-          and (rt, e') = expr symbols e in
+          let lt = type_of_vmember var mem symbols (*@TODO: test calling wrong thing, eg player.columns*)
+          and ((rt, e'), symbols') = expr symbols e in
+          if (rt = List && mem = "letters") || (rt = Map && mem = "guessedWords")
+          then ((lt, SAssignm(var, mem, (rt, e'))), symbols')
+          else
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
             string_of_typ rt ^ " in " ^ string_of_expr ex
-          in (check_assign lt rt err, SAssignm(var, mem, (rt, e')))
+          in ((check_assign lt rt err, SAssignm(var, mem, (rt, e'))), symbols')
       | Call(fname, args) as call ->
           let fd = find_func fname in
           let param_length = List.length fd.formals in
@@ -211,13 +221,17 @@ let check (*functions*) (globals, functions) =
             raise (Failure ("expecting " ^ string_of_int param_length ^
                             " arguments in " ^ string_of_expr call))
           else let check_call (ft, _) e =
-            let (et, e') = expr symbols e in
+            let ((et, e'), _) = expr symbols e in
+              (match e' with
+                  SAssign _ -> raise (Failure "Cannot Assign in Call")
+                | SAssignm _ -> raise (Failure "Cannot Assign in Call")
+                | _ ->
             let err = "illegal argument found " ^ string_of_typ et ^
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-            in (check_assign ft et err, e')
+            in (check_assign ft et err, e'))
           in
           let args' = List.map2 check_call fd.formals args
-          in (fd.typ, SCall(fname, args'))
+          in ((fd.typ, SCall(fname, args')), symbols)
       | Callm(vname, fname, args) as call ->
           let ty = type_of_identifier vname symbols in
           let fd = find_func ((string_of_typ ty) ^ fname) in
@@ -226,26 +240,31 @@ let check (*functions*) (globals, functions) =
             raise (Failure ("expecting " ^ string_of_int (param_length - 1) ^
                             " arguments in " ^ string_of_expr call))
           else let check_call (ft, _) e =
-            let (et, e') = expr symbols e in
+            let ((et, e'), _) = expr symbols e in
+            (match e' with
+                SAssign _ -> raise (Failure "Cannot Assign in Call")
+              | SAssignm _ -> raise (Failure "Cannot Assign in Call")
+              | _ ->
             let err = "illegal argument found " ^ string_of_typ et ^
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-            in (check_assign ft et err, e')
+            in (check_assign ft et err, e'))
           in
           let args' = List.map2 check_call fd.formals (Variable(vname) :: args)
-          in (fd.typ, SCall((string_of_typ ty) ^ fname, args'))
+          in ((fd.typ, SCall((string_of_typ ty) ^ fname, args')), symbols)
       | Newtobj(t1, t2) ->
-          if t1 = Map && (t2 = String || t2 = Char) then (*@TODO: add list?*)
-                 (t1, SNewtobj(t2))
+          if t1 = Map && (t2 = String || t2 = Char) then
+                 ((t1, SNewtobj(t2)), symbols)
           else raise (Failure ("Object cannot be initialized with type"))
       | Newobj(t1, argus)  ->
-          match t1 with (*@TODO: check these types*)
+          match t1 with
               Player ->
                 let rec pla ars = match ars with
                     [] -> []
                   | (v, ex) :: ars' ->
                       let sv va = match va with Variable(x) -> SVariable(x)
                        | _ -> raise (Failure "compiler error") in
-                      let (t, ex') = expr symbols ex in
+                      let ((t, ex'), _) = expr symbols ex in
+                        (*@TODO: make sure ex is not Assign/Assignm*)
                         if ((v = Variable("score") && t = Int) ||
                             (v = Variable("turn") && t = Bool) ||
                             (v = Variable("guessedWords") && t = Map (*&&
@@ -257,52 +276,57 @@ let check (*functions*) (globals, functions) =
                         else raise (Failure "Illegal argument to Player")
                 in
                 let sargus = pla argus in
-                  (t1, SNewobj(sargus))
+                  ((t1, SNewobj(sargus)), symbols)
               | Board ->
-                (t1, SNewobj([])) (*@TODO: IMPLEMENT*)
+                ((t1, SNewobj([])), symbols) (*@TODO: IMPLEMENT*)
               | _ -> raise (Failure ("Object needs type initialization"))
 
     in
 
     let check_bool_expr symbols e =
-      let (t', e') = expr symbols e
+      let ((t', e'), symbols') = expr symbols e
       and err = "expected Boolean expression in " ^ string_of_expr e
-      in if t' != Bool then raise (Failure err) else (t', e')
+      in if t' != Bool then raise (Failure err) else ((t', e'), symbols')
     in
     let check_int_expr symbols e =
-      let (t', e') = expr symbols e
+      let ((t', e'), symbols') = expr symbols e
       and err = "expected Int expression in " ^ string_of_expr e
-      in if t' != Int then raise (Failure err) else (t', e')
+      in if t' != Int then raise (Failure err) else ((t', e'), symbols')
     in
 
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt symbols sstm = match sstm with
-        Expr e -> (SExpr (expr symbols e), symbols)
-      | Print(e) -> (SPrint( expr symbols e ), symbols) (*@TODO: type checking*)
+        Expr e -> let (e', symbols') = expr symbols e in (SExpr (e'), symbols')
+      | Print(e) ->
+          let ((t, se), symbols')  = expr symbols e in
+            if (t = Player || t = Board || t = Void) then
+              raise (Failure ("Cannot print expr of type " ^ string_of_typ t))
+            else
+              (SPrint((t, se)), symbols')
       | If(p, b1, b2) -> (*keep track of any new variables introduced for conflicts*)
-          let sifs = check_bool_expr symbols p in
-          let (sths, stm') = check_stmt_list symbols b1 in
+          let (sifs, stmo) = check_bool_expr symbols p in
+          let (sths, stm') = check_stmt_list stmo b1 in
           let (sels, stm'') = check_stmt_list stm' b2
           in (SIf(sifs, sths, sels), stm'')
-      | For(e1, st) -> (*@TODO: Make sure e1 evaluates to an int *)
-          let sfo = check_int_expr symbols e1 in
-          let (sbo, stm') = check_stmt_list symbols st in
+      | For(e1, st) -> (*Make sure e1 evaluates to an int *)
+          let (sfo, stmo) = check_int_expr symbols e1 in
+          let (sbo, stm') = check_stmt_list stmo st in
 	  (SFor(sfo, sbo), stm')
       | While(p, s) ->
-          let sifs = check_bool_expr symbols p in
-          let (sths, stm') = check_stmt_list symbols s in
+          let (sifs, stmo) = check_bool_expr symbols p in
+          let (sths, stm') = check_stmt_list stmo s in
           (SWhile(sifs, sths), stm')
       | Foreach(v, e, sl) ->
-          let (t, e') = expr symbols e in
+          let ((t, e'), symbols') = expr symbols e in
           if t != List && t != Map then raise (Failure "Can't foreach if it's not a list or map")
             else
-          let syms = add_local_symbol (t, v) symbols in
+          let syms = add_local_symbol (t, v) symbols' in
           let (sths, stm') = check_stmt_list syms sl in
           (SForeach(v, (t, e'), sths), stm')
       | Exit(i) -> (SExit(i), symbols)
       | Bind(ty, var) -> (SBind(ty, var), add_local_symbol (ty, var) symbols)
-      | Return e -> let (t, e') = expr symbols e in
-        if t = func.typ then (SReturn (t, e'), symbols)
+      | Return e -> let ((t, e'), symbols') = expr symbols e in
+        if t = func.typ then (SReturn (t, e'), symbols')
         else raise (
 	  Failure ("return gives " ^ string_of_typ t ^ " expected " ^
 		   string_of_typ func.typ ^ " in " ^ string_of_expr e))

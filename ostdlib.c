@@ -178,6 +178,10 @@ void PrintCharLis(char *lis) {
         printf("%c]\n", lis[i]);
 }
 
+char *listToString(char *lis) {
+        return lis;
+}
+
 
 //called once at the beginning of each program
 //to initialize the RNG
@@ -237,7 +241,6 @@ int readDict(char* filename); //bool return val, may take additional param for d
 //void map.destroy(map<type> k) how to implement?
 //int map.contains(map<type> k) bool return val, how to implement?
 //int map.getLength(void) how to implement?
-//char* listToString(list lis[]); //should we implement list as a linked list so we can track length dynamically?
 //map<String> subStrings(String w) how to implement?
 
 

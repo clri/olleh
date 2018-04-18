@@ -9,6 +9,7 @@ type op = Add | Sub | Mult | Div | Equal | Mod |
 type uop = Neg | Not
 
 type typ = Int | Bool | Char | String | List | Map | Player | Board | Void
+           | Stringmap | Charmap | Charlist | Listlist
 
 type formalbind = typ * string
 
@@ -66,6 +67,10 @@ let string_of_typ x = match x with
     | Player -> "Player"
     | Board -> "Board"
     | Void -> "Void"
+    | Stringmap -> "Map<string>"
+    | Charmap -> "Map<char>"
+    | Charlist -> "List<char>"
+    | Listlist -> "List<list>"
 
 let string_of_uop x = match x with
       Not -> "Not"
