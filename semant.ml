@@ -140,7 +140,6 @@ let check (*functions*) (globals, functions) =
     in
 
     (* Return a semantically-checked expression, i.e., with a type *)
-    (*@TODO: return (sexpr, symbols)*)
     let rec expr symbols exx =
       match exx with
         Literali l -> ((Int, SLiterali l), symbols)
