@@ -30,9 +30,7 @@ cc -o test-if-pos.exe test-if-pos.s ostdlib.o
 
 ###### Testing test-list-pos
 ./toplevel tests/test-list-pos.olh > test-list-pos.ll
-llc test-list-pos.ll > test-list-pos.s
-cc -o test-list-pos.exe test-list-pos.s ostdlib.o
-./test-list-pos.exe
+Fatal error: exception Failure("internal error: print not (yet) implemented")
 ###### SUCCESS
 
 ###### Testing test-print-pos
@@ -40,7 +38,6 @@ cc -o test-list-pos.exe test-list-pos.s ostdlib.o
 llc test-print-pos.ll > test-print-pos.s
 cc -o test-print-pos.exe test-print-pos.s ostdlib.o
 ./test-print-pos.exe
-diff -b test-print-pos.out tests/test-print-pos.out > test-print-pos.diff
 ###### SUCCESS
 
 ###### Testing test-printbasic-pos
@@ -58,9 +55,11 @@ diff -b fail-list-neg.err tests/fail-list-neg.err > fail-list-neg.diff
 ###### Testing fail-print-neg
 ./toplevel < tests/fail-print-neg.olh 2> fail-print-neg.err >> testall.log
 diff -b fail-print-neg.err tests/fail-print-neg.err > fail-print-neg.diff
-###### SUCCESS
+FAILED fail-print-neg.err differs from tests/fail-print-neg.err
+###### FAILED
 
 ###### Testing fail-subtract-neg
 ./toplevel < tests/fail-subtract-neg.olh 2> fail-subtract-neg.err >> testall.log
 diff -b fail-subtract-neg.err tests/fail-subtract-neg.err > fail-subtract-neg.diff
-###### SUCCESS
+FAILED fail-subtract-neg.err differs from tests/fail-subtract-neg.err
+###### FAILED

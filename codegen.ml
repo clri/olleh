@@ -292,11 +292,11 @@ let translate (globals, functions) =
 	 let _ = L.build_cond_br bool_val then_bb else_bb builder in
          (* Move to the merge block for further instruction building *)
 	 L.builder_at_end context merge_bb
-     (*| SBind(t, s) ->
+     | SBind(t, s) ->
        let add_local m (t, n) =
         let local_var = L.build_alloca (ltype_of_typ t) n builder
         in StringMap.add n local_var m
-       in let local_vars = add_local local_vars (t, s)*)
+       in let local_vars = add_local local_vars (t, s) in builder
      | _ -> raise (Failure "internal error: not (yet) implemented")
      (*| SReturn e -> let _ = match fdecl.styp with
                               (* Special "return nothing" instr *)

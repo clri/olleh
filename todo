@@ -5,15 +5,17 @@ Once item is done/tested, remove it from the list
 Builtins
 -getsetters possibly? add to semant, codegen, ostdlib if necessary
 
-Parser
+Scanner/Parser/ast
+-Map<x> enforced
+-List<x> enforced
 -empty 2d list? nah just check and make sure it checks out
 
+
 Semantic Checker
--enforce newtobj = map
--enforce newobj = list or player
--bool binops
+-newlis
+-binds in if/else for polymorphic types (list only?)
 -enforce no assignment in list/map Literals
--no list/map polymorphism
+-no list/map polymorphism (since list/map will be charlis/maplis is better)
 -1d or 2d list only (and how to distinguish)
 
 Legitimate Test Suite
@@ -21,6 +23,7 @@ Legitimate Test Suite
 -build testing for all functionality
 
 LRM
+-Map<x>, List<x> (list<list> implicitly list<char>)
 -fresh list(expr)
 -explain array sentinels/integer limits
 -variable scope (clarify)
