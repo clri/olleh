@@ -47,7 +47,6 @@ rule tokenize = parse
 | "map" { MAPV }
 | "list" { LISTV }
 | "Player" { PLAYER }
-| "Board" { BOARD }
 | "fresh" { FRESH }
 | "true" { LITB(true) }
 | "false" { LITB(false) }

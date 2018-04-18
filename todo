@@ -2,18 +2,39 @@
 Once item is done/tested, remove it from the list
 
 
+Builtins
+-getsetters possibly? add to semant, codegen, ostdlib if necessary
+
+Scanner/Parser
+-eliminate board
+-fresh list(expr)
+-fresh list(expr, expr)
+-empty 2d list? nah just check and make sure it checks out
+
+Ast
+-eliminate board
 
 Semantic Checker
--add builtin functions (Mapdestroy, etc)
+-enforce newtobj = map
+-enforce newobj = list or player
+-eliminate board
 -add builtin globals (dictionary, etc)
--type-check maps
--new object creation--board
+-new object creation--board?
+-bool binops
+-enforce no assignment in list/map Literals
+-no list/map polymorphism
+-1d or 2d list only (and how to distinguish)
+-fresh list in new/newtobj
 
+Legitimate Test Suite
+-write down tests
+-build testing for all functionality
 
 LRM
 -explain array sentinels/integer limits
 -variable scope (clarify)
 -limits on string literals (can they have newlines?)
+-move some functs to builtin status
 
 BUILTINS (ostdlib.c)
 -rename file?

@@ -8,7 +8,7 @@ type op = Add | Sub | Mult | Div | Equal | Mod |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Char | String | List | Map | Player | Board | Void
+type typ = Int | Bool | Char | String | List | Map | Player | Void
            | Stringmap | Charmap | Charlist | Listlist
 
 type formalbind = typ * string
@@ -65,7 +65,6 @@ let string_of_typ x = match x with
     | Bool -> "Bool"
     | Char -> "Char"
     | Player -> "Player"
-    | Board -> "Board"
     | Void -> "Void"
     | Stringmap -> "Map<string>"
     | Charmap -> "Map<char>"

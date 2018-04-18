@@ -37,7 +37,8 @@ let check (*functions*) (globals, functions) =
       | _ -> raise (Failure "Error: Illegal stmt treated as bind")
   in
 
-  let globals' = check_binds "global" (List.map bind_to_formalbind globals) in
+  let globals' = check_binds "global" (List.map bind_to_formalbind
+    (Bind(Stringmap, "dictionary") :: (Bind(Charmap, "letterScores") :: globals))) in
 
   (**** Checking Functions ****)
 
@@ -53,8 +54,11 @@ let check (*functions*) (globals, functions) =
                                                  ("readDict", String, [(String, "filename")]);
                                                  ("listToString", String, [(List, "lis")]);
                                                  ("subStrings", Map, [(String, "w")]);
-                                                 ("random", Int, [(Int, "x")])
-                                                 (*@TODO: add builtins for objects, of the form "MapgetLength" etc*)
+                                                 ("random", Int, [(Int, "x")]);
+                                                 ("Mapdestroy", Void, [(Map, "k")]);
+                                                 ("Mapcontains", Bool, [(Map, "k")]);
+                                                 ("MapgetLength", Int, [(Map, "k")]);
+                                                 ("readInput", String, []);
                                                   ]
   in
 
@@ -118,9 +122,6 @@ let check (*functions*) (globals, functions) =
       let tvs = try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
       match tvs, m with
-          Board, "rows" -> Int
-        | Board, "cols" -> Int
-        | Board, "letters" -> Charlist
         | Player, "Score" -> Int
         | Player, "turn" -> Bool
         | Player, "guessedWords" -> Stringmap
@@ -130,9 +131,12 @@ let check (*functions*) (globals, functions) =
 
 
     (*tuple mapper helper function*)
-    (*let rec map_tup f s (x, y) =
+    let rec map_tup f s (x, y) =
         (f s x, f s y)
-    in*)
+    in
+    let rec map_tup_nos f (x, y) =
+        (f x, f y)
+    in
     let rec map_over_two f syms lis =
         match lis with
           [] -> []
@@ -156,7 +160,9 @@ let check (*functions*) (globals, functions) =
           let lchar = List.fold_left is_char true l' in
           let is_list b ((t, _), _) = b && (t = List) in
             (*@TODO: enforce 2d list of char only? possibly.
-            MUST ENFORCE: no assignment in list literal*)
+            MUST ENFORCE: no assignment in list literal
+            ALSO NO POLYMORPHISM and 2d char: no lchar, typecheck a listlist
+            to make sure every elem is a charlist*)
           let llist = List.fold_left is_list true l' in
           let l'' = List.map fst l' in
           let lempty = List.length l = 0 in
@@ -165,8 +171,19 @@ let check (*functions*) (globals, functions) =
               if llist then ((Listlist, SLiterall(List, l'')), symbols) else
                 raise (Failure ("List of improper type"))
       | Literalm m ->
-          (*@TODO: implement*)
-           ((Map, SLiteralm(Void, [])), symbols)
+          let m' = List.map (map_tup expr symbols) m in
+          let m'' = List.map (map_tup_nos fst) m' in
+          let is_charkey b ((t, _), _) = b && (t = Char) in
+          let mchar = List.fold_left is_charkey true m'' in
+          let is_stringkey b ((t, _), _) = b && (t = String) in
+          let mstrng = List.fold_left is_stringkey true m'' in
+          let is_intval b (_, (t, _)) = b && (t = Int) in
+          let mint = List.fold_left is_intval true m'' in
+          if mint then
+            if mchar then ((Charmap, SLiteralm(Char, m'')), symbols) else
+              if mstrng then ((Stringmap, SLiteralm(String, m'')), symbols) else
+                raise (Failure "Map of improper type")
+          else raise (Failure ("Map value must be integer"))
       | Assign(var, e) as ex ->
           let lt = type_of_identifier var symbols
           and ((rt, e'), symbols') = expr symbols e in
@@ -276,8 +293,6 @@ let check (*functions*) (globals, functions) =
                 in
                 let sargus = pla argus in
                   ((t1, SNewobj(sargus)), symbols)
-              | Board ->
-                ((t1, SNewobj([])), symbols) (*@TODO: IMPLEMENT*)
               | _ -> raise (Failure ("Object needs type initialization"))
 
     in
@@ -298,7 +313,7 @@ let check (*functions*) (globals, functions) =
         Expr e -> let (e', symbols') = expr symbols e in (SExpr (e'), symbols')
       | Print(e) ->
           let ((t, se), symbols')  = expr symbols e in
-            if (t = Player || t = Board || t = Void) then
+            if (t = Player || t = Void) then
               raise (Failure ("Cannot print expr of type " ^ string_of_typ t))
             else
               (SPrint((t, se)), symbols')
@@ -347,4 +362,4 @@ let check (*functions*) (globals, functions) =
       sformals = formals';
       sbody = fst (check_stmt_list (if func.fname = "main" then StringMap.empty else symbolz) func.body) (*no err since no block *)
     }
-  in (*List.map check_function functions*) (globals', List.map check_function functions )
+  in  (globals', List.map check_function functions)
