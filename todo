@@ -17,6 +17,7 @@ Semantic Checker
 -enforce no assignment in list/map Literals
 -no list/map polymorphism (since list/map will be charlis/maplis is better)
 -1d or 2d list only (and how to distinguish)
+-add back in the dictionary stuff
 
 Legitimate Test Suite
 -write down tests

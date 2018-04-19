@@ -37,7 +37,7 @@ let check (*functions*) (globals, functions) =
       | _ -> raise (Failure "Error: Illegal stmt treated as bind")
   in
 
-  let globals' = check_binds "global" (List.map bind_to_formalbind globals) in 
+  let globals' = check_binds "global" (List.map bind_to_formalbind globals) in
    (* (Bind(Stringmap, "dictionary") :: (Bind(Charmap, "letterScores") :: globals))) in*)
 
   (**** Checking Functions ****)
