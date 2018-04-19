@@ -30,7 +30,9 @@ cc -o test-if-pos.exe test-if-pos.s ostdlib.o
 
 ###### Testing test-list-pos
 ./toplevel tests/test-list-pos.olh > test-list-pos.ll
-Fatal error: exception Failure("internal error: print not (yet) implemented")
+llc test-list-pos.ll > test-list-pos.s
+cc -o test-list-pos.exe test-list-pos.s ostdlib.o
+./test-list-pos.exe
 ###### SUCCESS
 
 ###### Testing test-print-pos

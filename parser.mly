@@ -78,10 +78,12 @@ typr:
   | CHARV   { Char }
   | VOID    { Void }
   | STRINGV { String }
-  | LISTV   { List }
+  | LISTV LESS LISTV GREATER { Listlist }
+  | LISTV LESS CHARV GREATER { Charlist }
 
 obj:
-    MAPV    { Map }
+    MAPV LESS CHARV GREATER { Charmap }
+  | STRINGV LESS CHARV GREATER { Stringmap }
   | PLAYER  { Player }
 
 
@@ -116,10 +118,10 @@ rstmt:
 
 /*declare/assign statement, gets partitioned into two*/
 dastmt:
-   typ VARIABLE ASSIGN expr SEMI { ( Bind($1, $2), Expr (Assign ($2, $4)) ) }
+     typ VARIABLE ASSIGN expr SEMI { ( Bind($1, $2), Expr (Assign ($2, $4)) ) }
 
 vdecl:
-    typ VARIABLE SEMI { Bind( $1, $2) }
+      typ VARIABLE SEMI { Bind( $1, $2) }
 
 stmt:
   expr SEMI                                 { Expr $1               }
@@ -191,10 +193,11 @@ expr:
   | VARIABLE DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
   | VARIABLE DOT VARIABLE OPAREN args_opt CPAREN { Callm($1, $3, $5) }
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
-  | FRESH obj OPAREN typ CPAREN { Newtobj( $2, $4 )        }
-  | FRESH obj OCURLY maplis CCURLY   { Newobj( $2, $4 )    }
-  | FRESH LISTV OPAREN expr CCURLY { Newlis(List, ($4 :: [])) }
-  | FRESH LISTV OPAREN expr COMMA expr CCURLY { Newlis(List, ($4 :: ($6 :: []))) }
+  | FRESH MAPV OPAREN STRINGV CPAREN { Newtobj( Stringmap )        }
+  | FRESH MAPV OPAREN CHARV CPAREN { Newtobj( Charmap )        }
+  | FRESH PLAYER OCURLY maplis CCURLY   { Newobj( Player, $4 )    }
+  | FRESH LISTV OPAREN expr CCURLY { Newlis(Charlist, ($4 :: [])) }
+  | FRESH LISTV OPAREN expr COMMA expr CCURLY { Newlis(Listlist, ($4 :: ($6 :: []))) }
   | OPAREN expr CPAREN { $2                                }
 
 

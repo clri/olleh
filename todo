@@ -6,17 +6,13 @@ Builtins
 -getsetters possibly? add to semant, codegen, ostdlib if necessary
 
 Scanner/Parser/ast
--Map<x> enforced
--List<x> enforced
 -empty 2d list? nah just check and make sure it checks out
 
 
 Semantic Checker
+-refactor
 -newlis
--binds in if/else for polymorphic types (list only?)
--enforce no assignment in list/map Literals
--no list/map polymorphism (since list/map will be charlis/maplis is better)
--1d or 2d list only (and how to distinguish)
+-enforce no assignment in list/map Literals or fresh players
 -add back in the dictionary stuff
 
 Legitimate Test Suite
@@ -28,6 +24,7 @@ LRM
 -fresh list(expr)
 -explain array sentinels/integer limits
 -variable scope (clarify)
+-when you are not allowed to assign variables
 -limits on string literals (can they have newlines? test the functionality)
 -move some functs to builtin status
 -eliminate board

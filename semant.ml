@@ -52,12 +52,15 @@ let check (*functions*) (globals, functions) =
                                                  ("reverse", String, [(String, "w")]);
                                                  ("anagram", String, [(String, "w")]);
                                                  ("readDict", String, [(String, "filename")]);
-                                                 ("listToString", String, [(List, "lis")]);
-                                                 ("subStrings", Map, [(String, "w")]);
+                                                 ("listToString", String, [(Charlist, "lis")]);
+                                                 ("subStrings", Stringmap, [(String, "w")]);
                                                  ("random", Int, [(Int, "x")]);
-                                                 ("Mapdestroy", Void, [(Map, "k")]);
-                                                 ("Mapcontains", Bool, [(Map, "k")]);
-                                                 ("MapgetLength", Int, [(Map, "k")]);
+                                                 ("Stringmapdestroy", Void, [(Stringmap, "k"); (String, "s")]);
+                                                 ("Stringmapcontains", Bool, [(Stringmap, "k"); (String, "s")]);
+                                                 ("StringmapgetLength", Int, [(Stringmap, "k")]);
+                                                 ("Charmapdestroy", Void, [(Charmap, "k"); (Char, "s")]);
+                                                 ("Charmapcontains", Bool, [(Charmap, "k"); (Char, "s")]);
+                                                 ("CharmapgetLength", Int, [(Stringmap, "k")]);
                                                  ("readInput", String, []);
                                                   ]
   in
@@ -101,9 +104,6 @@ let check (*functions*) (globals, functions) =
        the given lvalue type *)
     let check_assign lvaluet rvaluet err =
        if lvaluet = rvaluet then lvaluet
-       else if (lvaluet = Map && (rvaluet = Stringmap || rvaluet = Charmap))
-         || (lvaluet = List && (rvaluet = Listlist || rvaluet = Charlist))
-         then rvaluet
        else raise (Failure err)
     in
 
@@ -155,22 +155,28 @@ let check (*functions*) (globals, functions) =
       | Variable s       -> ((type_of_identifier s symbols, SVariable s), symbols)
       | Vmember(s, m) -> ((type_of_vmember s m symbols, SVmember(s, m)), symbols)
       | Literall l ->
+          let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
+          let isasn = List.fold_left is_assign true l in
+            if isasn then raise (Failure ("Cannot make assignments in list literals"))
+          else
           let l' = map_over_two expr symbols l in
           let is_char b ((t, _), _) = b && (t = Char) in
           let lchar = List.fold_left is_char true l' in
-          let is_list b ((t, _), _) = b && (t = List) in
-            (*@TODO: enforce 2d list of char only? possibly.
-            MUST ENFORCE: no assignment in list literal
-            ALSO NO POLYMORPHISM and 2d char: no lchar, typecheck a listlist
-            to make sure every elem is a charlist*)
+          let is_list b ((t, _), _) = b && (t = Charlist) in
+            (*@TODO: no assignment in list literal*)
           let llist = List.fold_left is_list true l' in
           let l'' = List.map fst l' in
-          let lempty = List.length l = 0 in
-          if lempty then ((List, SLiterall(Void, l'')), symbols) else
-            if lchar then ((Charlist, SLiterall(Char, l'')), symbols) else
-              if llist then ((Listlist, SLiterall(List, l'')), symbols) else
+            if lchar then ((Charlist, SLiterall(l'')), symbols) else
+              if llist then ((Listlist, SLiterall(l'')), symbols) else
                 raise (Failure ("List of improper type"))
       | Literalm m ->
+          let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
+          let isasnk = List.fold_left is_assign true (List.map fst m) in
+            if isasnk then raise (Failure ("Cannot make assignments in  map literals"))
+          else
+          let isasnv = List.fold_left is_assign true (List.map snd m) in
+            if isasnv then raise (Failure ("Cannot make assignments in  map literals"))
+          else
           let m' = List.map (map_tup expr symbols) m in
           let m'' = List.map (map_tup_nos fst) m' in
           let is_charkey b ((t, _), _) = b && (t = Char) in
@@ -180,8 +186,8 @@ let check (*functions*) (globals, functions) =
           let is_intval b (_, (t, _)) = b && (t = Int) in
           let mint = List.fold_left is_intval true m'' in
           if mint then
-            if mchar then ((Charmap, SLiteralm(Char, m'')), symbols) else
-              if mstrng then ((Stringmap, SLiteralm(String, m'')), symbols) else
+            if mchar then ((Charmap, SLiteralm(m'')), symbols) else
+              if mstrng then ((Stringmap, SLiteralm(m'')), symbols) else
                 raise (Failure "Map of improper type")
           else raise (Failure ("Map value must be integer"))
       | Assign(var, e) as ex ->
@@ -224,7 +230,7 @@ let check (*functions*) (globals, functions) =
       | Assignm(var, mem, e) as ex ->
           let lt = type_of_vmember var mem symbols (*@TODO: test calling wrong thing, eg player.columns*)
           and ((rt, e'), symbols') = expr symbols e in
-          if (rt = List && mem = "letters") || (rt = Map && mem = "guessedWords")
+          if (rt = Stringmap && mem = "guessedWords")
           then ((lt, SAssignm(var, mem, (rt, e'))), symbols')
           else
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
@@ -267,28 +273,39 @@ let check (*functions*) (globals, functions) =
           in
           let args' = List.map2 check_call fd.formals (Variable(vname) :: args)
           in ((fd.typ, SCall((string_of_typ ty) ^ fname, args')), symbols)
-      | Newtobj(t1, t2) ->
-          if t1 = Map && (t2 = String || t2 = Char) then
-                 ((t1, SNewtobj(t2)), symbols)
+      | Newtobj(t1) ->
+          if t1 = Charmap || t1 = Stringmap then
+                 ((t1, SNewtobj(t1)), symbols)
           else raise (Failure ("Object cannot be initialized with type"))
-      | Newlis(e1, e2) -> ((List, SNewlis([])), symbols) (*@TODO: IMPLEMENT*)
+      | Newlis(t1, e2) ->
+          if (t1 = Charlist && List.length e2 != 1) || (t1 = Listlist && List.length e2 != 2) then
+            raise (Failure "Unexpected fatal compiler error")
+          else
+            let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
+            let isasnk = List.fold_left is_assign true e2 in
+            if isasnk then raise (Failure ("Cannot assign in new list")) else
+            let l' = map_over_two expr symbols e2 in
+            let is_int b ((t, _), _) = b && (t = Int) in
+            let lint = List.fold_left is_int true l' in
+            if not lint then raise (Failure ("Cannot create new list with non-integer arguments"))
+            else ((t1, SNewlis(List.map fst l')), symbols)
       | Newobj(t1, argus)  ->
           match t1 with
               Player ->
                 let rec pla ars = match ars with
                     [] -> []
                   | (v, ex) :: ars' ->
+                      match ex with
+                          Assign(_) -> raise (Failure("Cannot assign in new Player"))
+                        | Assignm(_) -> raise (Failure("Cannot assign in new Player"))
+                        | _ ->
                       let sv va = match va with Variable(x) -> SVariable(x)
                        | _ -> raise (Failure "compiler error") in
                       let ((t, ex'), _) = expr symbols ex in
-                        (*@TODO: make sure ex is not Assign/Assignm*)
                         if ((v = Variable("score") && t = Int) ||
                             (v = Variable("turn") && t = Bool) ||
-                            (v = Variable("guessedWords") && t = Map (*&&
-                              (fst ex' = String || fst ex' = Void)*)) ||
-                            (v = Variable("letters") && t = List (*&&
-                              (fst ex' = Char ||
-                                (fst ex' = Void))*)))
+                            (v = Variable("guessedWords") && t = Stringmap) ||
+                            (v = Variable("letters") && t = Charlist))
                         then ((t, sv v), (t, ex')) :: pla ars'
                         else raise (Failure "Illegal argument to Player")
                 in
@@ -333,7 +350,8 @@ let check (*functions*) (globals, functions) =
           (SWhile(sifs, sths), stm')
       | Foreach(v, e, sl) ->
           let ((t, e'), symbols') = expr symbols e in
-          if t != List && t != Map then raise (Failure "Can't foreach if it's not a list or map")
+          if t != Charlist && t!= Listlist && t != Stringmap && t != Charmap then
+            raise (Failure "Can't foreach if it's not a list or map")
             else
           let syms = add_local_symbol (t, v) symbols' in
           let (sths, stm') = check_stmt_list syms sl in

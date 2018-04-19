@@ -34,9 +34,10 @@ let translate (globals, functions) =
     | A.Char  -> i8_t
     | A.String -> (*L.pointer_type*) i8_t (*???*)
     | A.Void  -> void_t
-    | A.Map -> map_ptr_t
+    | A.Stringmap -> map_ptr_t
+    | A.Charmap -> map_ptr_t
     | A.Player -> player_t
-    | A.List -> string_pointer (* @TODO adapt for 2D *)
+    | A.Charlist -> string_pointer (* @TODO adapt for 2D *)
     | _ -> void_t (*temp; @TODO: add for structs*)
   in
 
@@ -140,7 +141,7 @@ let translate (globals, functions) =
     let sentinel = Int32.to_int (Int32.div Int32.max_int (Int32.of_int 2)) in
 
     (* Construct code for an expression; return its value *)
-    let rec expr builder ((_, e) : sexpr) = match e with
+    let rec expr builder ((gtype, e) : sexpr) = match e with
 	SLiterali i -> L.const_int i32_t i
       | SLiteralc c -> L.const_int i8_t (int_of_char c)
       | SLiteralb b -> L.const_int i1_t (if b then 1 else 0)
@@ -149,19 +150,10 @@ let translate (globals, functions) =
       | Null -> L.const_int i32_t 0
       | SVariable s -> L.build_load (lookup s) s builder
       | SVmember (v, _) -> L.build_load (lookup v) v builder (*@TODO: IMPLEMENT*)
-      | SLiterall (t, l) ->
+      | SLiterall l ->
          let l' = List.map (expr builder) l in
          let len = (List.length l) + 1 in
-         if t = Int then
-           let y = L.build_array_malloc i32_t (L.const_int i32_t len) "a1" builder
-           in let x = L.build_pointercast y (L.pointer_type i32_t) "a2" builder
-           in let addtoar index elem =
-             let xx = L.build_gep x [| L.const_int i32_t index |] "a3" builder
-             in ignore (L.build_store elem xx builder)
-           in let _ = List.iteri addtoar l'
-           in let _ = addtoar (len - 1) (L.const_int i32_t sentinel)
-           in x
-         else if t = Char then
+         if gtype = Charlist then
            let y = L.build_array_malloc i8_t (L.const_int i32_t len) "a1" builder
            in let x = L.build_pointercast y (L.pointer_type i8_t) "a2" builder
            in let addtoar index elem =
@@ -170,6 +162,7 @@ let translate (globals, functions) =
            in let _ = List.iteri addtoar l'
            in let _ = addtoar (len - 1) (L.const_int i8_t 0) (*sentinel*)
          in x
+         (*@TODO: Listlist*)
          else raise (Failure "build error")
       | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SAssignm (s, _, e) -> let e' = expr builder e in
@@ -260,7 +253,7 @@ let translate (globals, functions) =
       | SPrint (t, e) ->
           if t = String then let _ = L.build_call printf_func [| str_format_str ; (expr builder (t,e)) |]
 	    "printf" builder in builder
-         else if t = List then
+         else if t = Charlist then
            let ex = expr builder (t, e) in
            (*let n = 4 (L.array_length (L.type_of ex)) in*)
            let _ = L.build_call printil_func [| ex |]

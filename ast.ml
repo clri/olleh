@@ -8,7 +8,7 @@ type op = Add | Sub | Mult | Div | Equal | Mod |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Char | String | List | Map | Player | Void
+type typ = Int | Bool | Char | String | Player | Void
            | Stringmap | Charmap | Charlist | Listlist
 
 type formalbind = typ * string
@@ -27,7 +27,7 @@ type expr =
     | Unop of uop * expr
     | Assign of string * expr
     | Assignm of string * string * expr
-    | Newtobj of typ * typ
+    | Newtobj of typ
     | Newobj of typ * (expr * expr) list
     | Newlis of typ * expr list
     | Call of string * expr list
@@ -61,8 +61,6 @@ type program = stmt list * func_decl list
 let string_of_typ x = match x with
       String -> "String"
     | Int -> "Int"
-    | List -> "List"
-    | Map -> "Map"
     | Bool -> "Bool"
     | Char -> "Char"
     | Player -> "Player"
@@ -106,7 +104,8 @@ let rec string_of_expr e = match e with
     | Unop (op, e1) -> (string_of_uop op) ^ " " ^ (string_of_expr e1)
     | Assign (v, e1) -> v ^ " = " ^ (string_of_expr e1)
     | Assignm (v, m, e1) -> v ^ "." ^ m ^ " = " ^ (string_of_expr e1)
-    | Newtobj (t1, t2) -> "fresh " ^ (string_of_typ t1) ^ "(" ^ (string_of_typ t2) ^ ")"
+    | Newtobj (t1) -> "fresh " ^ (string_of_typ t1)
+    | Newlis (t1, _) -> "fresh " ^ (string_of_typ t1)
     | Newobj (t, elis) -> "fresh " ^ (string_of_typ t) ^ "[...]"
     | Call (s, elis) -> s ^ "(...)"
     | Callm (s, m, elis) -> s ^ "." ^ m ^ "(...)"
