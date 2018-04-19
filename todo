@@ -10,9 +10,7 @@ Scanner/Parser/ast
 
 
 Semantic Checker
--refactor
--newlis
--enforce no assignment in list/map Literals or fresh players
+-refactor if there's time
 -add back in the dictionary stuff
 
 Legitimate Test Suite

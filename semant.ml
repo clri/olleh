@@ -163,7 +163,6 @@ let check (*functions*) (globals, functions) =
           let is_char b ((t, _), _) = b && (t = Char) in
           let lchar = List.fold_left is_char true l' in
           let is_list b ((t, _), _) = b && (t = Charlist) in
-            (*@TODO: no assignment in list literal*)
           let llist = List.fold_left is_list true l' in
           let l'' = List.map fst l' in
             if lchar then ((Charlist, SLiterall(l'')), symbols) else
