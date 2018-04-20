@@ -4,18 +4,19 @@ Once item is done/tested, remove it from the list
 
 Builtins
 -getsetters possibly? add to semant, codegen, ostdlib if necessary
-
-Scanner/Parser/ast
--empty 2d list? nah just check and make sure it checks out
+-exit in codegen (sexit->build call to exit)
 
 
 Semantic Checker
+-newobj (charmap, stringmap, charlist, listlist)
+-scope of freach variables
 -refactor if there's time
 -add back in the dictionary stuff
 
 Legitimate Test Suite
--write down tests
 -build testing for all functionality
+-build .out/.err files
+-remove extraneous tests
 
 LRM
 -Map<x>, List<x> (list<list> implicitly list<char>)
@@ -50,7 +51,7 @@ Standard Library (.olh)
 Compiler (codegen.ml)
 -add builtin constants (dictionary)
 -add structs and other builtin types
--printing lists
+-printing maps
 -global variables
 -variable scope
 -garbage collection for string return values

@@ -342,7 +342,7 @@ let translate (globals, functions) =
     add_terminal builder (match fdecl.styp with
         A.Void -> L.build_ret_void
       | _ -> raise (Failure "internal error: return type not (yet) implemented"))
-      (*| A.Float -> L.build_ret (L.const_float float_t 0.0)
+      (*
       | t -> L.build_ret (L.const_int (ltype_of_typ t) 0)) @TODO: IMPLEMENT*)
   in
 

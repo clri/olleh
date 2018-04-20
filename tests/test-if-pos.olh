@@ -8,3 +8,36 @@ if (true):
 else:
 	print "Printing from false!";
 end;
+
+boolean b = true;
+
+if (b):
+        print "there is no else";
+end;
+
+boolean b2 = false;
+
+if (b and b2):
+        print "true and false is true??!!";
+end;
+if (b or b2):
+        print "true or false is true!";
+end;
+if (b and b):
+        print "true and true is true!";
+end;
+if (b or b):
+        print "true or true is true!";
+end;
+if (b2 and b2):
+        print "false and false is true!??";
+end;
+if (b2 or b2):
+        print "false or false is true!??";
+end;
+if (not b):
+        print "not true is true?!";
+end;
+if (not b2):
+        print "not false is true!";
+end;
