@@ -19,18 +19,14 @@ Legitimate Test Suite
 -remove extraneous tests
 
 LRM
--Map<x>, List<x> (list<list> implicitly list<char>)
--fresh list(expr)
--explain array sentinels/integer limits
 -variable scope (clarify)
 -when you are not allowed to assign variables
 -limits on string literals (can they have newlines? test the functionality)
--move some functs to builtin status
--eliminate board
+-getsetters
 
 BUILTINS (ostdlib.c)
 -rename file?
--implement constants if necessary
+-implement constants (dictionary and letterScores)
 -anagram()
 -readDict()
 -map.destroy() -> "Mapdestroy"
@@ -49,6 +45,7 @@ Standard Library (.olh)
 -Hook them into code we write via the compiler (how?)
 
 Compiler (codegen.ml)
+-Attempting to access a key not in the map will result in an index-out-of-bounds error.
 -add builtin constants (dictionary)
 -add structs and other builtin types
 -printing maps
