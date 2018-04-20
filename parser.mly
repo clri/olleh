@@ -1,5 +1,5 @@
 %{ open Ast %}
-%token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT REMOVE NULL
+%token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT NULL
 %token INTV CHARV STRINGV BOOLV VOID MAPV LISTV PLAYER
 %token EQUALS LESS GREATER NOT NEQ LEQ GEQ AND OR
 %token RET END IF ELSE FOR FOREACH WHILE
@@ -85,23 +85,6 @@ obj:
     MAPV LESS CHARV GREATER { Charmap }
   | STRINGV LESS CHARV GREATER { Stringmap }
   | PLAYER  { Player }
-
-
-fdecl:
-  FUNCT typ VARIABLE OPAREN formals_opt CPAREN COLON stmt_list END SEMI
-     { { typ = $2;
-         fname = $3;
-         formals = $5;
-         body = List.rev $8 } }
-
-
-formals_opt:
-    /* nothing */ { [] }
-  | formal_list   { List.rev $1 }
-
-formal_list:
-    typ VARIABLE                   { [($1,$2)]     }
-  | formal_list COMMA typ VARIABLE { ($3,$4) :: $1 }
 
 
 stmt_list:
