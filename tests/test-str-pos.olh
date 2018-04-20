@@ -1,0 +1,14 @@
+//test-str-pos: string operations
+
+String str = "a string";
+str = str + 5 + 6; //should be "a string11";
+print str;
+
+str = "
+i have 3
+lines";
+
+print str;
+
+str = "asdf " + " asdf";
+print str;

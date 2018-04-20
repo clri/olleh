@@ -1,0 +1,137 @@
+TODO - TESTING
+
+Positive
+using null (what/how?)
+
+Scanner - negative
+multiple chars within single quotes
+trailing open comment
+trailing open double quote
+variable that starts with a number
+variable that starts with an underscore
+variable that starts with an uppercase leter
+variable with disallowed characters (-, %, etc)
+
+
+Parser - negative
+use reserved keywords as variables (if, end, etc)
+Map x;/List x;
+incorrect fresh player syntax
+incorrect map syntax
+intcorrect list syntax
+prefix notation (+ 9 8)
+no ending semicolon
+expr not expr
+expr neg expr
+binop as unop (x = %3 eg)
+fresh on something that isn't supposed to be fresh
+emtpy if()
+empty for()
+improper foreach
+empty body of for
+empty body of foreach
+empty body of if
+
+
+Semant - negative
+Print Player
+3d list
+list of stuff that is not a char or list
+list of mixed chars and lists
+map with non-integer values
+map with key that is not a char or str
+map with mixed char/str keys
+and/or/not for non-bool exprs
+</>/==/<=/>= for non-int/char
+mult/div/mod for non-int
+plus for not: 2 ints, 2 strs, str(s) + int(s)
+misuse of variables
+-prior to declaration
+-improper types (char as int, bool as string, etc)
+-improper types (charmap/strmap, charlist/listlist)
+-out of scope
+-redefinition of a global in formals
+-redefinition of a global in locals
+-void type variable
+function returning the wrong type
+calling a function with wrong params
+calling a function that has not been declared
+fresh list(non-integer)
+fresh list(>2 integers)
+fresh list()
+fresh player (additional field)
+fresh player (same field twice)
+assign the result of a void function
+negative (noninteger)
+assignment in params of function call
+assignment in params of var.function call
+assignment in list
+assignment in new player
+map assignment of non-player type (charmap, bool)
+print void
+foreach on sth that's not a list or map
+return that's not the last statement (?)
+
+
+Codegen - negative
+n/a for now
+
+
+Written (positive)
+Assign and print a variable of type: int (pos, neg, zero), char, string, bool (test-assign-pos)
+Assign and print a variable of type list (1d and 2d) (test-list-pos)
+fresh list(x), fresh list(x,y) (test-list-pos)
+list getsetters (test-list-pos)
+empty 2d list (test-list-pos)
+empty 1d list (test-list-pos)
+two statements on the same line (test-list-pos)
+Assign and print a variable of type map (char and str) (test-map-pos)
+map getsetters (test-map-pos)
+fresh map(string), fresh map(char) (test-map-pos)
+empty map (test-map-pos)
+/*comment*/ on same line as code (test-map-pos)
+subtract integers (test-int-pos)
+modulo integers (test-int-pos)
+multiply integers (test-int-pos)
+divide integers (test-int-pos)
+complex expression with lots of ops (test-int-pos)
+Assign player and print its members (test-player-pos)
+fresh player(nothing), fresh player(something) (test-player-pos)
+player getsetters (test-player-pos)
+exit (test-exit-pos)
+multiline string? (test-str-pos)
+concat strings, concat string + multiple ints (test-str-pos)
+and/or/not (test-if-pos)
+if noelse (test-if-pos)
+</>/==/<=/>=/!= (for int and char) (test-compare-pos)
+multiline statement (test-compare-pos)
+foreach of list, foreach of map (test-foreach-pos)
+create function (no args, args, void, real return type) (test-func-pos)
+call function (no args, args, void, real return type) (test-func-pos)
+use the result of a function in statement (test-func-pos)
+use function to manipluate a global variable (test-func-pos)
+
+Written (negative)
+plus (str, bool) (fail-print-neg)
+minus (strs) (fail-subtract-neg)
+
+
+Passing (positive)
+// comment (test-assign-pos)
+/* comment*/ (test-if-pos)
+add integers (test-add-pos)
+concat string + int (test-print-pos)
+if else (test-if-pos)
+declare function (void) (test-func-pos)
+call function(void) (test-func-pos)
+
+
+Passing (negative)
+
+
+
+
+
+
+
+.

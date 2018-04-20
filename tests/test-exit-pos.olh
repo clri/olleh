@@ -1,0 +1,5 @@
+//test-exit-pos: tests functionality of exit keyword
+
+print "before the exit";
+exit;
+print "i should have exited already!";

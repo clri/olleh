@@ -1,0 +1,16 @@
+//test-int-pos: operations on ints
+
+int i = 2 + 1;
+int j = 3 - 4;
+print j; //-1
+
+print i - k;
+
+print 54 % 17; //3
+print i * j;
+print i * 7;
+
+print 4 / 3;
+
+int x = j + i - -9 * 7 + 65 / 34; //-1 + 3 - -63 + 1 = 66
+print x;
