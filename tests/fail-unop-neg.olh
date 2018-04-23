@@ -1,0 +1,3 @@
+//binop as unop
+int x = % 3;
+

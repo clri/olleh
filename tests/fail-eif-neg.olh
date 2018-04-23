@@ -1,0 +1,6 @@
+//empty if()
+
+if ():
+	print "empty!";
+end;
+
