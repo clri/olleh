@@ -1,0 +1,4 @@
+//compare on non-int/char
+if ("a" < "b"):
+        print "we won't get here";
+end;

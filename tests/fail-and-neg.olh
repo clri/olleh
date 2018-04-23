@@ -1,0 +1,4 @@
+//and for non-bool
+
+print 'a' and 's';
+

@@ -1,0 +1,6 @@
+//redefinition of a global in locals
+int z;
+function void decl():
+        int z = 5;
+end;
+

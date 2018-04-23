@@ -1,0 +1,3 @@
+//multiply non-integer(s)
+print ['7'] * 4;
+

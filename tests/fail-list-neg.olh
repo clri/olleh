@@ -2,5 +2,4 @@
  * Semantic failure: list containing different types
  */
 
-print ['a', 'b', 4, 5];
-
+ print [[], 'a'];

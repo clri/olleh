@@ -1,0 +1,3 @@
+//calling a function that has not been declared
+foo();
+

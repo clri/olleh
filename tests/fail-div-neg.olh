@@ -1,0 +1,3 @@
+//divide non-integers
+print "5" / "5";
+

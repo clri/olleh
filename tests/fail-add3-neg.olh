@@ -1,0 +1,3 @@
+//charlist + int
+print ['5'] + 54;
+

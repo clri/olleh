@@ -1,0 +1,6 @@
+//too many parameters
+function int x():
+        return 2;
+end;
+x(5);
+

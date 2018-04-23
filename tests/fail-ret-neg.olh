@@ -1,0 +1,5 @@
+//wrong return type
+function int x():
+        return;
+end;
+

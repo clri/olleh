@@ -1,0 +1,3 @@
+//modulo non-integers
+print '5' % '#';
+

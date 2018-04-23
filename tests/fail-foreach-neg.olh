@@ -1,0 +1,5 @@
+//foreach on something that's not a list or map
+foreach k: 5:
+        print "ahhh";
+end;
+

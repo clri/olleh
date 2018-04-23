@@ -1,0 +1,3 @@
+//fresh list()
+list<char> lis = fresh list();
+

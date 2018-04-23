@@ -1,0 +1,3 @@
+//fail-intlist-neg: 
+//list of stuff that is not a char or list
+print [1, 2, 3, 4];

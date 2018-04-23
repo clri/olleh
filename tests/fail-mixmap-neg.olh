@@ -1,0 +1,3 @@
+//map with mixed char/str keys
+print {'a' -> 4, "astr" -> 4};
+

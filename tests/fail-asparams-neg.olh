@@ -1,0 +1,7 @@
+//assignment in params of function call
+function void foo(int y):
+        return;
+end;
+int x;
+foo(x = 5);
+

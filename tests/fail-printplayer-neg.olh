@@ -1,0 +1,4 @@
+//fail-printplayer-neg: fails at printing a player
+
+//Print Player
+print fresh Player{};

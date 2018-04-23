@@ -1,0 +1,3 @@
+//fail-mapkey-neg: map with key that is not a char or str
+print {123 -> 234};
+

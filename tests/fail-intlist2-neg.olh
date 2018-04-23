@@ -1,0 +1,2 @@
+//fail-intlist2-neg: attempts to create integer list
+list<int> lis = [];

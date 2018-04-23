@@ -1,0 +1,6 @@
+//redefinition of a global in formals
+int y;
+function void wrong(int y):
+        return;
+end;
+

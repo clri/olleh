@@ -1,0 +1,3 @@
+//compare mixed comparable and non-comparable
+boolean r = 6 >= '6';
+

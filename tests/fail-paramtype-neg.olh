@@ -1,0 +1,6 @@
+//calling with param of wrong type
+function int x(int y):
+        return 4;
+end;
+x('c');
+

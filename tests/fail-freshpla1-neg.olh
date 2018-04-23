@@ -1,0 +1,3 @@
+//fresh player (additional field)
+Player player = fresh Player{x -> 5};
+

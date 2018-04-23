@@ -1,0 +1,4 @@
+//variable of wrong type
+String h;
+h = 5 * 7;
+

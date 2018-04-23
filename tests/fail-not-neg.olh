@@ -1,0 +1,3 @@
+//not on non-bool
+boolean b = not "string";
+

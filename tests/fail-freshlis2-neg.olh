@@ -1,0 +1,3 @@
+//fresh list(>2 integers)
+list<list> lis = fresh list(4, 5, 6);
+

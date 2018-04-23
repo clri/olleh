@@ -1,0 +1,6 @@
+//out of scope
+function void decl():
+        int x = 4;
+end;
+print x
+;

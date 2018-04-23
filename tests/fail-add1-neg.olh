@@ -1,0 +1,2 @@
+//int + str
+print 9 + "";

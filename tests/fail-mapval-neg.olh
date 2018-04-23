@@ -1,0 +1,2 @@
+//fail-mapval-neg: map with non-integer values
+map<char> m = {'a' -> 'a'};

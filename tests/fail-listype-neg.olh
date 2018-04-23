@@ -1,0 +1,5 @@
+//list of wrong type
+list<char> l1;
+list<char> l2;
+l1 = [l2];
+

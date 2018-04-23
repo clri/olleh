@@ -1,0 +1,4 @@
+//map of improper type
+map<char> mc;
+mc = {"lkf" -> 6};
+

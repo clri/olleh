@@ -1,0 +1,5 @@
+//variable used prior to declaration
+
+x = 5;
+int x;
+
