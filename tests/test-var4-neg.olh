@@ -1,0 +1,3 @@
+//variable with disallowed char
+Player pl$ayer;
+

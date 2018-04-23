@@ -1,0 +1,3 @@
+//variable that starts with underscore
+boolean _bool = true;
+

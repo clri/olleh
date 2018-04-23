@@ -1,0 +1,3 @@
+//multiple chars within single quotes
+print 'chars';
+
