@@ -293,73 +293,47 @@ let translate (globals, functions) =
          else if t = Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder (t,e)) |]
            "printf" builder in builder
           else raise (Failure "internal error: print not (yet) implemented")
-      (* The order that we create and add the basic blocks for an If statement
-      doesnt 'really' matter (seemingly). What hooks them up in the right order
-      are the build_br functions used at the end of the then and else blocks (if
-      they don't already have a terminator) and the build_cond_br function at
-      the end, which adds jump instructions to the "then" and "else" basic blocks *)
-      | SIf (predicate, then_stmt, else_stmt) ->
+      | SIf (predicate, then_stmt, else_stmt) -> (*lifted from microC, comments removed for brevity*)
          let bool_val = expr builder predicate in
-         (* Add "merge" basic block to our function's list of blocks *)
 	 let merge_bb = L.append_block context "merge" the_function in
-         (* Partial function used to generate branch to merge block *)
          let branch_instr = L.build_br merge_bb in
 
-         (* Same for "then" basic block *)
 	 let then_bb = L.append_block context "then" the_function in
-         (* Position builder in "then" block and build the statement *)
 
          let then_builder = List.fold_left stmt (L.builder_at_end context then_bb) then_stmt in
-         (* Add a branch to the "then" block (to the merge block)
-           if a terminator doesn't already exist for the "then" block *)
 	 let () = add_terminal then_builder branch_instr in
 
-         (* Identical to stuff we did for "then" *)
 	 let else_bb = L.append_block context "else" the_function in
          let else_builder = List.fold_left stmt (L.builder_at_end context else_bb) else_stmt in
 	 let () = add_terminal else_builder branch_instr in
 
-         (* Generate initial branch instruction perform the selection of "then"
-         or "else". Note we're using the builder we had access to at the start
-         of this alternative. *)
 	 let _ = L.build_cond_br bool_val then_bb else_bb builder in
-         (* Move to the merge block for further instruction building *)
 	 L.builder_at_end context merge_bb
+     | SWhile (predicate, body) ->  (*lifted from microC, comments removed for brevity*)
+         let pred_bb = L.append_block context "while" the_function in
+         let _ = L.build_br pred_bb builder in
+
+         let body_bb = L.append_block context "while_body" the_function in
+         let while_builder = List.fold_left stmt (L.builder_at_end context body_bb) body in
+         let () = add_terminal while_builder (L.build_br pred_bb) in
+
+         let pred_builder = L.builder_at_end context pred_bb in
+         let bool_val = expr pred_builder predicate in
+
+         let merge_bb = L.append_block context "merge" the_function in
+         let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
+         L.builder_at_end context merge_bb
+     | SReturn e -> let _ = match fdecl.styp with
+                              A.Void -> L.build_ret_void builder
+                            | _ -> L.build_ret (expr builder e) builder
+                     in builder
      | SBind(t, s) ->
        let add_local m (t, n) =
         let local_var = L.build_alloca (ltype_of_typ t) n builder
         in StringMap.add n local_var m
        in let local_vars = add_local local_vars (t, s) in builder
      | _ -> raise (Failure "internal error: not (yet) implemented")
-     (*| SReturn e -> let _ = match fdecl.styp with
-                              (* Special "return nothing" instr *)
-                              A.Void -> L.build_ret_void builder
-                              (* Build return statement *)
-                            | _ -> L.build_ret (expr builder e) builder
-                     in builder
-      | SWhile (predicate, body) ->
-          (* First create basic block for condition instructions -- this will
-          serve as destination in the case of a loop *)
-	  let pred_bb = L.append_block context "while" the_function in
-          (* In current block, branch to predicate to execute the condition *)
-	  let _ = L.build_br pred_bb builder in
-
-          (* Create the body's block, generate the code for it, and add a branch
-          back to the predicate block (we always jump back at the end of a while
-          loop's body, unless we returned or something) *)
-	  let body_bb = L.append_block context "while_body" the_function in
-          let while_builder = stmt (L.builder_at_end context body_bb) body in
-	  let () = add_terminal while_builder (L.build_br pred_bb) in
-
-          (* Generate the predicate code in the predicate block *)
-	  let pred_builder = L.builder_at_end context pred_bb in
-	  let bool_val = expr pred_builder predicate in
-
-          (* Hook everything up *)
-	  let merge_bb = L.append_block context "merge" the_function in
-	  let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
-	  L.builder_at_end context merge_bb
-
+     (*
       (* Implement for loops as while loops! *)
       | SFor (e1, e2, e3, body) -> stmt builder
 	    ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )

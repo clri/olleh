@@ -19,6 +19,7 @@ Legitimate Test Suite
 -build .out/.err files
 -remove extraneous tests
 -is it "not" or "!"
+-test if/while with multiple statements in body
 
 LRM
 -variable scope (clarify)
@@ -29,6 +30,8 @@ LRM
 
 BUILTINS (ostdlib.c)
 -rename file?
+-print map and listlist
+-charmap, stringmap, and player structs
 -implement constants (dictionary and letterScore)
 -anagram()
 -readDict()
@@ -40,7 +43,6 @@ BUILTINS (ostdlib.c)
 -Initialize_dictionary()
 -list.getLength() for chars and lists
 -subStrings()
--once everything has been tested, remove commented-out test code
 
 
 Standard Library (.olh)
@@ -51,23 +53,18 @@ Compiler (codegen.ml)
 -Attempting to access a key not in the map will result in an index-out-of-bounds error.
 -add builtin constants (dictionary)
 -add structs and other builtin types
--printing maps
--global variables
+-printing maps and listlists
 -variable scope
 -garbage collection for string return values
--SVmember (members of objects)
+-SVmember (members of objects: change them from calls to getsetters, maybe even in parser/semant)
 -SLiteralm (literal maps)
 -SAssignm (member assigning)
--SAssign (variable assigning)
--SBinop for booleans (if needed?)
 -SNewobj/SNewtobj (allocating space for new objects)
--SCallm (calling a function on an object)
+-SNewlis of listlist
 -SFor
--SReturn
--SIf
 -SForeach
 -SBind (variable creation)
--build_ret for all return types
+-add_terminal for all return types
 
 
 
