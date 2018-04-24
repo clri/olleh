@@ -151,7 +151,12 @@ let translate (globals, functions) =
                 | _ -> raise (Failure "Error: should have been caught at semant")*)
     in
 
-    let sentinel = Int32.to_int (Int32.div Int32.max_int (Int32.of_int 2)) in
+    let rec inddex (lis: Sast.sexpr list) (i: int) = (*get list elem by index*)
+        match lis with elm :: rest ->
+                if i = 0 then elm
+                else (inddex (rest) (i - 1))
+        | _ -> raise (Failure "Index out of bounds")
+    in
 
     (* Construct code for an expression; return its value *)
     let rec expr builder ((gtype, e) : sexpr) = match e with
@@ -225,8 +230,19 @@ let translate (globals, functions) =
           | A.Not                  -> L.build_not) e' "tmp" builder
       | SNewtobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT: fresh map*)
       | SNewobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMEN: fresh player*)
-      | SNewlis _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT: fresh list*)
-      (*| SCall("nameOfBuiltin") ...: implement for our builtins*)
+      | SNewlis l ->
+           if gtype = A.Charlist then  (*1 dimension*)
+             let e' = expr builder (inddex l 0)
+             in let e'' = L.build_add e' (L.const_int i32_t 1) "tmp" builder
+             in let y = L.build_array_malloc i8_t e'' "a1" builder
+             in let x = L.build_pointercast y (L.pointer_type i8_t) "a2" builder
+             in let addtoar index elem =
+               let xx = L.build_gep x [| index |] "a3" builder
+               in ignore (L.build_store elem xx builder)
+             in let _ = addtoar (e'') (L.const_int i8_t 0) (*sentinel*)
+             in x
+           else L.const_int i32_t 0 (*@TODO: Listlist*)
+      (*| SCall("nameOfBuiltin") ...: @TODO implement for our builtins*)
       | SCall ("InitializeRandom",[]) ->
          L.build_call randi_func [| |]
          "" builder
@@ -237,8 +253,8 @@ let translate (globals, functions) =
                         A.Void -> ""
                       | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
-      | SCallm (_, f, args) -> (*@TODO: IMPLEMENT *)
-            let (fdef, fdecl) = StringMap.find f function_decls in
+      | SCallm (t, f, args) ->
+            let (fdef, fdecl) = StringMap.find (t ^ f) function_decls in
         let llargs = List.rev (List.map (expr builder) (List.rev args)) in
         let result = (match fdecl.styp with
                            A.Void -> ""
