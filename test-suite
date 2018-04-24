@@ -3,75 +3,15 @@ TODO - TESTING
 Positive
 using null (what/how?)
 
-Scanner - negative
-multiple chars within single quotes
-trailing open comment
-trailing open double quote
-variable that starts with a number
-variable that starts with an underscore
-variable that starts with an uppercase leter
-variable with disallowed characters (-, %, etc)
-
-
-Parser - negative
-use reserved keywords as variables (if, end, etc)
-Map x;/List x;
-incorrect fresh player syntax
-incorrect map syntax
-intcorrect list syntax
-prefix notation (+ 9 8)
-no ending semicolon
-expr not expr
-expr neg expr
-binop as unop (x = %3 eg)
-fresh on something that isn't supposed to be fresh
-emtpy if()
-empty for()
-improper foreach
-empty body of for
-empty body of foreach
-empty body of if
-
+Parser - negatve
+empty body of for?
+empty body of foreach?
+empty body of if?
 
 Semant - negative
-Print Player
-3d list
-list of stuff that is not a char or list
-list of mixed chars and lists
-map with non-integer values
-map with key that is not a char or str
-map with mixed char/str keys
-and/or/not for non-bool exprs
-</>/==/<=/>= for non-int/char
-mult/div/mod for non-int
-plus for not: 2 ints, 2 strs, str(s) + int(s)
-misuse of variables
--prior to declaration
--improper types (char as int, bool as string, etc)
--improper types (charmap/strmap, charlist/listlist)
--out of scope
--redefinition of a global in formals
--redefinition of a global in locals
--void type variable
-function returning the wrong type
-calling a function with wrong params
-calling a function that has not been declared
-fresh list(non-integer)
-fresh list(>2 integers)
-fresh list()
-fresh player (additional field)
-fresh player (same field twice)
-assign the result of a void function
-negative (noninteger)
-assignment in params of function call
-assignment in params of var.function call
-assignment in list
-assignment in new player
-map assignment of non-player type (charmap, bool)
-print void
-foreach on sth that's not a list or map
+== for non-int/char/bool? What can be equals
 return that's not the last statement (?)
-
+map with same key twice? how to detect and avoid?
 
 Codegen - negative
 n/a for now
@@ -114,7 +54,61 @@ use function to manipluate a global variable (test-func-pos)
 Written (negative)
 plus (str, bool) (fail-print-neg)
 minus (strs) (fail-subtract-neg)
-
+Print Player (fail-printplayer-neg)
+3d list (fail-listlistlist-neg)
+list of stuff that is not a char or list (fail-intlist-neg, fail-intlist2-neg)
+list of mixed chars and lists (fail-list-neg)
+map with non-integer values (fail-mapval-neg)
+map with key that is not a char or str (fail-mapkey-neg)
+map with mixed char/str keys (fail-mixmap-neg)
+and/or/not for non-bool exprs (fail-and-neg, fail-or-neg, fail-not-neg)
+</>/==/<=/>= for mixed int/char (fail-mixcmp-neg)
+<= comparison for non-int/char (fail-cmp-neg)
+mult/div/mod for non-int (fail-mult-neg, fail-div-neg, fail-mod-neg)
+plus for not: 2 ints, 2 strs, str(s) + int(s) (fail-add1-neg, fail-add2-neg, fail-add3-neg)
+misuse of variables
+-prior to declaration (fail-prior-neg)
+-improper types (fail-vartype-neg)
+-improper types (charmap/strmap, charlist/listlist) (fail-maptype-neg, fail-listype-neg)
+-out of scope (fail-scope-neg)
+-redefinition of a global in formals (fail-glofo-neg)
+-redefinition of a global in locals (fail-glolo-neg)
+-redefinition of formal in locals (fail-folo-neg)
+-void type variable (fail-voidvar-neg)
+function returning the wrong type (fail-ret-neg)
+calling a function with wrong params (fail-paramnum-neg, fail-paramtype-neg)
+calling a function that has not been declared (fail-undef-neg)
+fresh list(non-integer) (fail-freshlis1-neg)
+fresh list(>2 integers) (fail-freshlis2-neg)
+fresh list() (fail-freshlis3-neg)
+fresh player (additional field) (fail-freshpla1-neg)
+fresh player (same field twice) (fail-freshpla2-neg)
+do something with the result of a void function (fail-voidas-neg)
+negative (noninteger) (fail-nega-neg)
+assignment in params of function call (fail-asparams-neg)
+assignment in params of var.function call (fail-asparams2-neg)
+assignment in list (fail-aslist-neg)
+assignment in new player (fail-aspla-neg)
+print void (fail-voidas-neg)
+foreach on sth that's not a list or map (fail-foreach-neg)
+multiple chars within single quotes (fail-chars-neg)
+trailing open comment (fail-comment-neg)
+trailing open double quote (fail-quote-neg)
+variable that starts with a number (fail-var1-neg)
+variable that starts with an underscore (fail-var2-neg)
+variable that starts with an uppercase leter (fail-var3-neg)
+variable with disallowed character (fail-var4-neg)
+use reserved keywords as variables (fail-var5-neg)
+Map x;/List x; (fail-gmap-neg, fail-glist-neg)
+incorrect fresh player syntax (fail-fpla-neg)
+incorrect map syntax (fail-smap-neg)
+incorrect list syntax (fail-slist-neg)
+prefix notation (+ 9 8) (fail-prefix-neg)
+no ending semicolon (fail-semi-neg)
+expr not expr (fail-not2-neg)
+binop as unop (x = %3 eg) (fail-unop-neg)
+emtpy if() (fail-eif-neg)
+empty for() (fail-efor-neg)
 
 Passing (positive)
 // comment (test-assign-pos)

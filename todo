@@ -10,6 +10,7 @@ Builtins
 Semantic Checker
 -newobj (charmap, stringmap, charlist, listlist)
 -scope of freach variables
+-what is allowed to be equality
 -refactor if there's time
 -add back in the dictionary stuff
 
@@ -17,16 +18,18 @@ Legitimate Test Suite
 -build testing for all functionality
 -build .out/.err files
 -remove extraneous tests
+-is it "not" or "!"
 
 LRM
 -variable scope (clarify)
 -when you are not allowed to assign variables
--limits on string literals (can they have newlines? test the functionality)
+-limits on string literals (can they have newlines? test the functionality), escaped quote char
 -getsetters
+-equality of reference
 
 BUILTINS (ostdlib.c)
 -rename file?
--implement constants (dictionary and letterScores)
+-implement constants (dictionary and letterScore)
 -anagram()
 -readDict()
 -map.destroy() -> "Mapdestroy"
@@ -42,7 +45,7 @@ BUILTINS (ostdlib.c)
 
 Standard Library (.olh)
 -Write standard library functions
--Hook them into code we write via the compiler (how?)
+-Hook them into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
 
 Compiler (codegen.ml)
 -Attempting to access a key not in the map will result in an index-out-of-bounds error.

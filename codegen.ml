@@ -32,21 +32,23 @@ let translate (globals, functions) =
       A.Int   -> i32_t
     | A.Bool  -> i1_t
     | A.Char  -> i8_t
-    | A.String -> (*L.pointer_type*) i8_t (*???*)
+    | A.String -> (*L.pointer_type*) i8_t (*@TODO: change???*)
     | A.Void  -> void_t
     | A.Stringmap -> map_ptr_t
-    | A.Charmap -> map_ptr_t
+    | A.Charmap -> map_ptr_t (*@TODO: possibly switch to separate struct*)
     | A.Player -> player_t
     | A.Charlist -> string_pointer (* @TODO adapt for 2D *)
     | _ -> void_t (*temp; @TODO: add for structs*)
   in
 
   (* Declare each global variable; remember its value in a map *)
-
   let global_vars : L.llvalue StringMap.t =
     let global_var m (t, n) =
       let init = match t with
-          _ -> L.const_int (ltype_of_typ t) 0 (*@TODO: IMPLEMENT*)
+            A.Int -> L.const_int (ltype_of_typ t) 0
+          | A.Bool -> L.const_int (ltype_of_typ t) 0
+          | A.Char -> L.const_int (ltype_of_typ t) 0
+          | _ -> L.const_null (ltype_of_typ t)
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
 
@@ -137,6 +139,17 @@ let translate (globals, functions) =
     let lookup n = try StringMap.find n local_vars
                    with Not_found -> StringMap.find n global_vars
     in
+    let lookupmem v m = (*let t =*) try StringMap.find v local_vars
+        with Not_found -> StringMap.find v global_vars
+        (*@TODO: get pointer to member of Player properly
+           in match t with
+                A.Player -> if m = "letters" then (ptr to v.letters) else
+                  if m = "turn" then (ptr to v.turn) else
+                  if m = "guessedWords" then (ptr to v.guessedWords) else
+                  if m = "score" then (ptr to v.guessedWords) else
+                  raise (Failure "Error: should have been caught at semant")
+                | _ -> raise (Failure "Error: should have been caught at semant")*)
+    in
 
     let sentinel = Int32.to_int (Int32.div Int32.max_int (Int32.of_int 2)) in
 
@@ -149,7 +162,7 @@ let translate (globals, functions) =
       | SNoexpr -> L.const_int i32_t 0
       | Null -> L.const_int i32_t 0
       | SVariable s -> L.build_load (lookup s) s builder
-      | SVmember (v, _) -> L.build_load (lookup v) v builder (*@TODO: IMPLEMENT*)
+      | SVmember (v, m) -> L.build_load (lookupmem v m) v builder (*@TODO: "v builder" should probably be something else*)
       | SLiterall l ->
          let l' = List.map (expr builder) l in
          let len = (List.length l) + 1 in
@@ -166,9 +179,9 @@ let translate (globals, functions) =
          else raise (Failure "build error")
       | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SAssignm (s, _, e) -> let e' = expr builder e in
-                          let _  = L.build_store e' (lookup s) builder in e' (*@TODO: IMPLEMENT/UNDERSTAND*)
+                          let _  = L.build_store e' (lookup s) builder in e' (*@TODO: CALL SETTER FUNCTION*)
       | SAssign (s, e) -> let e' = expr builder e in
-                          let _  = L.build_store e' (lookup s) builder in e' (*@TODO: IMPLEMENT/UNDERSTAND*)
+                          let _  = L.build_store e' (lookup s) builder in e'
       | SBinop (e1, op, e2) ->
 	  let (t, _) = e1 and (tt, _) = e2
 	  and e1' = expr builder e1
@@ -178,8 +191,6 @@ let translate (globals, functions) =
 	  | A.Sub     -> L.build_sub
 	  | A.Mult    -> L.build_mul
           | A.Div     -> L.build_sdiv
-	  | A.And     -> L.build_and
-	  | A.Or      -> L.build_or
           | A.Mod     -> L.build_urem
 	  | A.Equal   -> L.build_icmp L.Icmp.Eq
 	  | A.Neq     -> L.build_icmp L.Icmp.Ne
@@ -187,6 +198,7 @@ let translate (globals, functions) =
 	  | A.Leq     -> L.build_icmp L.Icmp.Sle
 	  | A.Greater -> L.build_icmp L.Icmp.Sgt
 	  | A.Geq     -> L.build_icmp L.Icmp.Sge
+          | _ -> raise (Failure "semantic error in codegen")
 	      ) e1' e2' "tmp" builder
           else if t = A.String then
             if op = A.Add then
@@ -198,19 +210,23 @@ let translate (globals, functions) =
             let result = "strcat_result" in
               L.build_call strcati_func [| e1'; e2' |]
               result builder
-          else raise (Failure "internal error: not binop for string")
-          else raise (Failure "internal error: binop for non int not (yet) implemented")
-          (*@TODO: IMPLEMENT FURTHER*)
+          else raise (Failure "internal error: not binop for string, should not have passed semantic")
+          else if t = A.Bool then
+            if op = A.And then L.build_and e1' e2' "tmp" builder
+  	    else L.build_or e1' e2' "tmp" builder
+          else if t = A.Char then
+            L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
+          else raise (Failure "internal error: binop not implemented")
       | SUnop(op, e) ->
 	  let _ = e in
           let e' = expr builder e in
 	  (match op with
             A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
+      | SNewtobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT: fresh map*)
+      | SNewobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMEN: fresh player*)
+      | SNewlis _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT: fresh list*)
       (*| SCall("nameOfBuiltin") ...: implement for our builtins*)
-      | SNewtobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
-      | SNewobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
-      | SNewlis _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
       | SCall ("InitializeRandom",[]) ->
          L.build_call randi_func [| |]
          "" builder
