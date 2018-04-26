@@ -2,11 +2,13 @@ TODO - TESTING
 
 Positive
 using null (what/how?)
+getsetters
 
 Parser - negatve
 empty body of for?
 empty body of foreach?
 empty body of if?
+if w/o parens
 
 Semant - negative
 == for non-int/char/bool? What can be equals

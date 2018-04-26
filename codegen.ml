@@ -253,7 +253,7 @@ let translate (globals, functions) =
                         A.Void -> ""
                       | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
-      | SCallm (t, f, args) ->
+      | SCallm (t, f, args) -> (*@TODO: fix this*)
             let (fdef, fdecl) = StringMap.find (t ^ f) function_decls in
         let llargs = List.rev (List.map (expr builder) (List.rev args)) in
         let result = (match fdecl.styp with
@@ -332,12 +332,42 @@ let translate (globals, functions) =
         let local_var = L.build_alloca (ltype_of_typ t) n builder
         in StringMap.add n local_var m
        in let local_vars = add_local local_vars (t, s) in builder
-     | _ -> raise (Failure "internal error: not (yet) implemented")
-     (*
-      (* Implement for loops as while loops! *)
-      | SFor (e1, e2, e3, body) -> stmt builder
-	    ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )
-            @TODO: IMPLEMENT ALL OF THIS COMMENT BLOCK*)
+     | SFor (e, body) ->
+       (*build temporary counter variable in order to implement for as while*)
+       let rec counterbind s =
+         try let _ = StringMap.find s local_vars in s
+         with Not_found -> counterbind (s ^ (String.sub s 0 1))
+       in let varname = counterbind "_"
+       in let _ = stmt builder (SBind(A.Int, varname))
+       in let _ = expr builder (A.Int, SAssign(varname, (A.Int, SLiterali(0))))
+       in let sx' = SBinop((A.Int, SVariable(varname)), A.Less, e)
+       in let body' = body @
+         [SExpr(A.Int,
+                SAssign(varname,
+                       (A.Int, SBinop((A.Int, SVariable(varname)),
+                                       A.Add,
+                                       (A.Int, SLiterali(1))
+                                      )
+                       ))
+               )] in
+        let _ = stmt builder (SWhile((A.Int, sx'), body')) in builder
+     | SForeach(v, (t, s), body) ->
+        let type_of_s tr = match tr with A.Listlist -> A.Charlist | A.Charlist -> A.Char
+          | A.Charmap -> A.Char | A.Stringmap -> A.String | _ -> raise (Failure "Fatal error: Foreach")
+        in let tos = type_of_s t (*the type of v*)
+        in let _ = stmt builder (SBind(tos, v)) (*build space for your temp var*)
+        in let rec counterbind s =
+          try let _ = StringMap.find s local_vars in s
+          with Not_found -> counterbind (s ^ (String.sub s 0 1))
+        in let varname = counterbind "_"
+        in let _ = stmt builder (SBind(A.Int, varname))
+        in let get_fun = if t = A.Listlist || t = A.Charlist then "Get" else "Geti"
+        in let iterer = SExpr(tos, SAssign(v, (tos, SCallm(""(*t*), get_fun, [] (*@TODO: ???*))))) (*do a get*)
+        in let while_cond = SBinop((A.Int, SVariable(varname)), A.Less,
+                                   (A.Int, SCall("Getlength", []))) (*@TODO: fix call, turn to SCallm when that is fixed*)
+        in let body' = iterer :: body
+        in let _ = stmt builder (SWhile((A.Int, while_cond), body'))
+        in builder
     in
 
     (* Build the code for each statement in the function *)

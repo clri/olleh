@@ -21,7 +21,7 @@ and sx =
   | SNewobj of (sexpr * sexpr) list
   | SNewlis of sexpr list
   | SCall of string * sexpr list
-  | SCallm of string * string * sexpr list
+  | SCallm of string (*sexpr*) * string * sexpr list
   | SNoexpr
 
 

@@ -4,13 +4,17 @@ Once item is done/tested, remove it from the list
 
 Builtins
 -getsetters possibly? add to semant, codegen, ostdlib if necessary
+-mapget vs mapgeti
 -exit in codegen (sexit->build call to exit)
 
+Scanner/parser
+-callm: expr dot variable NOT variable dot variable for gets, members, etc
+-getsetters
 
 Semantic Checker
 -newobj (charmap, stringmap, charlist, listlist)
--scope of freach variables
--what is allowed to be equality
+-scope of foreach variables
+-what is allowed to be equality (int, bool, string)
 -refactor if there's time
 -add back in the dictionary stuff
 
@@ -29,6 +33,7 @@ LRM
 -equality of reference
 
 BUILTINS (ostdlib.c)
+-change listToString to L...
 -rename file?
 -print map and listlist
 -charmap, stringmap, and player structs

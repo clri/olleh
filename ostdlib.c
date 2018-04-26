@@ -6,7 +6,7 @@
 //dictionary, letterScores, and seeds--must they exist here as constants as
 //well or shall we pass them in fron codegen.ml?
 
-
+//concat two strings
 char *SConcat(char *a, char *b) {
         char *ans;
         int n = strlen(a) + strlen(b) + 1;
@@ -18,8 +18,7 @@ char *SConcat(char *a, char *b) {
         return ans;
 }
 
-//helper functions
-
+//helper function for converting int to string
 int GetElemSpace(int e) {
         int ans = 9;
         int powers[] = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
@@ -28,6 +27,8 @@ int GetElemSpace(int e) {
                 ans--;
         return ans;
 }
+
+//int to string
 char *IntToS(int e) {
         char *ans;
         int s = GetElemSpace(e) + 2;
@@ -37,26 +38,7 @@ char *IntToS(int e) {
         return ans;
 }
 
-
-int MAXINT = 1073741823;
-
-int GetLengthOfIList(int lis[]) {
-        int i = 0;
-        while (lis[i] != MAXINT) i++;
-        return i;
-}
-
-//print a list of ints
-void ListOfIntsToString(int lis[]) {
-        int i;
-        printf("[");
-        int n = GetLengthOfIList(lis);
-        for (i = 0; i < n - 1; i++)
-                printf("%d, ", lis[i]);
-        printf("%d]\n", lis[i]);
-
-}
-
+//print charlist
 void PrintCharLis(char *lis) {
         int i;
         printf("[");
@@ -66,6 +48,8 @@ void PrintCharLis(char *lis) {
         printf("%c]\n", lis[i]);
 }
 
+//list to string: doesn't really do much, but
+//olleh pretends there is a difference
 char *listToString(char *lis) {
         return lis;
 }
@@ -128,6 +112,11 @@ int readDict(char* filename); //bool return val, may take additional param for d
 //int map.getLength(void) how to implement?
 //map<String> subStrings(String w) how to implement?
 
+//getsetters
+//Listlist.get(int): char* ListlistGet(int)
+//Charlist.get(int): char CharlistGet(int)
+//Charmap.get(char): int CharmapGet(char)
+//Charmap.geti(char): int CharmapGeti(char) //aka how to iterate through a linked list
 
 
 
