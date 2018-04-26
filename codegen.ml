@@ -32,7 +32,7 @@ let translate (globals, functions) =
       A.Int   -> i32_t
     | A.Bool  -> i1_t
     | A.Char  -> i8_t
-    | A.String -> string_pointer (*@TODO: change???*)
+    | A.String -> string_pointer
     | A.Void  -> void_t
     | A.Stringmap -> map_ptr_t
     | A.Charmap -> map_ptr_t (*@TODO: possibly switch to separate struct*)
@@ -134,7 +134,12 @@ let translate (globals, functions) =
 
       let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
           (Array.to_list (L.params the_function)) in
-      List.fold_left add_local formals [] (*@TODO: ADD LATERfdecl.slocals*)
+      let rec onlybind lis = match lis with
+          [] -> []
+        | SBind(x, y) :: es -> (x, y) :: (onlybind es)
+        | _ :: es -> onlybind es
+      in let localds = onlybind fdecl.sbody in
+      List.fold_left add_local formals localds (*@TODO: ADD LATERfdecl.slocals*)
     in
 
     (* Return the value for a variable or formal argument. First check

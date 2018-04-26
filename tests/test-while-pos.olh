@@ -1,0 +1,9 @@
+//a while loop
+
+boolean b = true;
+while (b):
+	b = false;
+end;
+
+//@TODO: add other tests
+

@@ -1,16 +1,16 @@
 TODO - TESTING
 
 ERRORS
-test-func-pos (not_found: due to local variables in codegen)
-fail-add2-neg (passes--@TODO add this to lang features)
+test-func-pos (utilizes for looop that is currently commented out)
 fail-aslist-neg (passes and it absolutely shouldn't, NO ASSIGNMENTs  IN LIST LITERALS)
-fail-glolo-neg (passes and it shouldn't because of variable scope)
-
+fail-glolo-neg (passes semant and it shouldn't because of variable scope)
+test-for-pos (hangs for some reason even though a while loop does not)
 
 
 Positive
 using null (what/how?)
 getsetters
+
 
 Parser - negatve
 function in a function
@@ -61,6 +61,7 @@ create function (no args, args, void, real return type) (test-func-pos)
 call function (no args, args, void, real return type) (test-func-pos)
 use the result of a function in statement (test-func-pos)
 use function to manipluate a global variable (test-func-pos)
+test while loops (test-while-pos)
 
 Written (negative)
 plus (str, bool) (fail-print-neg)

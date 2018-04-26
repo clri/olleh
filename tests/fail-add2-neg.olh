@@ -1,3 +1,0 @@
-//str + int + str
-print "5" + 9 + "";
-

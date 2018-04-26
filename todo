@@ -34,6 +34,7 @@ LRM
 -equality of reference
 -exit as a reserved keyword
 -what is exactly allowed to have a binop and which binop
+-add to lang features that str + int + str = str
 
 BUILTINS (ostdlib.c)
 -change listToString to L...
@@ -47,7 +48,7 @@ BUILTINS (ostdlib.c)
 -map.contains()
 -map.getLength()
 -map.get()
--list.get()
+-map.geti()
 -Initialize_dictionary()
 -list.getLength() for chars and lists
 -subStrings()
@@ -68,7 +69,7 @@ Compiler (codegen.ml)
 -SLiteralm (literal maps)
 -SAssignm (member assigning)
 -SNewobj/SNewtobj (allocating space for new objects)
--SNewlis of listlist
+-SNewlis of listlist (and SLiterall for lists of lists)
 -SFor
 -SForeach
 -SBind (variable creation)

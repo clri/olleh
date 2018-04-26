@@ -21,11 +21,11 @@ print intArgFun(x);
 
 function String stringFun(int a1, int a2):
         String ans = "";
-        for (a1):
+        /*for (a1):
                 for (a2):
                         ans = ans + ".";
                 end;
-        end;
+        end;*/
         return ans;
 end;
 print stringFun(1,3);
