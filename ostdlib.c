@@ -113,11 +113,19 @@ int readDict(char* filename); //bool return val, may take additional param for d
 //map<String> subStrings(String w) how to implement?
 
 //getsetters
-//Listlist.get(int): char* ListlistGet(int)
-//Charlist.get(int): char CharlistGet(int)
-//Charmap.get(char): int CharmapGet(char)
-//Charmap.geti(char): int CharmapGeti(char) //aka how to iterate through a linked list
+//Listlist.get(int):
+char* ListlistGet(char **lis, int i) {
+        return lis[i];
+}
 
+//Charlist.get(int):
+char CharlistGet(char *lis, int i) {
+        return lis[i];
+}
+
+//Charmap.get(char): int CharmapGet(char);
+//Charmap.geti(char): int CharmapGeti(char); //aka how to iterate through a linked list
+//same for stringmap
 
 
 /*TEST ONLY: REMOVE FOR FINAL DELIVERABLE

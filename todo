@@ -31,6 +31,7 @@ LRM
 -limits on string literals (can they have newlines? test the functionality), escaped quote char
 -getsetters
 -equality of reference
+-exit as a reserved keyword
 
 BUILTINS (ostdlib.c)
 -change listToString to L...

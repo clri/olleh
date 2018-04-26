@@ -67,6 +67,10 @@ let translate (globals, functions) =
       L.function_type (L.pointer_type i8_t) [| i32_t |] in
   let intToString_func : L.llvalue =
      L.declare_function "IntToS" strint_t the_module in
+  let voidint_t : L.lltype =
+     L.function_type void_t [| i32_t |] in
+  let exit_func : L.llvalue =
+     L.declare_function "exit" strint_t the_module in
 
   (*builtins: random*)
   (*let intvoid_t : L.lltype =
@@ -165,9 +169,9 @@ let translate (globals, functions) =
       | SLiteralb b -> L.const_int i1_t (if b then 1 else 0)
       | SLiterals s -> L.build_global_stringptr s "" builder
       | SNoexpr -> L.const_int i32_t 0
-      | Null -> L.const_int i32_t 0
+      | Null -> L.const_int i32_t 0 (*@TODO: null pointer*)
       | SVariable s -> L.build_load (lookup s) s builder
-      | SVmember (v, m) -> L.build_load (lookupmem v m) v builder (*@TODO: "v builder" should probably be something else*)
+      | SVmember (v, m) -> L.build_load (lookupmem v m) v builder (*@TODO: change to gep or getter*)
       | SLiterall l ->
          let l' = List.map (expr builder) l in
          let len = (List.length l) + 1 in
@@ -242,7 +246,8 @@ let translate (globals, functions) =
              in let _ = addtoar (e'') (L.const_int i8_t 0) (*sentinel*)
              in x
            else L.const_int i32_t 0 (*@TODO: Listlist*)
-      (*| SCall("nameOfBuiltin") ...: @TODO implement for our builtins*)
+      (*| SCall("nameOfBuiltin") ...: @TODO implement for our builtins
+       for a listget it should be a gep and not a function call*)
       | SCall ("InitializeRandom",[]) ->
          L.build_call randi_func [| |]
          "" builder
@@ -253,13 +258,6 @@ let translate (globals, functions) =
                         A.Void -> ""
                       | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
-      | SCallm (t, f, args) -> (*@TODO: fix this*)
-            let (fdef, fdecl) = StringMap.find (t ^ f) function_decls in
-        let llargs = List.rev (List.map (expr builder) (List.rev args)) in
-        let result = (match fdecl.styp with
-                           A.Void -> ""
-                         | _ -> f ^ "_result") in
-            L.build_call fdef (Array.of_list llargs) result builder
     in
 
     (* Each basic block in a program ends with a "terminator" instruction i.e.
@@ -361,13 +359,18 @@ let translate (globals, functions) =
           with Not_found -> counterbind (s ^ (String.sub s 0 1))
         in let varname = counterbind "_"
         in let _ = stmt builder (SBind(A.Int, varname))
-        in let get_fun = if t = A.Listlist || t = A.Charlist then "Get" else "Geti"
-        in let iterer = SExpr(tos, SAssign(v, (tos, SCallm(""(*t*), get_fun, [] (*@TODO: ???*))))) (*do a get*)
+        in let get_fun = if t = A.Listlist || t = A.Charlist
+          then (A.string_of_typ t) ^ "Get"
+          else (A.string_of_typ t) ^ "Geti"
+        in let iterer = SExpr(tos, SAssign(v, (tos, SCall(get_fun, [] (*@TODO: ???*))))) (*do a get*)
         in let while_cond = SBinop((A.Int, SVariable(varname)), A.Less,
                                    (A.Int, SCall("Getlength", []))) (*@TODO: fix call, turn to SCallm when that is fixed*)
         in let body' = iterer :: body
         in let _ = stmt builder (SWhile((A.Int, while_cond), body'))
         in builder
+    | SExit i ->
+        let _ = (L.build_call exit_func [| L.const_int i32_t i |]
+        "" builder) in builder
     in
 
     (* Build the code for each statement in the function *)
