@@ -4,7 +4,7 @@ int i = 2 + 1;
 int j = 3 - 4;
 print j; //-1
 
-print i - k;
+print i - j;
 
 print 54 % 17; //3
 print i * j;

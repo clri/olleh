@@ -4,5 +4,5 @@ Player player = fresh Player{};
 player.set(turn, true);
 print player.turn;
 
-player fresh Player{turn: true, letters: ['a','b']};
+player = fresh Player{turn -> true, letters -> ['a','b']};
 print player.letters;

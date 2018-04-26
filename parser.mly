@@ -83,7 +83,7 @@ typr:
 
 obj:
     MAPV LESS CHARV GREATER { Charmap }
-  | STRINGV LESS CHARV GREATER { Stringmap }
+  | MAPV LESS STRINGV GREATER { Stringmap }
   | PLAYER  { Player }
 
 
@@ -179,8 +179,8 @@ expr:
   | FRESH MAPV OPAREN STRINGV CPAREN { Newtobj( Stringmap )        }
   | FRESH MAPV OPAREN CHARV CPAREN { Newtobj( Charmap )        }
   | FRESH PLAYER OCURLY maplis CCURLY   { Newobj( Player, $4 )    }
-  | FRESH LISTV OPAREN expr CCURLY { Newlis(Charlist, ($4 :: [])) }
-  | FRESH LISTV OPAREN expr COMMA expr CCURLY { Newlis(Listlist, ($4 :: ($6 :: []))) }
+  | FRESH LISTV OPAREN expr CPAREN { Newlis(Charlist, ($4 :: [])) }
+  | FRESH LISTV OPAREN expr COMMA expr CPAREN { Newlis(Listlist, ($4 :: ($6 :: []))) }
   | OPAREN expr CPAREN { $2                                }
 
 

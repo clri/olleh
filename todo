@@ -10,6 +10,7 @@ Builtins
 Scanner/parser
 -callm: expr dot variable NOT variable dot variable for gets, members, etc
 -getsetters
+-ast: string_of_expr for List<char> -> Charlist etc
 
 Semantic Checker
 -newobj (charmap, stringmap, charlist, listlist)
@@ -32,6 +33,7 @@ LRM
 -getsetters
 -equality of reference
 -exit as a reserved keyword
+-what is exactly allowed to have a binop and which binop
 
 BUILTINS (ostdlib.c)
 -change listToString to L...

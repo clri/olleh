@@ -17,27 +17,27 @@ end;
 
 boolean b2 = false;
 
-if (b and b2):
-        print "true and false is true??!!";
+if (b && b2):
+        print "true && false is true?!!";
 end;
-if (b or b2):
-        print "true or false is true!";
+if (b || b2):
+        print "true || false is true!";
 end;
-if (b and b):
-        print "true and true is true!";
+if (b && b):
+        print "true && true is true!";
 end;
-if (b or b):
-        print "true or true is true!";
+if (b || b):
+        print "true || true is true!";
 end;
-if (b2 and b2):
-        print "false and false is true!??";
+if (b2 && b2):
+        print "false && false is true!?";
 end;
-if (b2 or b2):
-        print "false or false is true!??";
+if (b2 || b2):
+        print "false || false is true!?";
 end;
-if (not b):
+if (! b):
         print "not true is true?!";
 end;
-if (not b2):
+if (! b2):
         print "not false is true!";
 end;

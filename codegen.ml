@@ -32,7 +32,7 @@ let translate (globals, functions) =
       A.Int   -> i32_t
     | A.Bool  -> i1_t
     | A.Char  -> i8_t
-    | A.String -> (*L.pointer_type*) i8_t (*@TODO: change???*)
+    | A.String -> string_pointer (*@TODO: change???*)
     | A.Void  -> void_t
     | A.Stringmap -> map_ptr_t
     | A.Charmap -> map_ptr_t (*@TODO: possibly switch to separate struct*)

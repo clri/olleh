@@ -1,10 +1,19 @@
 TODO - TESTING
 
+ERRORS
+test-func-pos (not_found: due to local variables in codegen)
+fail-add2-neg (passes--@TODO add this to lang features)
+fail-aslist-neg (passes and it absolutely shouldn't, NO ASSIGNMENTs  IN LIST LITERALS)
+fail-glolo-neg (passes and it shouldn't because of variable scope)
+
+
+
 Positive
 using null (what/how?)
 getsetters
 
 Parser - negatve
+function in a function
 empty body of for?
 empty body of foreach?
 empty body of if?

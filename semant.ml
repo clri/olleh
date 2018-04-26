@@ -217,9 +217,9 @@ let check (*functions*) (globals, functions) =
             Add | Sub | Mult | Div | Mod when same && t1 = Int   -> Int
           | Add when same && t1 = String -> String
           | Add when t1 = String && t2 = Int -> String
-          | Equal | Neq            when same               -> Bool
+          | Equal | Neq when same && (t1 = Int || t1 = Char || t1 = Bool)  -> Bool
           | Less | Leq | Greater | Geq
-                     when same && (t1 = Int) -> Bool
+                     when same && (t1 = Int || t1 = Char) -> Bool
           | And | Or when same && t1 = Bool -> Bool
           | _ -> raise (
 	      Failure ("illegal binary operator " ^

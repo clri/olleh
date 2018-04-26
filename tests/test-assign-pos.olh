@@ -15,5 +15,5 @@ print c;
 boolean b = false;
 print b;
 
-string s = "string";
+String s = "string";
 print s;

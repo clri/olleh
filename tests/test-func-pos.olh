@@ -19,7 +19,6 @@ function int intArgFun(int input):
 end;
 print intArgFun(x);
 
-
 function String stringFun(int a1, int a2):
         String ans = "";
         for (a1):
