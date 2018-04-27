@@ -3,8 +3,8 @@ Once item is done/tested, remove it from the list
 
 
 Builtins
--getsetters possibly? add to semant, codegen, ostdlib if necessary
--mapget vs mapgeti
+-getsetters for map (at least implemenet stub functions)/geti
+-getsetters for list that handle the out of bounds or not_found
 -exit in codegen (sexit->build call to exit)
 
 Scanner/parser
@@ -13,30 +13,28 @@ Scanner/parser
 -ast: string_of_expr for List<char> -> Charlist etc
 
 Semantic Checker
+-getsetters: change to array access for list
 -newobj (charmap, stringmap, charlist, listlist)
 -what is allowed to be equality (int, bool, string)
--refactor if there's time
 -add back in the dictionary stuff
+-refactor if there's time
+-go over and make sure it complies with the specs
 
 Legitimate Test Suite
--build testing for all functionality
--build .out/.err files
--remove extraneous tests
--is it "not" or "!"
--test if/while with multiple statements in body
+-see test-suite
 
 LRM
 -variable scope (clarify): one per function (even in cond/loop should be)
 -when you are not allowed to assign variables
 -limits on string literals (they can have newlines!), escaped quote char is poss?, what about "\n?"
--getsetters
+-getsetters (explain the semantics)
 -equality of reference
 -exit as a reserved keyword
 -what is exactly allowed to have a binop and which binop
 -add to lang features that str + int + str = str
 -what is default value
 -modifying maps while foreaching them
--only VARIABLE DOT VARIABLE
+-only VARIABLE DOT VARIABLE (explain this)
 
 BUILTINS (ostdlib.c)
 -change listToString to L...
@@ -61,7 +59,7 @@ Standard Library (.olh)
 -Hook them into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
 
 Compiler (codegen.ml)
--Attempting to access a key not in the map will result in an index-out-of-bounds error.
+-Attempting to access a key not in the map will result in an index-out-of-bounds error. (or something)
 -add builtin constants (dictionary)
 -add structs and other builtin types
 -printing maps and listlists

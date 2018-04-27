@@ -103,6 +103,13 @@ char* ReadInput(void) {
         return ans;
 }
 
+//converts int to ascii. will return zero if int is
+//greater than unsigned 8bit representation.
+char ToAscii(int i) {
+        if (i > 256)
+            return 0;
+        return (char)i;
+}
 
 //@TODO: IMPLEMENT BELOW
 char* anagram(char* w); //may take additional param for dictionary
@@ -112,14 +119,28 @@ int readDict(char* filename); //bool return val, may take additional param for d
 //int map.getLength(void) how to implement?
 //map<String> subStrings(String w) how to implement?
 
-//getsetters
-//Listlist.get(int):
+//LIST FUNCTIONS
+//length: we can just use strlen for Charlist.
+//here we use a null pointer as a sentinel for listlists
+int Listlistlen(char **lis) {
+        int ans = 0;
+
+        while (lis[ans] != NULL)
+                ans++;
+        return ans;
+}
+
+//Listlist.get(int): return NULL on out of bounds
 char* ListlistGet(char **lis, int i) {
+        if (i > Listlistlen(lis))
+                return NULL;
         return lis[i];
 }
 
-//Charlist.get(int):
+//Charlist.get(int): return 0 on out of bounds
 char CharlistGet(char *lis, int i) {
+        if (i > strlen(lis))
+                return '\0';
         return lis[i];
 }
 

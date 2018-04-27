@@ -6,7 +6,7 @@ type op = Add | Sub | Mult | Div | Equal | Mod |
         Neq | Less | Leq | Greater | Geq |
         And | Or
 
-type uop = Neg | Not
+type uop = Neg | Not | Asc
 
 type typ = Int | Bool | Char | String | Player | Void
            | Stringmap | Charmap | Charlist | Listlist
@@ -73,6 +73,7 @@ let string_of_typ x = match x with
 let string_of_uop x = match x with
       Not -> "Not"
     | Neg -> "Negative"
+    | Asc -> "Ascii"
 
 let string_of_op x = match x with
       Add -> "Plus"

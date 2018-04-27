@@ -18,8 +18,11 @@ test-player-pos (does not compile completely)
 test-foreach-pos (does not completely compile)
 
 Positive
+(*@TODO: test calling wrong thing, eg player.columns*)
 using null (what/how?)
 getsetters
+vmembers
+test if/while with multiple statements in body
 
 Parser - negatve
 function in a function

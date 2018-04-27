@@ -70,7 +70,11 @@ let translate (globals, functions) =
   let voidint_t : L.lltype =
      L.function_type void_t [| i32_t |] in
   let exit_func : L.llvalue =
-     L.declare_function "exit" strint_t the_module in
+     L.declare_function "exit" voidint_t the_module in
+  let charint_t : L.lltype =
+     L.function_type i8_t [| i32_t |] in
+  let ascii_func : L.llvalue =
+     L.declare_function "ToAscii" charint_t the_module in
 
   (*builtins: random*)
   (*let intvoid_t : L.lltype =
@@ -235,8 +239,9 @@ let translate (globals, functions) =
 	  let _ = e in
           let e' = expr builder locs e in
 	  (match op with
-            A.Neg                  -> L.build_neg
-          | A.Not                  -> L.build_not) e' "tmp" builder
+            A.Neg                  -> L.build_neg e' "tmp" builder
+          | A.Not                  -> L.build_not e' "tmp" builder
+          | A.Asc                  -> L.build_call ascii_func [| e' |] "tmp" builder)
       | SNewtobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT: fresh map*)
       | SNewobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMEN: fresh player*)
       | SNewlis l ->

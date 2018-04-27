@@ -206,6 +206,7 @@ let check (*functions*) (globals, functions) =
           let ty = match op with
             Neg when t = Int -> t
           | Not when t = Bool -> Bool
+          | Asc when t = Int -> Char
           | _ -> raise (Failure ("illegal unary operator " ^
                                  string_of_uop op ^ string_of_typ t ^
                                  " in " ^ string_of_expr ex))
@@ -230,7 +231,7 @@ let check (*functions*) (globals, functions) =
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in ((ty, SBinop((t1, e1'), op, (t2, e2'))), symbols'')
       | Assignm(var, mem, e) as ex ->
-          let lt = type_of_vmember var mem symbols (*@TODO: test calling wrong thing, eg player.columns*)
+          let lt = type_of_vmember var mem symbols
           and ((rt, e'), symbols') = expr symbols e in
           if (rt = Stringmap && mem = "guessedWords")
           then ((lt, SAssignm(var, mem, (rt, e'))), symbols')

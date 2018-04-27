@@ -1,6 +1,6 @@
 %{ open Ast %}
 %token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT NULL
-%token INTV CHARV STRINGV BOOLV VOID MAPV LISTV PLAYER
+%token INTV CHARV STRINGV BOOLV VOID MAPV LISTV PLAYER ASCIV
 %token EQUALS LESS GREATER NOT NEQ LEQ GEQ AND OR
 %token RET END IF ELSE FOR FOREACH WHILE
 %token <int> LITI
@@ -24,7 +24,7 @@
 %left LESS GREATER LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MODULO
-%right NOT NEG
+%right NOT NEG ASCIV
 %nonassoc PRINT
 
 %%
@@ -150,6 +150,7 @@ expr:
   | LITC	     { Literalc($1)                        }
   | LITB             { Literalb($1)                        }
   | LITS             { Literals($1)                        }
+  | ASCIV expr       { Unop(Asc, $2)                       }
   | NULL             { Null                                }
   | VARIABLE         { Variable($1)                        }
   | VARIABLE DOT VARIABLE { Vmember($1, $3)                } /*member of obj*/

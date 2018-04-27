@@ -51,8 +51,10 @@ rule tokenize = parse
 | "true" { LITB(true) }
 | "false" { LITB(false) }
 | "main" { raise Not_found }
+| "ASCII" { ASCIV }
 | ['0'-'9']+ as lit { LITI(int_of_string lit) }
 | ['\'']_['\''] as lit { LITC(lit.[1]) }
+| ['\'']['\\']['0']['\''] { LITC(Char.chr 0) }
 | ['a'-'z']['0'-'9' 'a'-'z' 'A'-'Z' '_']* as lit { VARIABLE(lit) }
 | ['"'][^ '"']*['"'] as lit { LITS(String.sub lit 1 (String.length lit - 2)) }
 | eof { EOF }
