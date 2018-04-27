@@ -1,1 +1,6 @@
 Printing from true!
+there is no else
+true || false is true!
+true && true is true!
+true || true is true!
+not false is true!

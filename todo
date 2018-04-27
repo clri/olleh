@@ -28,7 +28,7 @@ Legitimate Test Suite
 LRM
 -variable scope (clarify): one per function (even in cond/loop should be)
 -when you are not allowed to assign variables
--limits on string literals (can they have newlines? test the functionality), escaped quote char
+-limits on string literals (they can have newlines!), escaped quote char is poss?, what about "\n?"
 -getsetters
 -equality of reference
 -exit as a reserved keyword

@@ -1,26 +1,25 @@
 TODO - TESTING
 
 ERRORS
-test-for-pos (fatal error not_found)
-test-func-pos (utilizes for looop that is currently commented out)
 fail-aslist-neg (passes and it absolutely shouldn't, NO ASSIGNMENTs  IN LIST LITERALS)
-
-fail-asmparams2-neg (parse err)
-fail-and-neg (parse err)
-fail-folo-neg (parse err)
-fail-freshpla2-neg (parse err)
-fail-gmap-neg (lex err)
+fail-asmparams2-neg (fix getsetters)
+fail-freshpla2-neg (why is this assigning something in the map literal i don't understand)
 fail-listlistlist-neg (??? error)
-fail-not-neg (parse err)
-fail-not2-neg (parse err)
-fail-or-neg (parse err)
 
-fail-slist-neg? (lex err)
+test-assign-pos (does not completely compile)
+test-compare-pos (something wrong with char comparisons)
+test-func-pos (doesn't print a lot of what's going on)
+test-list-pos (need to implement list printing functs)
+test-while-pos (needs something to print in loop)
+
+(these use structs not implemented)
+test-map-pos (does not compile completely)
+test-player-pos (does not compile completely)
+test-foreach-pos (does not completely compile)
 
 Positive
 using null (what/how?)
 getsetters
-
 
 Parser - negatve
 function in a function
@@ -74,10 +73,26 @@ use function to manipluate a global variable (test-func-pos)
 test while loops (test-while-pos)
 
 Written (negative)
+assignment in list (fail-aslist-neg)
+assignment in params of var.function call (fail-asparams2-neg)
+fresh player (same field twice) (fail-freshpla2-neg)
+3d list (fail-listlistlist-neg)
+
+
+Passing (positive)
+// comment (test-assign-pos)
+/* comment*/ (test-if-pos)
+add integers (test-add-pos)
+concat string + int (test-print-pos)
+if else (test-if-pos)
+declare function (void) (test-func-pos)
+call function(void) (test-func-pos)
+
+
+Passing (negative)
 plus (str, bool) (fail-print-neg)
 minus (strs) (fail-subtract-neg)
 Print Player (fail-printplayer-neg)
-3d list (fail-listlistlist-neg)
 list of stuff that is not a char or list (fail-intlist-neg, fail-intlist2-neg)
 list of mixed chars and lists (fail-list-neg)
 map with non-integer values (fail-mapval-neg)
@@ -104,12 +119,9 @@ fresh list(non-integer) (fail-freshlis1-neg)
 fresh list(>2 integers) (fail-freshlis2-neg)
 fresh list() (fail-freshlis3-neg)
 fresh player (additional field) (fail-freshpla1-neg)
-fresh player (same field twice) (fail-freshpla2-neg)
 do something with the result of a void function (fail-voidas-neg)
 negative (noninteger) (fail-nega-neg)
 assignment in params of function call (fail-asparams-neg)
-assignment in params of var.function call (fail-asparams2-neg)
-assignment in list (fail-aslist-neg)
 assignment in new player (fail-aspla-neg)
 print void (fail-voidas-neg)
 foreach on sth that's not a list or map (fail-foreach-neg)
@@ -131,19 +143,6 @@ expr not expr (fail-not2-neg)
 binop as unop (x = %3 eg) (fail-unop-neg)
 emtpy if() (fail-eif-neg)
 empty for() (fail-efor-neg)
-
-Passing (positive)
-// comment (test-assign-pos)
-/* comment*/ (test-if-pos)
-add integers (test-add-pos)
-concat string + int (test-print-pos)
-if else (test-if-pos)
-declare function (void) (test-func-pos)
-call function(void) (test-func-pos)
-
-
-Passing (negative)
-
 
 
 

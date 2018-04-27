@@ -1,2 +1,2 @@
 //incorrect list syntax
-List<char> lis = ['a'; 'b'];
+list<char> lis = ['a'; 'b'];
