@@ -36,6 +36,7 @@ LRM
 -add to lang features that str + int + str = str
 -what is default value
 -modifying maps while foreaching them
+-only VARIABLE DOT VARIABLE
 
 BUILTINS (ostdlib.c)
 -change listToString to L...

@@ -1,5 +1,4 @@
 //redefinition of a formal in locals
 function void f(int ff):
-        bool ff;
+        boolean ff;
 end;
-

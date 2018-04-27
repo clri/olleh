@@ -5,6 +5,17 @@ test-for-pos (fatal error not_found)
 test-func-pos (utilizes for looop that is currently commented out)
 fail-aslist-neg (passes and it absolutely shouldn't, NO ASSIGNMENTs  IN LIST LITERALS)
 
+fail-asmparams2-neg (parse err)
+fail-and-neg (parse err)
+fail-folo-neg (parse err)
+fail-freshpla2-neg (parse err)
+fail-gmap-neg (lex err)
+fail-listlistlist-neg (??? error)
+fail-not-neg (parse err)
+fail-not2-neg (parse err)
+fail-or-neg (parse err)
+
+fail-slist-neg? (lex err)
 
 Positive
 using null (what/how?)

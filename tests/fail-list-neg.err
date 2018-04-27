@@ -1,1 +1,1 @@
-Fatal error: exception Failure("List of improper type")
+Fatal error: exception Failure("Cannot make assignments in list literals")

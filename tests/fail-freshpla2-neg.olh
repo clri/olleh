@@ -1,3 +1,2 @@
 //fresh player (same field twice)
-Player player = fresh Player{letterScore -> {}, letterScore -> {}}
-
+Player player = fresh Player{letterScore -> {}, letterScore -> {}};
