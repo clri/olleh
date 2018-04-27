@@ -86,7 +86,6 @@ obj:
   | MAPV LESS STRINGV GREATER { Stringmap }
   | PLAYER  { Player }
 
-
 stmt_list:
     /* nothing */ { [] }
   | stmt_list stmt { $2 :: $1 }
@@ -109,7 +108,6 @@ vdecl:
 stmt:
   expr SEMI                                 { Expr $1               }
   | PRINT expr SEMI { Print($2) }
-  /*| RET expr_opt SEMI                       { Return $2             }*/
   | ifs END SEMI                            { $1 }
   | FOR OPAREN expr CPAREN COLON stmt_list END SEMI { For($3, $6)   }
   | WHILE OPAREN expr CPAREN COLON stmt_list END SEMI

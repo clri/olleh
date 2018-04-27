@@ -1,10 +1,9 @@
 TODO - TESTING
 
 ERRORS
+test-for-pos (fatal error not_found)
 test-func-pos (utilizes for looop that is currently commented out)
 fail-aslist-neg (passes and it absolutely shouldn't, NO ASSIGNMENTs  IN LIST LITERALS)
-fail-glolo-neg (passes semant and it shouldn't because of variable scope)
-test-for-pos (hangs for some reason even though a while loop does not)
 
 
 Positive

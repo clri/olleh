@@ -111,7 +111,10 @@ let check (*functions*) (globals, functions) =
     let symbolz = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
 	                StringMap.empty (locals' )
     in
-    let add_local_symbol (ty, name) symbols = StringMap.add name ty symbols
+    let add_local_symbol (ty, name) symbols =
+        let x = try StringMap.find name symbols with Not_found -> Void
+        in if x = Void then StringMap.add name ty symbols
+        else raise (Failure "Duplicate variable")
     in
 
     (* Return a variable from our local symbol table *)
@@ -152,7 +155,7 @@ let check (*functions*) (globals, functions) =
       | Literalb l -> ((Bool, SLiteralb l), symbols)
       | Noexpr     -> ((Void, SNoexpr), symbols)
       | Null       -> ((Void, Null), symbols)
-      | Variable s       -> ((type_of_identifier s symbols, SVariable s), symbols)
+      | Variable s  -> ((type_of_identifier s symbols, SVariable s), symbols)
       | Vmember(s, m) -> ((type_of_vmember s m symbols, SVmember(s, m)), symbols)
       | Literall l ->
           let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
@@ -356,7 +359,9 @@ let check (*functions*) (globals, functions) =
           let (sths, stm') = check_stmt_list syms sl in
           (SForeach(v, (t, e'), sths), stm')
       | Exit(i) -> (SExit(i), symbols)
-      | Bind(ty, var) -> (SBind(ty, var), add_local_symbol (ty, var) symbols)
+      | Bind(ty, var) ->
+        (*check if variable exists *)
+        (SBind(ty, var), add_local_symbol (ty, var) symbols)
       | Return e -> let ((t, e'), symbols') = expr symbols e in
         if t = func.typ then (SReturn (t, e'), symbols')
         else raise (
