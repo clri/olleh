@@ -6,7 +6,6 @@ fail-asmparams2-neg (fix getsetters)
 fail-freshpla2-neg (why is this assigning something in the map literal i don't understand--may have to change syntax)
 
 test-assign-pos (does not completely compile)
-test-compare-pos (something wrong with char comparisons)
 test-func-pos (doesn't print a lot of what's going on)
 test-list-pos (need to implement list printing functs)
 test-while-pos (needs something to print in loop)

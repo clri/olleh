@@ -240,8 +240,46 @@ diff -b fail-fpla-neg.err tests/fail-fpla-neg.err > fail-fpla-neg.diff
 
 ###### Testing fail-freshlis1-neg
 ./toplevel < tests/fail-freshlis1-neg.olh 2> fail-freshlis1-neg.err >> testall.log
+; ModuleID = 'Olleh'
+source_filename = "Olleh"
+
+@lis = global i8* null
+@fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
+
+declare i32 @printf(i8*, ...)
+
+declare i8* @IntToS(i32)
+
+declare void @exit(i32)
+
+declare i8 @ToAscii(i32)
+
+declare void @InitializeRandom()
+
+declare i8* @SConcat(i8*, i8*)
+
+declare void @PrintCharLis(i8*)
+
+define void @main(i8* %lis) {
+entry:
+  %lis1 = alloca i8*
+  store i8* %lis, i8** %lis1
+  %lis2 = alloca i8*
+  call void @InitializeRandom()
+  %0 = zext i8 98 to i32
+  %mallocsize = mul i32 %0, ptrtoint (i8* getelementptr (i8, i8* null, i32 1) to i32)
+  %a1 = tail call i8* @malloc(i32 %mallocsize)
+  %a3 = getelementptr i8, i8* %a1, i8 98
+  store i8 0, i8* %a3
+  store i8* %a1, i8** %lis2
+  ret void
+}
+
+declare noalias i8* @malloc(i32)
 diff -b fail-freshlis1-neg.err tests/fail-freshlis1-neg.err > fail-freshlis1-neg.diff
-###### SUCCESS
+FAILED fail-freshlis1-neg.err differs from tests/fail-freshlis1-neg.err
+###### FAILED
 
 ###### Testing fail-freshlis2-neg
 ./toplevel < tests/fail-freshlis2-neg.olh 2> fail-freshlis2-neg.err >> testall.log

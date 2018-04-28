@@ -18,8 +18,11 @@ if (x == 2):
 end;
 
 if ('a' < 'b'):
+        print "'a' < 'b'";
         if ('a' <= 'b'):
+                print "'a' <= 'b'";
                 if ('a' != 'b'):
+                        print "'a' != 'b'";
                         if ('b' > 'a'):
                                 if ('b' >= 'a'):
                                         print "'a'<'b'; 'a'<='b'; 'a'!='b';" +

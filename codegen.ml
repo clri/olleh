@@ -152,7 +152,7 @@ let translate (globals, functions) =
     let lookup n lcs = try StringMap.find n lcs
                    with Not_found -> StringMap.find n global_vars
     in
-    let lookupmem v m = (*let t =*) try StringMap.find v local_vars (*lcs*)
+    (*let lookupmem v m = (*let t =*) try StringMap.find v local_vars (*lcs*)
         with Not_found -> StringMap.find v global_vars
         (*@TODO: get pointer to member of Player properly
            in match t with
@@ -162,7 +162,7 @@ let translate (globals, functions) =
                   if m = "score" then (ptr to v.guessedWords) else
                   raise (Failure "Error: should have been caught at semant")
                 | _ -> raise (Failure "Error: should have been caught at semant")*)
-    in
+    in*)
 
     let rec inddex (lis: Sast.sexpr list) (i: int) = (*get list elem by index*)
         match lis with elm :: rest ->
@@ -232,8 +232,15 @@ let translate (globals, functions) =
           else if t = A.Bool then
             if op = A.And then L.build_and e1' e2' "tmp" builder
   	    else L.build_or e1' e2' "tmp" builder
-          else if t = A.Char then
-            L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
+          else if t = A.Char then (match op with
+              A.Equal   -> L.build_icmp L.Icmp.Eq
+            | A.Neq     -> L.build_icmp L.Icmp.Ne
+            | A.Less    -> L.build_icmp L.Icmp.Slt
+            | A.Leq     -> L.build_icmp L.Icmp.Sle
+            | A.Greater -> L.build_icmp L.Icmp.Sgt
+            | A.Geq     -> L.build_icmp L.Icmp.Sge
+            | _ -> raise (Failure "semantic error in codegen")
+             ) e1' e2' "tmp" builder
           else raise (Failure "internal error: binop not implemented")
       | SUnop(op, e) ->
 	  let _ = e in
