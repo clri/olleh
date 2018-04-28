@@ -2,78 +2,64 @@
 Once item is done/tested, remove it from the list
 
 
-Builtins
--getsetters for map (at least implemenet stub functions)/geti
--getsetters for list that handle the out of bounds or not_found
--exit in codegen (sexit->build call to exit)
-
-Scanner/parser
--callm: expr dot variable NOT variable dot variable for gets, members, etc
--getsetters
--ast: string_of_expr for List<char> -> Charlist etc
+Ast
+string_of_expr for List<char> -> Charlist etc
 
 Semantic Checker
--getsetters: change to array access for list
+-vmember and assignm
 -newobj (charmap, stringmap, charlist, listlist)
--what is allowed to be equality (int, bool, string)
 -add back in the dictionary stuff
--refactor if there's time
 -go over and make sure it complies with the specs
+-refactor if there's time
+-check the list.rev in for/foreach/while
 
 Legitimate Test Suite
 -see test-suite
 
 LRM
--variable scope (clarify): one per function (even in cond/loop should be)
+-curly quotes to straight
+-standardize format (line spacing, font size, etc)
+-variable scope (clarify): one per function (even in cond/loop should be); what is default value (if any)
 -when you are not allowed to assign variables
 -limits on string literals (they can have newlines!), escaped quote char is poss?, what about "\n?"
--getsetters (explain the semantics)
+-getsetters (explain the semantics in builtin function section)
 -equality of reference
 -exit as a reserved keyword
 -what is exactly allowed to have a binop and which binop
 -add to lang features that str + int + str = str
--what is default value
 -modifying maps while foreaching them
 -only VARIABLE DOT VARIABLE (explain this)
+-how to use null
+-any updates made in syntax
 
 BUILTINS (ostdlib.c)
--change listToString to L...
--rename file?
--print map and listlist
+-StringToList
 -charmap, stringmap, and player structs
--implement constants (dictionary and letterScore)
--anagram()
--readDict()
--map.destroy() -> "Mapdestroy"
--map.contains()
--map.getLength()
--map.get()
--map.geti()
--Initialize_dictionary()
--list.getLength() for chars and lists
+-implement constants (dictionary and letterScore) as map
+-print map
+-anagram() (takes dictionary as param)
+-readDict() (returns dictionary so it's implicitly (ASsign(dictionary, readDict())))
+-map.destroy()/contains()/getLength()/get()/geti() for strings and chars
 -subStrings()
+-listlist to string??
 
 
 Standard Library (.olh)
--Write standard library functions
+-Write standard library functions (list here)
 -Hook them into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
 
 Compiler (codegen.ml)
--Attempting to access a key not in the map will result in an index-out-of-bounds error. (or something)
--add builtin constants (dictionary)
+-add builtin constants (dictionary) when appropriate
 -add structs and other builtin types
--printing maps and listlists
--variable scope
--garbage collection for string return values
--SVmember (members of objects: change them from calls to getsetters, maybe even in parser/semant)
+-variable scope: make sure to build it out for stuff definied inside loops/blocks
+-SVmember (members of objects: change them from calls to getsetters using build_call)
 -SLiteralm (literal maps)
 -SAssignm (member assigning)
 -SNewobj/SNewtobj (allocating space for new objects)
 -SNewlis of listlist (and SLiterall for lists of lists)
--SFor
--SForeach
--SBind (variable creation)
 -add_terminal for all return types
+-add builtins for strlen and others
+-null comparisons/null pointer
 
 
 

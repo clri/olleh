@@ -10,13 +10,13 @@ and sx =
   | SLiteralb of bool
   | Null
   | SVariable of string
-  | SVmember of string * string
+  | SVmember of sexpr * string
   | SLiterall of (sexpr list)
   | SLiteralm of ((sexpr * sexpr) list)
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr
   | SAssign of string * sexpr
-  | SAssignm of string * string * sexpr
+  | SAssignm of sexpr * string * sexpr
   | SNewtobj of typ
   | SNewobj of (sexpr * sexpr) list
   | SNewlis of sexpr list

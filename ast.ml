@@ -20,18 +20,18 @@ type expr =
     | Literalb of bool
     | Null
     | Variable of string
-    | Vmember of string * string
+    | Vmember of expr * string
     | Literall of expr list
     | Literalm of (expr * expr) list
     | Binop of expr * op * expr
     | Unop of uop * expr
     | Assign of string * expr
-    | Assignm of string * string * expr
+    | Assignm of expr * string * expr
     | Newtobj of typ
     | Newobj of typ * (expr * expr) list
     | Newlis of typ * expr list
     | Call of string * expr list
-    | Callm of string * string * expr list
+    | Callm of expr * string * expr list
     | Noexpr
 
 type stmt =
@@ -65,10 +65,10 @@ let string_of_typ x = match x with
     | Char -> "Char"
     | Player -> "Player"
     | Void -> "Void"
-    | Stringmap -> "Map<string>"
-    | Charmap -> "Map<char>"
-    | Charlist -> "List<char>"
-    | Listlist -> "List<list>"
+    | Stringmap -> "Stringmap"
+    | Charmap -> "Charmap"
+    | Charlist -> "Charlist"
+    | Listlist -> "Listlist"
 
 let string_of_uop x = match x with
       Not -> "Not"
@@ -97,17 +97,17 @@ let rec string_of_expr e = match e with
     | Literalb b -> string_of_bool b
     | Null -> "Null"
     | Variable v -> v
-    | Vmember (v, m) -> v ^ "." ^ m
+    | Vmember (v, m) -> (string_of_expr v) ^ "." ^ m
     | Literall l -> "[...]"
     | Literalm m -> "{...}"
     | Binop (e1, op, e2) ->
         (string_of_expr e1) ^ " " ^ (string_of_op op) ^ " " ^ (string_of_expr e2)
     | Unop (op, e1) -> (string_of_uop op) ^ " " ^ (string_of_expr e1)
     | Assign (v, e1) -> v ^ " = " ^ (string_of_expr e1)
-    | Assignm (v, m, e1) -> v ^ "." ^ m ^ " = " ^ (string_of_expr e1)
+    | Assignm (v, m, e1) -> (string_of_expr v) ^ "." ^ m ^ " = " ^ (string_of_expr e1)
     | Newtobj (t1) -> "fresh " ^ (string_of_typ t1)
     | Newlis (t1, _) -> "fresh " ^ (string_of_typ t1)
     | Newobj (t, elis) -> "fresh " ^ (string_of_typ t) ^ "[...]"
     | Call (s, elis) -> s ^ "(...)"
-    | Callm (s, m, elis) -> s ^ "." ^ m ^ "(...)"
+    | Callm (s, m, elis) -> (string_of_expr s) ^ "." ^ m ^ "(...)"
     | Noexpr -> ""

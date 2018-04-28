@@ -180,7 +180,7 @@ let translate (globals, functions) =
       | SNoexpr -> L.const_int i32_t 0
       | Null -> L.const_int i32_t 0 (*@TODO: null pointer*)
       | SVariable s -> L.build_load (lookup s locs) s builder
-      | SVmember (v, m) -> L.build_load (lookupmem v m) v builder (*@TODO: change to gep or getter*)
+      | SVmember (v, m) ->L.const_int i32_t 0 (*@TODO: change to gep or getter*)
       | SLiterall l ->
          let l' = List.map (expr builder locs) l in
          let len = (List.length l) + 1 in
@@ -196,7 +196,7 @@ let translate (globals, functions) =
          (*@TODO: Listlist*)
          else raise (Failure "build error")
       | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
-      | SAssignm (s, _, e) -> let e' = expr builder locs e in
+      | SAssignm (_, s, e) -> let e' = expr builder locs e in
                           let _  = L.build_store e' (lookup s locs) builder in e' (*@TODO: CALL SETTER FUNCTION*)
       | SAssign (s, e) -> let e' = expr builder locs e in
                           let _  = L.build_store e' (lookup s locs) builder in e'

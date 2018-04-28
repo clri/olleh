@@ -3,8 +3,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-//dictionary, letterScores, and seeds--must they exist here as constants as
-//well or shall we pass them in fron codegen.ml?
+//STRUCTS: object definitions
+//@TODO: define them here
+
+
 
 //concat two strings
 char *SConcat(char *a, char *b) {
@@ -38,21 +40,36 @@ char *IntToS(int e) {
         return ans;
 }
 
-//print charlist
-void PrintCharLis(char *lis) {
+//helper function for PrintCharLis and PrintListList
+void PrintCharLis1(char *lis) {
         int i;
         printf("[");
         int n = strlen(lis);
         for (i = 0; i < n - 1; i++)
-                printf("%c, ", lis[i]);
-        printf("%c]\n", lis[i]);
+                printf("'%c', ", lis[i]);
+        printf("'%c']", lis[i]);
 }
 
-//list to string: doesn't really do much, but
-//olleh pretends there is a difference
-char *listToString(char *lis) {
-        return lis;
+//print charlist
+void PrintCharLis(char *lis) {
+        PrintCharLis1(lis);
+        printf("\n");
 }
+
+//print listlist
+void PrintListList(char **lis) {
+        int i = 0;
+
+        printf("[");
+        while (lis[i+1] != NULL) {
+                PrintCharLis1(lis[i]);
+                printf(",\n");
+        }
+        PrintCharLis1(lis[i]);
+        printf("]\n");
+}
+
+//@TODO: print bool, charmap, stringmap
 
 
 //called once at the beginning of each program
@@ -61,10 +78,12 @@ void InitializeRandom(void) {
         srand(time(NULL));
 }
 
+//random() function maps to this
 int OllehRandom(int max) {
         return rand() % max;
 }
 
+//scramble(): scrambles a string as specified in LRM
 char* scramble(char* w) {
         int r;
         int i = 0;
@@ -81,6 +100,7 @@ char* scramble(char* w) {
         return ans;
 }
 
+//returns the reverse of a string
 char* reverse(char* w) {
         int i;
         int len = strlen(w);
@@ -93,7 +113,7 @@ char* reverse(char* w) {
         return ans;
 };
 
-//returns a line without newline char, helper function for readDict
+//returns a line without newline char, also used as helper function for readDict
 char* ReadInput(void) {
         char *ans = NULL;
         size_t len = 0;
@@ -104,9 +124,9 @@ char* ReadInput(void) {
 }
 
 //converts int to ascii. will return zero if int is
-//greater than unsigned 8bit representation.
+//greater than unsigned 8bit representation. ASCII maps to this
 char ToAscii(int i) {
-        if (i > 256)
+        if (i > 256 || i < 0)
             return 0;
         return (char)i;
 }
@@ -115,7 +135,7 @@ char ToAscii(int i) {
 char* anagram(char* w); //may take additional param for dictionary
 int readDict(char* filename); //bool return val, may take additional param for dictionary
 //void map.destroy(map<type> k) how to implement?
-//int map.contains(map<type> k) bool return val, how to implement?
+//int Mapcontains(map<type> k) bool return val, how to implement? (Stringmapcontains, Charmapcontains...)
 //int map.getLength(void) how to implement?
 //map<String> subStrings(String w) how to implement?
 
@@ -144,17 +164,13 @@ char CharlistGet(char *lis, int i) {
         return lis[i];
 }
 
+//list to string: doesn't really do much, but
+//olleh pretends there is a difference
+char *ListToString(char *lis) {
+        return lis;
+}
+
+
 //Charmap.get(char): int CharmapGet(char);
 //Charmap.geti(char): int CharmapGeti(char); //aka how to iterate through a linked list
 //same for stringmap
-
-
-/*TEST ONLY: REMOVE FOR FINAL DELIVERABLE
-int main(void) {
-        char *v = readInput();
-        v = "ASDF";
-        fprintf(stderr,"%s\n",v);
-        v = reverse(v);
-        fprintf(stderr,"%s\n",v);
-        return 1;
-}*/

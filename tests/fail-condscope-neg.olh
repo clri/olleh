@@ -1,0 +1,10 @@
+//two variables declared in the same function, even in separate blocks, is NOT allowed
+
+function void x():
+	if (true):
+		int y = 1;
+	end;
+	if (false):
+		int y = 0;
+	end;
+end;

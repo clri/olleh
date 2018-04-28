@@ -25,7 +25,7 @@
 %left PLUS MINUS
 %left TIMES DIVIDE MODULO
 %right NOT NEG ASCIV
-%nonassoc PRINT
+%nonassoc PRINT DOT
 
 %%
 
@@ -153,7 +153,7 @@ expr:
   | ASCIV expr       { Unop(Asc, $2)                       }
   | NULL             { Null                                }
   | VARIABLE         { Variable($1)                        }
-  | VARIABLE DOT VARIABLE { Vmember($1, $3)                } /*member of obj*/
+  | expr DOT VARIABLE { Vmember($1, $3)                } /*member of obj*/
   | OBRACK lis CBRACK { Literall( List.rev $2 )            } /*list literal*/
   | OCURLY maplis CCURLY { Literalm($2)                    } /*map literal*/
   | expr PLUS   expr { Binop($1, Add,   $3)                }
@@ -172,8 +172,8 @@ expr:
   | MINUS expr %prec NEG { Unop(Neg, $2)                   }
   | NOT expr         { Unop(Not, $2)                       }
   | VARIABLE ASSIGN expr { Assign($1, $3)                  }
-  | VARIABLE DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
-  | VARIABLE DOT VARIABLE OPAREN args_opt CPAREN { Callm($1, $3, $5) }
+  | expr DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
+  | expr DOT VARIABLE OPAREN args_opt CPAREN { Callm($1, $3, $5) }
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
   | FRESH MAPV OPAREN STRINGV CPAREN { Newtobj( Stringmap )        }
   | FRESH MAPV OPAREN CHARV CPAREN { Newtobj( Charmap )        }

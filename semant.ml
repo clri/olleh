@@ -121,7 +121,7 @@ let check (*functions*) (globals, functions) =
     let type_of_identifier s symbols =
       try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
-    let type_of_vmember s m symbols =
+    (*let type_of_vmember s m symbols =
       let tvs = try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
       match tvs, m with
@@ -130,7 +130,7 @@ let check (*functions*) (globals, functions) =
         | Player, "guessedWords" -> Stringmap
         | Player, "letters" -> Charlist
         | _ -> raise (Failure ("Object " ^ s ^ " of type " ^ (string_of_typ tvs) ^ " has no attribute " ^ m))
-    in
+    in*)
 
 
     (*tuple mapper helper function*)
@@ -156,7 +156,7 @@ let check (*functions*) (globals, functions) =
       | Noexpr     -> ((Void, SNoexpr), symbols)
       | Null       -> ((Void, Null), symbols)
       | Variable s  -> ((type_of_identifier s symbols, SVariable s), symbols)
-      | Vmember(s, m) -> ((type_of_vmember s m symbols, SVmember(s, m)), symbols)
+      | Vmember(s, _) -> (*@TODO: implement*) expr symbols s
       | Literall l ->
           let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
           let isasn = List.fold_left is_assign true l in
@@ -222,6 +222,8 @@ let check (*functions*) (globals, functions) =
           | Add when same && t1 = String -> String
           | Add when t1 = String && t2 = Int -> String
           | Equal | Neq when same && (t1 = Int || t1 = Char || t1 = Bool)  -> Bool
+          | Equal when ((e1 = Null && (t2 = Listlist || t2 = Stringmap))
+            || (e2 = Null && (t1 = Listlist || t1 = Stringmap))) -> Bool
           | Less | Leq | Greater | Geq
                      when same && (t1 = Int || t1 = Char) -> Bool
           | And | Or when same && t1 = Bool -> Bool
@@ -231,14 +233,14 @@ let check (*functions*) (globals, functions) =
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in ((ty, SBinop((t1, e1'), op, (t2, e2'))), symbols'')
       | Assignm(var, mem, e) as ex ->
-          let lt = type_of_vmember var mem symbols
-          and ((rt, e'), symbols') = expr symbols e in
+          let ((lt, var'), sy') = expr symbols var in (*@TODO: implement*)
+          let ((rt, e'), symbols') = expr sy' e in
           if (rt = Stringmap && mem = "guessedWords")
-          then ((lt, SAssignm(var, mem, (rt, e'))), symbols')
+          then ((lt, SAssignm((lt, var'), mem, (rt, e'))), symbols')
           else
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
             string_of_typ rt ^ " in " ^ string_of_expr ex
-          in ((check_assign lt rt err, SAssignm(var, mem, (rt, e'))), symbols')
+          in ((check_assign lt rt err, SAssignm((lt, var'), mem, (rt, e'))), symbols')
       | Call(fname, args) as call ->
           let fd = find_func fname in
           let param_length = List.length fd.formals in
@@ -258,7 +260,7 @@ let check (*functions*) (globals, functions) =
           let args' = List.map2 check_call fd.formals args
           in ((fd.typ, SCall(fname, args')), symbols)
       | Callm(vname, fname, args) as call ->
-          let ty = type_of_identifier vname symbols in
+          let ((ty, ee), sy') = expr symbols vname in
           let fd = find_func ((string_of_typ ty) ^ fname) in
           let param_length = List.length fd.formals in
           if List.length args != param_length - 1 then
@@ -274,7 +276,7 @@ let check (*functions*) (globals, functions) =
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
             in (check_assign ft et err, e'))
           in
-          let args' = List.map2 check_call fd.formals (Variable(vname) :: args)
+          let args' = List.map2 check_call fd.formals (vname :: args)
           in ((fd.typ, SCall((string_of_typ ty) ^ fname, args')), symbols)
       | Newtobj(t1) ->
           if t1 = Charmap || t1 = Stringmap then
@@ -340,16 +342,16 @@ let check (*functions*) (globals, functions) =
               (SPrint((t, se)), symbols')
       | If(p, b1, b2) -> (*keep track of any new variables introduced for conflicts*)
           let (sifs, stmo) = check_bool_expr symbols p in
-          let (sths, stm') = check_stmt_list stmo b1 in
-          let (sels, stm'') = check_stmt_list stm' b2
+          let (sths, stm') = check_stmt_list stmo (List.rev b1) in
+          let (sels, stm'') = check_stmt_list stm' (List.rev b2)
           in (SIf(sifs, sths, sels), stm'')
       | For(e1, st) -> (*Make sure e1 evaluates to an int *)
           let (sfo, stmo) = check_int_expr symbols e1 in
-          let (sbo, stm') = check_stmt_list stmo st in
+          let (sbo, stm') = check_stmt_list stmo (List.rev st) in
 	  (SFor(sfo, sbo), stm')
       | While(p, s) ->
           let (sifs, stmo) = check_bool_expr symbols p in
-          let (sths, stm') = check_stmt_list stmo s in
+          let (sths, stm') = check_stmt_list stmo (List.rev s) in
           (SWhile(sifs, sths), stm')
       | Foreach(v, e, sl) ->
           let ((t, e'), symbols') = expr symbols e in
@@ -357,7 +359,7 @@ let check (*functions*) (globals, functions) =
             raise (Failure "Can't foreach if it's not a list or map")
             else
           let syms = add_local_symbol (t, v) symbols' in
-          let (sths, stm') = check_stmt_list syms sl in
+          let (sths, stm') = check_stmt_list syms (List.rev sl) in
           (SForeach(v, (t, e'), sths), stm')
       | Exit(i) -> (SExit(i), symbols)
       | Bind(ty, var) ->

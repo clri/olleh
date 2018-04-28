@@ -43,7 +43,7 @@ cc -o test-for-pos.exe test-for-pos.s ostdlib.o
 
 ###### Testing test-foreach-pos
 ./toplevel tests/test-foreach-pos.olh > test-foreach-pos.ll
-Fatal error: exception Failure("unrecognized function Map<string>set")
+Fatal error: exception Failure("unrecognized function Stringmapset")
 ###### SUCCESS
 
 ###### Testing test-func-pos
@@ -67,12 +67,12 @@ cc -o test-int-pos.exe test-int-pos.s ostdlib.o
 
 ###### Testing test-list-pos
 ./toplevel tests/test-list-pos.olh > test-list-pos.ll
-Fatal error: exception Failure("unrecognized function List<char>set")
+Fatal error: exception Failure("unrecognized function Charlistset")
 ###### SUCCESS
 
 ###### Testing test-map-pos
 ./toplevel tests/test-map-pos.olh > test-map-pos.ll
-Fatal error: exception Failure("unrecognized function Map<string>set")
+Fatal error: exception Failure("unrecognized function Stringmapset")
 ###### SUCCESS
 
 ###### Testing test-player-pos
@@ -116,7 +116,8 @@ diff -b fail-add1-neg.err tests/fail-add1-neg.err > fail-add1-neg.diff
 ###### Testing fail-add3-neg
 ./toplevel < tests/fail-add3-neg.olh 2> fail-add3-neg.err >> testall.log
 diff -b fail-add3-neg.err tests/fail-add3-neg.err > fail-add3-neg.diff
-###### SUCCESS
+FAILED fail-add3-neg.err differs from tests/fail-add3-neg.err
+###### FAILED
 
 ###### Testing fail-and-neg
 ./toplevel < tests/fail-and-neg.olh 2> fail-and-neg.err >> testall.log
@@ -136,7 +137,9 @@ declare i32 @printf(i8*, ...)
 
 declare i8* @IntToS(i32)
 
-declare i8* @exit(i32)
+declare void @exit(i32)
+
+declare i8 @ToAscii(i32)
 
 declare void @InitializeRandom()
 
@@ -198,6 +201,11 @@ diff -b fail-cmp-neg.err tests/fail-cmp-neg.err > fail-cmp-neg.diff
 ###### Testing fail-comment-neg
 ./toplevel < tests/fail-comment-neg.olh 2> fail-comment-neg.err >> testall.log
 diff -b fail-comment-neg.err tests/fail-comment-neg.err > fail-comment-neg.diff
+###### SUCCESS
+
+###### Testing fail-condscope-neg
+./toplevel < tests/fail-condscope-neg.olh 2> fail-condscope-neg.err >> testall.log
+diff -b fail-condscope-neg.err tests/fail-condscope-neg.err > fail-condscope-neg.diff
 ###### SUCCESS
 
 ###### Testing fail-div-neg
@@ -300,7 +308,8 @@ FAILED fail-listlistlist-neg.err differs from tests/fail-listlistlist-neg.err
 ###### Testing fail-listype-neg
 ./toplevel < tests/fail-listype-neg.olh 2> fail-listype-neg.err >> testall.log
 diff -b fail-listype-neg.err tests/fail-listype-neg.err > fail-listype-neg.diff
-###### SUCCESS
+FAILED fail-listype-neg.err differs from tests/fail-listype-neg.err
+###### FAILED
 
 ###### Testing fail-mapkey-neg
 ./toplevel < tests/fail-mapkey-neg.olh 2> fail-mapkey-neg.err >> testall.log
@@ -310,7 +319,8 @@ diff -b fail-mapkey-neg.err tests/fail-mapkey-neg.err > fail-mapkey-neg.diff
 ###### Testing fail-maptype-neg
 ./toplevel < tests/fail-maptype-neg.olh 2> fail-maptype-neg.err >> testall.log
 diff -b fail-maptype-neg.err tests/fail-maptype-neg.err > fail-maptype-neg.diff
-###### SUCCESS
+FAILED fail-maptype-neg.err differs from tests/fail-maptype-neg.err
+###### FAILED
 
 ###### Testing fail-mapval-neg
 ./toplevel < tests/fail-mapval-neg.olh 2> fail-mapval-neg.err >> testall.log
@@ -335,7 +345,8 @@ diff -b fail-mod-neg.err tests/fail-mod-neg.err > fail-mod-neg.diff
 ###### Testing fail-mult-neg
 ./toplevel < tests/fail-mult-neg.olh 2> fail-mult-neg.err >> testall.log
 diff -b fail-mult-neg.err tests/fail-mult-neg.err > fail-mult-neg.diff
-###### SUCCESS
+FAILED fail-mult-neg.err differs from tests/fail-mult-neg.err
+###### FAILED
 
 ###### Testing fail-nega-neg
 ./toplevel < tests/fail-nega-neg.olh 2> fail-nega-neg.err >> testall.log

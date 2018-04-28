@@ -3,8 +3,7 @@ TODO - TESTING
 ERRORS
 fail-aslist-neg (passes and it absolutely shouldn't, NO ASSIGNMENTs  IN LIST LITERALS)
 fail-asmparams2-neg (fix getsetters)
-fail-freshpla2-neg (why is this assigning something in the map literal i don't understand)
-fail-listlistlist-neg (??? error)
+fail-freshpla2-neg (why is this assigning something in the map literal i don't understand--may have to change syntax)
 
 test-assign-pos (does not completely compile)
 test-compare-pos (something wrong with char comparisons)
@@ -18,8 +17,7 @@ test-player-pos (does not compile completely)
 test-foreach-pos (does not completely compile)
 
 Positive
-(*@TODO: test calling wrong thing, eg player.columns*)
-using null (what/how?)
+null comparison (bw listlist, stringmap)
 getsetters
 vmembers
 test if/while with multiple statements in body
@@ -32,6 +30,7 @@ empty body of if?
 if w/o parens
 
 Semant - negative
+(*@TODO: test calling wrong thing, eg player.columns*)
 == for non-int/char/bool? What can be equals
 return that's not the last statement (?)
 map with same key twice? how to detect and avoid?
@@ -79,7 +78,7 @@ Written (negative)
 assignment in list (fail-aslist-neg)
 assignment in params of var.function call (fail-asparams2-neg)
 fresh player (same field twice) (fail-freshpla2-neg)
-3d list (fail-listlistlist-neg)
+
 
 
 Passing (positive)
@@ -146,6 +145,9 @@ expr not expr (fail-not2-neg)
 binop as unop (x = %3 eg) (fail-unop-neg)
 emtpy if() (fail-eif-neg)
 empty for() (fail-efor-neg)
+3d list (fail-listlistlist-neg)
+redeclaring variable within the same function's conditionals(fail-condscope-neg)
+
 
 
 
