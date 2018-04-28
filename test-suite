@@ -19,8 +19,9 @@ test-foreach-pos (does not completely compile)
 Positive
 null comparison (bw listlist, stringmap)
 getsetters
-vmembers
-test if/while with multiple statements in body
+vmembers (of many exprs)
+test for/foreach/while with multiple statements in body (determine order)
+test strings with escaped quotes and \n, \0
 
 Parser - negatve
 function in a function

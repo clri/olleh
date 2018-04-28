@@ -2,40 +2,32 @@
 Once item is done/tested, remove it from the list
 
 
-Ast
-string_of_expr for List<char> -> Charlist etc
-
 Semantic Checker
 -vmember and assignm
 -newobj (charmap, stringmap, charlist, listlist)
 -add back in the dictionary stuff
 -go over and make sure it complies with the specs
 -refactor if there's time
--check the list.rev in for/foreach/while
+
 
 Legitimate Test Suite
 -see test-suite
 
+
 LRM
--curly quotes to straight
+-curly quotes to straight; code to courier
 -standardize format (line spacing, font size, etc)
+-any updates made in syntax (check against parser/semant at very end)
 -variable scope (clarify): one per function (even in cond/loop should be); what is default value (if any)
--when you are not allowed to assign variables
--limits on string literals (they can have newlines!), escaped quote char is poss?, what about "\n?"
+
+-limits on string literals (they can have newlines literals!),
+ escaped quote char is poss?, what about "\n?" TEST THIS
 -getsetters (explain the semantics in builtin function section)
--equality of reference
--exit as a reserved keyword
--what is exactly allowed to have a binop and which binop
--add to lang features that str + int + str = str
--modifying maps while foreaching them
--only VARIABLE DOT VARIABLE (explain this)
--how to use null
--any updates made in syntax
+-modifying maps while foreaching them (once that section's written)
+
 
 BUILTINS (ostdlib.c)
--StringToList
 -charmap, stringmap, and player structs
--implement constants (dictionary and letterScore) as map
 -print map
 -anagram() (takes dictionary as param)
 -readDict() (returns dictionary so it's implicitly (ASsign(dictionary, readDict())))
@@ -48,10 +40,10 @@ Standard Library (.olh)
 -Write standard library functions (list here)
 -Hook them into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
 
+
 Compiler (codegen.ml)
--add builtin constants (dictionary) when appropriate
--add structs and other builtin types
--variable scope: make sure to build it out for stuff definied inside loops/blocks
+-add builtin constants (dictionary, letterScores) when appropriate
+-charmap, stringmap, and player structs
 -SVmember (members of objects: change them from calls to getsetters using build_call)
 -SLiteralm (literal maps)
 -SAssignm (member assigning)

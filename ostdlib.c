@@ -170,6 +170,13 @@ char *ListToString(char *lis) {
         return lis;
 }
 
+//neither does stringToList, but since
+//we don't want users to manipulate strings
+//as strings they'll have to do it as a list
+char *StringToList(char *lis) {
+        return lis;
+}
+
 
 //Charmap.get(char): int CharmapGet(char);
 //Charmap.geti(char): int CharmapGeti(char); //aka how to iterate through a linked list
