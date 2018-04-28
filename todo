@@ -1,10 +1,12 @@
 @TODO
 Once item is done/tested, remove it from the list
 
+ALL FILES
+-comment code, explain anything that's ambiguous or confusing to you (or that you think
+  might need explaining to tfs/townsend)
+
 
 Semantic Checker
--vmember and assignm
--newobj (charmap, stringmap, charlist, listlist)
 -add back in the dictionary stuff
 -go over and make sure it complies with the specs
 -refactor if there's time
@@ -19,6 +21,7 @@ LRM
 -standardize format (line spacing, font size, etc)
 -any updates made in syntax (check against parser/semant at very end)
 -variable scope (clarify): one per function (even in cond/loop should be); what is default value (if any)
+-check semantics of fresh for diff types
 
 -limits on string literals (they can have newlines literals!),
  escaped quote char is poss?, what about "\n?" TEST THIS
@@ -46,7 +49,7 @@ Compiler (codegen.ml)
 -charmap, stringmap, and player structs
 -SVmember (members of objects: change them from calls to getsetters using build_call)
 -SLiteralm (literal maps)
--SAssignm (member assigning)
+-SAssignm (member assigning: change to call setter)
 -SNewobj/SNewtobj (allocating space for new objects)
 -SNewlis of listlist (and SLiterall for lists of lists)
 -add_terminal for all return types

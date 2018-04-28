@@ -121,16 +121,14 @@ let check (*functions*) (globals, functions) =
     let type_of_identifier s symbols =
       try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
-    (*let type_of_vmember s m symbols =
-      let tvs = try StringMap.find s symbols
-      with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
+    let type_of_vmember tvs m  =
       match tvs, m with
         | Player, "Score" -> Int
         | Player, "turn" -> Bool
         | Player, "guessedWords" -> Stringmap
         | Player, "letters" -> Charlist
-        | _ -> raise (Failure ("Object " ^ s ^ " of type " ^ (string_of_typ tvs) ^ " has no attribute " ^ m))
-    in*)
+        | _ -> raise (Failure ("Object of type " ^ (string_of_typ tvs) ^ " has no attribute " ^ m))
+    in
 
 
     (*tuple mapper helper function*)
@@ -156,7 +154,10 @@ let check (*functions*) (globals, functions) =
       | Noexpr     -> ((Void, SNoexpr), symbols)
       | Null       -> ((Void, Null), symbols)
       | Variable s  -> ((type_of_identifier s symbols, SVariable s), symbols)
-      | Vmember(s, _) -> (*@TODO: implement*) expr symbols s
+      | Vmember(e, m) ->
+        let ((t', e'), symbols') = expr symbols e in
+        let tov = type_of_vmember t' m in
+        ((tov, SVmember((t', e'), m)), symbols')
       | Literall l ->
           let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
           let isasn = List.fold_left is_assign true l in
@@ -233,11 +234,8 @@ let check (*functions*) (globals, functions) =
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in ((ty, SBinop((t1, e1'), op, (t2, e2'))), symbols'')
       | Assignm(var, mem, e) as ex ->
-          let ((lt, var'), sy') = expr symbols var in (*@TODO: implement*)
+          let ((lt, var'), sy') = expr symbols var in
           let ((rt, e'), symbols') = expr sy' e in
-          if (rt = Stringmap && mem = "guessedWords")
-          then ((lt, SAssignm((lt, var'), mem, (rt, e'))), symbols')
-          else
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
             string_of_typ rt ^ " in " ^ string_of_expr ex
           in ((check_assign lt rt err, SAssignm((lt, var'), mem, (rt, e'))), symbols')
@@ -284,16 +282,18 @@ let check (*functions*) (globals, functions) =
           else raise (Failure ("Object cannot be initialized with type"))
       | Newlis(t1, e2) ->
           if (t1 = Charlist && List.length e2 != 1) || (t1 = Listlist && List.length e2 != 2) then
-            raise (Failure "Unexpected fatal compiler error")
+            raise (Failure "Unexpected fatal compiler error") (*parser should have caught this*)
           else
-            let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
-            let isasnk = List.fold_left is_assign true e2 in
-            if isasnk then raise (Failure ("Cannot assign in new list")) else
-            let l' = map_over_two expr symbols e2 in
-            let is_int b ((t, _), _) = b && (t = Int) in
-            let lint = List.fold_left is_int true l' in
-            if not lint then raise (Failure ("Cannot create new list with non-integer arguments"))
-            else ((t1, SNewlis(List.map fst l')), symbols)
+              let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
+              let isasnk = List.fold_left is_assign true e2 in
+              if isasnk then raise (Failure ("Cannot assign in new list")) else
+              let l' = map_over_two expr symbols e2 in
+              let is_char b ((t, _), _) = b && (t = Char) in
+              let lint = List.fold_left is_char true l' in
+              let is_list b ((t, _), _) = b && (t = Charlist) in
+              let llis = List.fold_left is_list true l' in
+              if not (lint || llis) then raise (Failure ("Cannot create new list with non-char/charlist arguments"))
+              else ((t1, SNewlis(List.map fst l')), symbols)
       | Newobj(t1, argus)  ->
           match t1 with
               Player ->
