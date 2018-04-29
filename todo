@@ -7,6 +7,7 @@ ALL FILES
 
 
 Semantic Checker
+-add any builtins that are allowed to be called by the user
 -add back in the dictionary stuff
 -go over and make sure it complies with the specs
 -refactor if there's time
@@ -18,11 +19,12 @@ Legitimate Test Suite
 
 LRM
 -curly quotes to straight; code to courier
--standardize format (line spacing, font size, etc)
+-standardize format (line spacing, font size, all Null, etc)
 -any updates made in syntax (check against parser/semant at very end)
 -variable scope (clarify): one per function (even in cond/loop should be); what is default value (if any)
 -check semantics of fresh for diff types
 
+-readdict as a void function
 -limits on string literals (they can have newlines literals!),
  escaped quote char is poss?, what about "\n?" TEST THIS
 -getsetters (explain the semantics in builtin function section)
@@ -30,13 +32,8 @@ LRM
 
 
 BUILTINS (ostdlib.c)
--player struct
--print map
--anagram() (takes dictionary as param)
--readDict() (returns dictionary so it's implicitly (ASsign(dictionary, readDict())))
--map.destroy()/contains()/get()/ for strings and chars
--subStrings()
--listlist to string??
+-anagram() (takes dictionary as param, if we need it)
+-subStrings() if we need it
 
 
 Standard Library (.olh)
@@ -45,6 +42,8 @@ Standard Library (.olh)
 
 
 Compiler (codegen.ml)
+-add new builtins
+-readdict as a "void" function
 -add builtin constants (dictionary, letterScores) when appropriate
 -SVmember (members of objects: change them from calls to getsetters using build_call)
 -SLiteralm (literal maps)

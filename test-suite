@@ -16,6 +16,7 @@ test-player-pos (does not compile completely)
 test-foreach-pos (does not completely compile)
 
 Positive
+readdict()
 null comparison (bw listlist, stringmap)
 getsetters
 vmembers (of many exprs)

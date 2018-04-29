@@ -85,7 +85,40 @@ void PrintListList(char **lis) {
         printf("]\n");
 }
 
-//@TODO: print bool, charmap, stringmap
+
+void PrintStringmap(smap_t *map) {
+        smap_t *tmp = map;
+
+        printf("{");
+        while (tmp != NULL && tmp->next != NULL) {
+                printf("\"%s\" -> %d, ", tmp->key, tmp->value);
+                tmp = tmp->next;
+        }
+        if (tmp != NULL)
+                printf("\"%s\" -> %d", tmp->key, tmp->value);
+        printf("}\n");
+}
+
+void PrintCharmap(cmap_t *map) {
+        cmap_t *tmp = map;
+
+        printf("{");
+        while (tmp != NULL && tmp->next != NULL) {
+                printf("'%c' -> %d, ", tmp->key, tmp->value);
+                tmp = tmp->next;
+        }
+        if (tmp != NULL)
+                printf("'%c' -> %d", tmp->key, tmp->value);
+        printf("}\n");
+}
+
+
+void PrintBool(unsigned char b) {
+        if (b)
+                printf("true\n");
+        else
+                printf("false\n");
+}
 
 
 //called once at the beginning of each program
@@ -129,13 +162,62 @@ char* reverse(char* w) {
         return ans;
 };
 
-//returns a line without newline char, also used as helper function for readDict
+//returns a line without newline char
 char* ReadInput(void) {
         char *ans = NULL;
         size_t len = 0;
         ssize_t err = getline(&ans, &len, stdin);
         if (!err) return "";
         ans[strlen(ans) - 1] = 0; //remove newline
+        return ans;
+}
+
+//readDict: returns the dictionary. NULL if error reading in or empty file.
+//user sees it as a void function.
+smap_t *readDict(char* filename) {
+        smap_t *ans, *tmp;
+        FILE *fp;
+        ssize_t err;
+        char *buf = NULL;
+        size_t len = 0;
+
+        fp = fopen(filename, "r");
+        if (fp == NULL) {
+                fprintf(stderr, "Error reading file %s\n", filename);
+                return NULL;
+        }
+        //read line, parse, allocate
+        err = getline(&buf, &len, fp);
+        if (!err) {
+                fclose(fp);
+                free(buf);
+                fprintf(stderr, "Error reading file %s\n", filename);
+                return NULL;
+        }
+
+        ans = malloc(sizeof(smap_t));
+        buf[strlen(buf) - 1] = 0; //remove newline
+        ans->key = buf;
+        ans->value = 1;
+        ans->next = NULL;
+        tmp = ans;
+        buf = NULL;
+        len = 0;
+        err = getline(&buf, &len, fp);
+        while (err) {
+                tmp->next = malloc(sizeof(smap_t));
+                tmp = tmp->next;
+                buf[strlen(buf) - 1] = 0; //remove newline
+                tmp->key = buf;
+                tmp->value = 1;
+                tmp->next = NULL;
+                err = getline(&buf, &len, fp);
+                buf = NULL;
+                len = 0;
+        }
+        free(buf); //after getline
+
+        fclose(fp);
         return ans;
 }
 
@@ -147,13 +229,6 @@ char ToAscii(int i) {
         return (char)i;
 }
 
-//@TODO: IMPLEMENT BELOW
-char* anagram(char* w); //may take additional param for dictionary
-int readDict(char* filename); //bool return val, may take additional param for dictionary
-//void map.destroy(map<type> k) how to implement?
-//int Mapcontains(map<type> k) bool return val, how to implement? (Stringmapcontains, Charmapcontains...)
-//int map.getLength(void) how to implement?
-//map<String> subStrings(String w) how to implement?
 
 //LIST FUNCTIONS
 //length: we can just use strlen for Charlist.
@@ -378,6 +453,8 @@ unsigned char Stringmapcontains(smap_t *m, char *k) {
         return 0;
 }
 
+//@TODO: implement this (probably involves some sort of recursive
+//permutation generation if we're even going to implement it)
 smap_t *subStrings(char *s);
 
 
