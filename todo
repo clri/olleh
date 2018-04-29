@@ -30,11 +30,11 @@ LRM
 
 
 BUILTINS (ostdlib.c)
--charmap, stringmap, and player structs
+-player struct
 -print map
 -anagram() (takes dictionary as param)
 -readDict() (returns dictionary so it's implicitly (ASsign(dictionary, readDict())))
--map.destroy()/contains()/getLength()/get()/geti() for strings and chars
+-map.destroy()/contains()/get()/ for strings and chars
 -subStrings()
 -listlist to string??
 
@@ -46,15 +46,16 @@ Standard Library (.olh)
 
 Compiler (codegen.ml)
 -add builtin constants (dictionary, letterScores) when appropriate
--charmap, stringmap, and player structs
 -SVmember (members of objects: change them from calls to getsetters using build_call)
 -SLiteralm (literal maps)
+-player functionality
 -SAssignm (member assigning: change to call setter)
 -SNewobj/SNewtobj (allocating space for new objects)
 -SNewlis of listlist (and SLiterall for lists of lists)
 -add_terminal for all return types
 -add builtins for strlen and others
 -null comparisons/null pointer
+-foreach and maps: use an iterator, NOT a counter
 
 
 

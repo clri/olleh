@@ -4,8 +4,24 @@
 #include <time.h>
 
 //STRUCTS: object definitions
-//@TODO: define them here
+typedef struct charmap {
+        char key;
+        int value;
+        struct charmap *next;
+} cmap_t;
 
+typedef struct stringmap {
+        char *key;
+        int value;
+        struct stringmap *next;
+} smap_t;
+
+typedef struct player {
+        int score;
+        unsigned char turn; //should be good for alignment
+        char *letters;
+        smap_t *guessedWords;
+} player_t;
 
 
 //concat two strings
@@ -178,6 +194,192 @@ char *StringToList(char *lis) {
 }
 
 
-//Charmap.get(char): int CharmapGet(char);
-//Charmap.geti(char): int CharmapGeti(char); //aka how to iterate through a linked list
-//same for stringmap
+//MAP FUNCTIONS
+int CharmapgetLength(cmap_t *m) {
+        int ans = 0;
+        cmap_t *tmp = m;
+
+        while (tmp != NULL) {
+                tmp = tmp->next;
+                ans++;
+        }
+        return ans;
+}
+
+int StringmapgetLength(smap_t *m) {
+        int ans = 0;
+        smap_t *tmp = m;
+
+        while (tmp != NULL) {
+                tmp = tmp->next;
+                ans++;
+        }
+        return ans;
+}
+
+//when c is not in the map it will return
+//the value of some element in the map.
+//so you'd better do a contains() check first!
+//if the map is empty, returns 0
+int CharmapGet(cmap_t *m, char c) {
+        cmap_t *tmp = m;
+
+        if (m == NULL)
+                return 0;
+        while (tmp != NULL && tmp->key != c)
+                tmp = tmp->next;
+        return (tmp == NULL ? m->value : tmp->value);
+}
+
+int StringmapGet(smap_t *m, char *c) {
+        smap_t *tmp = m;
+
+        if (m == NULL)
+                return 0;
+        while (tmp != NULL && strcmp(tmp->key,c) != 0)
+                tmp = tmp->next;
+        return (tmp == NULL ? m->value : tmp->value);
+}
+
+//destroys element with given key
+//does nothing if key is not in the map
+//returns the parameter map in case the pointer
+//must be changed
+cmap_t *Charmapdestroy(cmap_t *m, char key) {
+        cmap_t *tmp = m;
+        cmap_t *tmp2 = tmp;
+
+        if (m == NULL)
+                return m;
+
+        if (m->key == key) {
+                //special case
+                tmp2 = m->next;
+                free(tmp);
+                return tmp2;
+        }
+
+        while (tmp != NULL && tmp->key != key) {
+                tmp = tmp->next;
+                tmp2 = tmp;
+        }
+        if (tmp != NULL && tmp->key == key) {
+                tmp2->next = tmp->next;
+                free(tmp);
+        }
+        return m;
+}
+
+smap_t *Stringmapdestroy(smap_t *m, char *key) {
+        smap_t *tmp = m;
+        smap_t *tmp2 = tmp;
+
+        if (m == NULL)
+                return m;
+
+        if (!strcmp(m->key, key)) {
+                //special case
+                tmp2 = m->next;
+                free(tmp);
+                return tmp2;
+        }
+
+        while (tmp != NULL && !strcmp(tmp->key, key)) {
+                tmp = tmp->next;
+                tmp2 = tmp;
+        }
+        if (tmp != NULL && !strcmp(tmp->key, key)) {
+                tmp2->next = tmp->next;
+                free(tmp);
+        }
+        return m;
+}
+
+//setters: add a node to the map if none exists, or
+//change the existing value
+cmap_t *CharmapSet(cmap_t *m, char k, int v) {
+        cmap_t *tmp = m;
+        cmap_t *tmp2 = tmp;
+
+        if (m == NULL) {
+                m = malloc(sizeof(cmap_t));
+                m->key = k;
+                m->value = v;
+                m->next = NULL;
+                return m;
+        }
+        while (tmp != NULL && tmp->key != k) {
+                tmp = tmp->next;
+                tmp2 = tmp;
+        }
+        if (tmp == NULL) {
+                tmp = malloc(sizeof(cmap_t));
+                tmp2->next = tmp;
+                tmp->key = k;
+                tmp->value = v;
+                tmp->next = NULL;
+        } else
+                tmp->value = v;
+
+        return m;
+}
+
+smap_t *StringmapSet(smap_t *m, char *k, int v) {
+        smap_t *tmp = m;
+        smap_t *tmp2 = tmp;
+
+        if (m == NULL) {
+                m = malloc(sizeof(smap_t));
+                m->key = k;
+                m->value = v;
+                m->next = NULL;
+                return m;
+        }
+        while (tmp != NULL && !strcmp(tmp->key, k)) {
+                tmp = tmp->next;
+                tmp2 = tmp;
+        }
+        if (tmp == NULL) {
+                tmp = malloc(sizeof(smap_t));
+                tmp2->next = tmp;
+                tmp->key = k;
+                tmp->value = v;
+                tmp->next = NULL;
+        } else
+                tmp->value = v;
+
+        return m;
+}
+
+//for contains, how to return a bool? use unsigned char
+unsigned char Charmapcontains(cmap_t *m, char k) {
+        cmap_t *tmp = m;
+
+        if (m == NULL)
+                return 0;
+        while (tmp != NULL) {
+                tmp = tmp->next;
+                if (tmp->key == k)
+                        return 1;
+        }
+        return 0;
+}
+
+unsigned char Stringmapcontains(smap_t *m, char *k) {
+        smap_t *tmp = m;
+
+        if (m == NULL)
+                return 0;
+        while (tmp != NULL) {
+                tmp = tmp->next;
+                if (strcmp(tmp->key, k))
+                        return 1;
+        }
+        return 0;
+}
+
+smap_t *subStrings(char *s);
+
+
+
+//

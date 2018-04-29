@@ -16,10 +16,16 @@ let translate (globals, functions) =
   and void_t     = L.void_type         context (*void*)
   (*and p_t  = L.pointer_type (L.i8_type (context))*)(*pointer type*)
   in let string_pointer = L.pointer_type (L.i8_type context) in
+  let listlist_ptr = L.pointer_type string_pointer in
   let map_t = L.named_struct_type context "mapt" in
   let map_ptr_t = L.pointer_type map_t in
   let _ = L.struct_set_body map_t [| string_pointer; i32_t; map_ptr_t |] false in
-  let player_t = L.struct_type context [| i32_t ; i1_t ; string_pointer ; map_t |]
+  let charmap_t = L.named_struct_type context "charmapt" in
+  let cmap_ptr_t = L.pointer_type charmap_t in
+  let _ = L.struct_set_body charmap_t [| i8_t; i32_t; cmap_ptr_t |] false in
+  let player_t = L.named_struct_type context "playert" in
+  let player_ptr_t = L.pointer_type player_t in
+  let _ = L.struct_set_body player_t [| i32_t ; i1_t ; string_pointer ; map_t |] false
 
   (*and cnode_t    = L.struct_type       context [| i8_t; (p_t cnode_t) |]*) (*char node*)
   (*@TODO: add structs/other stuff*)
@@ -36,9 +42,9 @@ let translate (globals, functions) =
     | A.Void  -> void_t
     | A.Stringmap -> map_ptr_t
     | A.Charmap -> map_ptr_t (*@TODO: possibly switch to separate struct*)
-    | A.Player -> player_t
+    | A.Player -> player_ptr_t
     | A.Charlist -> string_pointer (* @TODO adapt for 2D *)
-    | _ -> void_t (*temp; @TODO: add for structs*)
+    | A.Listlist -> listlist_ptr
   in
 
   (* Declare each global variable; remember its value in a map *)
