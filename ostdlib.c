@@ -46,7 +46,7 @@ int GetElemSpace(int e) {
         return ans;
 }
 
-//int to string
+//int to string, used only in printing
 char *IntToS(int e) {
         char *ans;
         int s = GetElemSpace(e) + 2;
@@ -224,7 +224,7 @@ smap_t *readDict(char* filename) {
 //converts int to ascii. will return zero if int is
 //greater than unsigned 8bit representation. ASCII maps to this
 char ToAscii(int i) {
-        if (i > 256 || i < 0)
+        if (i > 127 || i < 0)
             return 0;
         return (char)i;
 }
@@ -233,7 +233,7 @@ char ToAscii(int i) {
 //LIST FUNCTIONS
 //length: we can just use strlen for Charlist.
 //here we use a null pointer as a sentinel for listlists
-int Listlistlen(char **lis) {
+int ListlistgetLength(char **lis) {
         int ans = 0;
 
         while (lis[ans] != NULL)
@@ -242,29 +242,58 @@ int Listlistlen(char **lis) {
 }
 
 //Listlist.get(int): return NULL on out of bounds
-char* ListlistGet(char **lis, int i) {
-        if (i > Listlistlen(lis))
+char* Listlistget(char **lis, int i) {
+        if (i >= ListlistgetLength(lis))
                 return NULL;
         return lis[i];
 }
 
 //Charlist.get(int): return 0 on out of bounds
-char CharlistGet(char *lis, int i) {
-        if (i > strlen(lis))
+char Charlistget(char *lis, int i) {
+        if (i >= strlen(lis))
                 return '\0';
         return lis[i];
 }
 
+//list setters: will do nothing if index out of bounds
+void Listlistset1d(char **lis, int i, char *c) {
+        if (i >= ListlistgetLength(lis))
+                return;
+        lis[i] = c; //don't free what's there; we don't know if it's still in use
+}
+
+/*do we need these? user can just do a listlist.get().set()
+void Listlistset2d(char **lis, int i, int j, char c) {
+        if (i >= ListlistgetLength(lis))
+                return;
+        if (j >= strlen(lis[i]))
+                return;
+        lis[i][j] = c;
+}
+char Listlistget2(char **lis, int i, int j) {
+        if (i >= ListlistgetLength(lis))
+                return NULL;
+        if (j >= strlen(lis[i]))
+                return NULL;
+        return lis[i][j];
+}*/
+
+void Charlistset(char *lis, int i, char c) {
+        if (i >= strlen(lis))
+                return;
+        lis[i] = c;
+}
+
 //list to string: doesn't really do much, but
 //olleh pretends there is a difference
-char *ListToString(char *lis) {
+char *listToString(char *lis) {
         return lis;
 }
 
 //neither does stringToList, but since
 //we don't want users to manipulate strings
 //as strings they'll have to do it as a list
-char *StringToList(char *lis) {
+char *stringToList(char *lis) {
         return lis;
 }
 

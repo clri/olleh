@@ -51,7 +51,7 @@ let check (*functions*) (globals, functions) =
                                                  ("scramble", String, [(String, "w")]);
                                                  ("reverse", String, [(String, "w")]);
                                                  ("anagram", String, [(String, "w")]);
-                                                 ("readDict", String, [(String, "filename")]);
+                                                 ("readDict", Void, [(String, "filename")]);
                                                  ("listToString", String, [(Charlist, "lis")]);
                                                  (*("subStrings", Stringmap, [(String, "w")]);*)
                                                  ("random", Int, [(Int, "x")]);
@@ -61,7 +61,10 @@ let check (*functions*) (globals, functions) =
                                                  ("Charmapdestroy", Void, [(Charmap, "k"); (Char, "s")]);
                                                  ("Charmapcontains", Bool, [(Charmap, "k"); (Char, "s")]);
                                                  ("CharmapgetLength", Int, [(Stringmap, "k")]);
+                                                 ("ListlistgetLength", Int, [(Listlist, "k")]);
+                                                 ("CharlistgetLength", Int, [(Charlist, "k")]);
                                                  ("readInput", String, []);
+                                                 (*@TODO: Listlistget, Charlistget, stringtoList--include setters*)
                                                   ]
   in
 

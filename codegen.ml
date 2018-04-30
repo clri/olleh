@@ -58,21 +58,44 @@ let translate (globals, functions) =
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
 
-  (*builtins: print*)
+  (*builtins: printing and strings*)
   let printf_t : L.lltype =
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue =
      L.declare_function "printf" printf_t the_module in
-
-  (*builtins: getLength of a string and convert int to string*)
-  (*let intstr_t : L.lltype =
-      L.function_type i32_t [| L.pointer_type i8_t |] in
-  let getLength_func : L.llvalue =
-     L.declare_function "strlen" intstr_t the_module in*)
   let strint_t : L.lltype =
       L.function_type (L.pointer_type i8_t) [| i32_t |] in
   let intToString_func : L.llvalue =
-     L.declare_function "IntToS" strint_t the_module in
+     L.declare_function "IntToS" strint_t the_module in (*helper function for printing/concatenation*)
+  let charcharchar_t : L.lltype =
+      L.function_type (L.pointer_type i8_t) [| L.pointer_type i8_t; L.pointer_type i8_t |] in
+  let strcati_func : L.llvalue =
+      L.declare_function "SConcat" charcharchar_t the_module in
+  let voidlis_t : L.lltype =
+     L.function_type void_t [| L.pointer_type i8_t |] in
+  let printil_func : L.llvalue =
+     L.declare_function "PrintCharLis" voidlis_t the_module in
+  (*let voidlislis_t : L.lltype =
+     L.function_type void_t [| listlist_ptr |] in
+  let printll_func : L.llvalue =
+     L.declare_function "PrintListList" voidlislis_t the_module in*)
+
+  (*builtins: object functions*)
+  (*getLength*)
+  (*let intstr_t : L.lltype =
+      L.function_type i32_t [| L.pointer_type i8_t |] in
+  let cllen_func : L.llvalue =
+     L.declare_function "strlen" intstr_t the_module in
+  let intlislis_t : L.lltype =
+     L.function_type i32_t [| listlist_ptr |] in
+  let lllen_func : L.llvalue =
+     L.declare_function "ListlistgetLength" intlislis_t the_module in*)
+  (*@TODO: CharmapgetLength, StringmapgetLength,*)
+  (*getters: Listlistget, Charlistget, Charmapget, Stringmapget*)
+  (*setters: Charmapset, Stringmapset, Listlistset, Charlistset*)
+  (*misc: Charmapdestroy, Stringmapdestroy, Charmapcontains, Stringmapcontains,*)
+
+  (*builtins: misc*)
   let voidint_t : L.lltype =
      L.function_type void_t [| i32_t |] in
   let exit_func : L.llvalue =
@@ -81,32 +104,15 @@ let translate (globals, functions) =
      L.function_type i8_t [| i32_t |] in
   let ascii_func : L.llvalue =
      L.declare_function "ToAscii" charint_t the_module in
-
-  (*builtins: random*)
   (*let intvoid_t : L.lltype =
       L.function_type i32_t [| |] in
   let rand_funct : L.llvalue =
      L.declare_function "OllehRandom" intvoid_t the_module in*)
-
-  (*builtins: functions the user cannot explicitly call*)
   let voidvoid_t : L.lltype =
       L.function_type void_t [| |] in
   let randi_func : L.llvalue =
       L.declare_function "InitializeRandom" voidvoid_t the_module in
-
-  let charcharchar_t : L.lltype =
-      L.function_type (L.pointer_type i8_t) [| L.pointer_type i8_t; L.pointer_type i8_t |] in
-  let strcati_func : L.llvalue =
-      L.declare_function "SConcat" charcharchar_t the_module in
-
-  let strintlis_t : L.lltype =
-     L.function_type void_t [| L.pointer_type i8_t |] in
-  let printil_func : L.llvalue =
-     L.declare_function "PrintCharLis" strintlis_t the_module in
-  (*let voidlislis_t : L.lltype =
-     L.function_type void_t [| listlist_ptr |] in
-  let printll_func : L.llvalue =
-     L.declare_function "PrintListList" voidlislis_t the_module in*)
+  (*@TODO: stringtoList, anagram*)
 
   (* Define each function (arguments and return type) so we can
    * define it's body and call it later *)
