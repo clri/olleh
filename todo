@@ -8,9 +8,7 @@ ALL FILES
 
 Semantic Checker
 -add any more builtins that are allowed to be called by the user (check vs lrm)
--check over Callm()
 -add back in the dictionary stuff
--add dict as param to correct functions during transformation ()
 -go over and make sure it complies with the specs
 -refactor if there's time
 
@@ -44,7 +42,6 @@ Standard Library (.olh)
 
 Compiler (codegen.ml)
 -add new builtins with return types, also match call() with them
--pointer_type i8_t -> what we're actually calling it
 -readdict as a "void" function (remember to assign result, in destroy as well)
 -add builtin constants (dictionary, letterScores) when appropriate
 -SVmember (members of objects: change them from calls to getsetters using build_call)

@@ -60,19 +60,19 @@ let translate (globals, functions) =
 
   (*builtins: printing and strings*)
   let printf_t : L.lltype =
-      L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
+      L.var_arg_function_type i32_t [| string_pointer |] in
   let printf_func : L.llvalue =
      L.declare_function "printf" printf_t the_module in
   let strint_t : L.lltype =
-      L.function_type (L.pointer_type i8_t) [| i32_t |] in
+      L.function_type string_pointer [| i32_t |] in
   let intToString_func : L.llvalue =
      L.declare_function "IntToS" strint_t the_module in (*helper function for printing/concatenation*)
   let charcharchar_t : L.lltype =
-      L.function_type (L.pointer_type i8_t) [| L.pointer_type i8_t; L.pointer_type i8_t |] in
+      L.function_type string_pointer [| string_pointer; string_pointer |] in
   let strcati_func : L.llvalue =
       L.declare_function "SConcat" charcharchar_t the_module in
   let voidlis_t : L.lltype =
-     L.function_type void_t [| L.pointer_type i8_t |] in
+     L.function_type void_t [| string_pointer |] in
   let printil_func : L.llvalue =
      L.declare_function "PrintCharLis" voidlis_t the_module in
   (*let voidlislis_t : L.lltype =
@@ -83,7 +83,7 @@ let translate (globals, functions) =
   (*builtins: object functions*)
   (*getLength*)
   (*let intstr_t : L.lltype =
-      L.function_type i32_t [| L.pointer_type i8_t |] in
+      L.function_type i32_t [| L.string_pointer |] in
   let cllen_func : L.llvalue =
      L.declare_function "strlen" intstr_t the_module in
   let intlislis_t : L.lltype =
@@ -202,7 +202,7 @@ let translate (globals, functions) =
          let len = (List.length l) + 1 in
          if gtype = Charlist then
            let y = L.build_array_malloc i8_t (L.const_int i32_t len) "a1" builder
-           in let x = L.build_pointercast y (L.pointer_type i8_t) "a2" builder
+           in let x = L.build_pointercast y string_pointer "a2" builder
            in let addtoar index elem =
              let xx = L.build_gep x [| L.const_int i32_t index |] "a3" builder
              in ignore (L.build_store elem xx builder)
@@ -272,7 +272,7 @@ let translate (globals, functions) =
              let e' = expr builder locs (inddex l 0)
              in let e'' = L.build_add e' (L.const_int i32_t 1) "tmp" builder
              in let y = L.build_array_malloc i8_t e'' "a1" builder
-             in let x = L.build_pointercast y (L.pointer_type i8_t) "a2" builder
+             in let x = L.build_pointercast y string_pointer "a2" builder
              in let addtoar index elem =
                let xx = L.build_gep x [| index |] "a3" builder
                in ignore (L.build_store elem xx builder)
