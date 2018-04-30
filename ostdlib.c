@@ -163,7 +163,7 @@ char* reverse(char* w) {
 };
 
 //returns a line without newline char
-char* ReadInput(void) {
+char* readInput(void) {
         char *ans = NULL;
         size_t len = 0;
         ssize_t err = getline(&ans, &len, stdin);
@@ -453,9 +453,39 @@ unsigned char Stringmapcontains(smap_t *m, char *k) {
         return 0;
 }
 
-//@TODO: implement this (probably involves some sort of recursive
-//permutation generation if we're even going to implement it)
-smap_t *subStrings(char *s);
+
+//helper function
+int IsAnagram(char *s1, char *s2) {
+        int i;
+        int a1[256] = { 0 };
+        int a2[256] = { 0 };
+
+        if (strlen(s1) != strlen(s2))
+                return 0;
+        if (strcmp(s1, s2) == 0)
+                return 0; //not anagram of self
+        for (i = 0; i < strlen(s1); i++) {
+                a1[(unsigned int)s1[i]] += 1;
+                a2[(unsigned int)s2[i]] += 1;
+        }
+        for (i = 0; i < 256; i++) {
+                if (a1[i] != a2[i])
+                        return 0;
+        }
+        return 1;
+}
+
+//finds first valid anagram in the dictionary, or null if none such
+char *anagram(smap_t *dictionary, char *s) {
+        smap_t *tmp = dictionary;
+
+        while (tmp != NULL) {
+                if (IsAnagram(s, tmp->key))
+                        return tmp->key;
+                tmp = tmp->next;
+        }
+        return NULL;
+}
 
 
 

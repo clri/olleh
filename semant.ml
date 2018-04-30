@@ -53,7 +53,7 @@ let check (*functions*) (globals, functions) =
                                                  ("anagram", String, [(String, "w")]);
                                                  ("readDict", String, [(String, "filename")]);
                                                  ("listToString", String, [(Charlist, "lis")]);
-                                                 ("subStrings", Stringmap, [(String, "w")]);
+                                                 (*("subStrings", Stringmap, [(String, "w")]);*)
                                                  ("random", Int, [(Int, "x")]);
                                                  ("Stringmapdestroy", Void, [(Stringmap, "k"); (String, "s")]);
                                                  ("Stringmapcontains", Bool, [(Stringmap, "k"); (String, "s")]);

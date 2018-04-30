@@ -17,6 +17,8 @@ test-foreach-pos (does not completely compile)
 
 Positive
 readdict()
+anagram()
+other builtins
 null comparison (bw listlist, stringmap)
 getsetters
 vmembers (of many exprs)

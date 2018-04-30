@@ -41,7 +41,7 @@ let translate (globals, functions) =
     | A.String -> string_pointer
     | A.Void  -> void_t
     | A.Stringmap -> map_ptr_t
-    | A.Charmap -> map_ptr_t (*@TODO: possibly switch to separate struct*)
+    | A.Charmap -> cmap_ptr_t (*@TODO: possibly switch to separate struct*)
     | A.Player -> player_ptr_t
     | A.Charlist -> string_pointer (* @TODO adapt for 2D *)
     | A.Listlist -> listlist_ptr
@@ -103,6 +103,10 @@ let translate (globals, functions) =
      L.function_type void_t [| L.pointer_type i8_t |] in
   let printil_func : L.llvalue =
      L.declare_function "PrintCharLis" strintlis_t the_module in
+  (*let voidlislis_t : L.lltype =
+     L.function_type void_t [| listlist_ptr |] in
+  let printll_func : L.llvalue =
+     L.declare_function "PrintListList" voidlislis_t the_module in*)
 
   (* Define each function (arguments and return type) so we can
    * define it's body and call it later *)

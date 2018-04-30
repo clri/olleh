@@ -7,8 +7,10 @@ ALL FILES
 
 
 Semantic Checker
--add any builtins that are allowed to be called by the user
+-add any more builtins that are allowed to be called by the user (check vs lrm)
+-check how callm() works and add any builtins as glue (getsetters?) if necessary to line ~57
 -add back in the dictionary stuff
+-add dict as param to correct functions during transformation ()
 -go over and make sure it complies with the specs
 -refactor if there's time
 
@@ -24,7 +26,7 @@ LRM
 -variable scope (clarify): one per function (even in cond/loop should be); what is default value (if any)
 -check semantics of fresh for diff types
 
--readdict as a void function
+-readdict as a void function (sets dict to null)
 -limits on string literals (they can have newlines literals!),
  escaped quote char is poss?, what about "\n?" TEST THIS
 -getsetters (explain the semantics in builtin function section)
@@ -42,8 +44,8 @@ Standard Library (.olh)
 
 
 Compiler (codegen.ml)
--add new builtins
--readdict as a "void" function
+-add new builtins with return types, also match call() with them
+-readdict as a "void" function (remember to assign result, in destroy as well)
 -add builtin constants (dictionary, letterScores) when appropriate
 -SVmember (members of objects: change them from calls to getsetters using build_call)
 -SLiteralm (literal maps)
