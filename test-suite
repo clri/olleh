@@ -39,6 +39,10 @@ return that's not the last statement (?)
 map with same key twice? how to detect and avoid?
 
 
+Codegen - negative
+fresh list with negative integers
+
+
 Written (positive)
 Assign and print a variable of type: int (pos, neg, zero), char, string, bool (test-assign-pos)
 Assign and print a variable of type list (1d and 2d) (test-list-pos)

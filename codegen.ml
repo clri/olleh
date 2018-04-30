@@ -27,8 +27,6 @@ let translate (globals, functions) =
   let player_ptr_t = L.pointer_type player_t in
   let _ = L.struct_set_body player_t [| i32_t ; i1_t ; string_pointer ; map_t |] false
 
-  (*and cnode_t    = L.struct_type       context [| i8_t; (p_t cnode_t) |]*) (*char node*)
-  (*@TODO: add structs/other stuff*)
   (* Create an LLVM module -- this is a "container" into which we'll
      generate actual code *)
   and the_module = L.create_module context "Olleh" in
@@ -211,7 +209,8 @@ let translate (globals, functions) =
          in x
          (*@TODO: Listlist*)
          else raise (Failure "build error")
-      | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT*)
+      | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT similar to sliterall but each thing is a call to mapset
+        ie expr builder locs (Sassign(this ptr, elem))**)
       | SAssignm (_, s, e) -> let e' = expr builder locs e in
                           let _  = L.build_store e' (lookup s locs) builder in e' (*@TODO: CALL SETTER FUNCTION*)
       | SAssign (s, e) -> let e' = expr builder locs e in
@@ -265,8 +264,8 @@ let translate (globals, functions) =
             A.Neg                  -> L.build_neg e' "tmp" builder
           | A.Not                  -> L.build_not e' "tmp" builder
           | A.Asc                  -> L.build_call ascii_func [| e' |] "tmp" builder)
-      | SNewtobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT: fresh map*)
-      | SNewobj _ -> L.const_int i32_t 0 (*@TODO: IMPLEMEN: fresh player*)
+      | SNewtobj(t) -> L.const_null (ltype_of_typ t) (*set map to Null*)
+      | SNewobj _ -> L.build_malloc (ltype_of_typ gtype) "" builder (*@TODO: IMPLEMEN: fresh player*)
       | SNewlis l ->
            if gtype = A.Charlist then  (*1 dimension*)
              let e' = expr builder locs (inddex l 0)
@@ -277,8 +276,21 @@ let translate (globals, functions) =
                let xx = L.build_gep x [| index |] "a3" builder
                in ignore (L.build_store elem xx builder)
              in let _ = addtoar (e'') (L.const_int i8_t 0) (*sentinel*)
+             (*@TODO: for (e') iterations, fill array with 1*)
              in x
-           else L.const_int i32_t 0 (*@TODO: Listlist*)
+           else (*2D*)
+             let rows = expr builder locs (inddex l 0)
+             in let rows' = L.build_add rows (L.const_int i32_t 1) "tmp" builder
+             in let cols = expr builder locs (inddex l 1)
+             in let cols' = L.build_add cols (L.const_int i32_t 1) "tmp2" builder
+             in let y = L.build_array_malloc string_pointer rows' "a1" builder
+             in let x = L.build_pointercast y listlist_ptr "a2" builder
+             in let addtoar index elem =
+               let xx = L.build_gep x [| index |] "a3" builder
+               in ignore (L.build_store elem xx builder)
+             in let _ = addtoar (rows') (L.const_null string_pointer) (*sentinel*)
+             (*@TODO: for (rows) iterations, add the result of snewlis(cols)*)
+             in x
       (*| SCall("nameOfBuiltin") ...: @TODO implement for our builtins
        for a listget it should be a gep and not a function call*)
       | SCall ("InitializeRandom",[]) ->
@@ -398,8 +410,8 @@ let translate (globals, functions) =
          in StringMap.add n local_var m
         in let locs = add_local locs (A.Int, varname)
         in let get_fun = if t = A.Listlist || t = A.Charlist
-          then (A.string_of_typ t) ^ "Get"
-          else (A.string_of_typ t) ^ "Geti"
+          then (A.string_of_typ t) ^ "get"
+          else (A.string_of_typ t) ^ "geti"
         in let iterer = SExpr(tos, SAssign(v, (tos, SCall(get_fun, [] (*@TODO: ???*))))) (*do a get*)
         in let while_cond = SBinop((A.Int, SVariable(varname)), A.Less,
                                    (A.Int, SCall("Getlength", []))) (*@TODO: fix call, turn to SCallm when that is fixed*)

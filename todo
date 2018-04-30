@@ -21,14 +21,14 @@ LRM
 -curly quotes to straight; code to courier
 -standardize format (line spacing, font size, all Null, etc)
 -any updates made in syntax (check against parser/semant at very end)
--variable scope (clarify): one per function (even in cond/loop should be); what is default value (if any: fresh list allocate all null??)
+-variable scope (clarify): one per function (even in cond/loop should be); what is default value (default for globals is null, for others is 0)
 -lists are NOT immutable. talk about their mutability (implemented as C arrays, attempt to modify out of bounds for allocated GetElemSpace
  is impossible, though other mod methods such as setting elem at index to something else, are totally ok (which may result in a changed dimension))
 -check syntax/semantics of fresh for diff types
 -listToString() and why that is allowed (we don't want users carelessly manipulating strings)
 
 -ASCII max = 127, not 256
--readdict as a void function (sets dict to null)
+-readdict as a void function (sets dict to null on error)
 -limits on string literals (they can have newlines literals!),
  escaped quote char is poss?, what about "\n?" TEST THIS
 -getsetters (explain the semantics in builtin function section)
@@ -41,20 +41,18 @@ Standard Library (.olh)
 
 
 Compiler (codegen.ml)
--add new builtins with return types, also match call() with them
--readdict as a "void" function (remember to assign result, in destroy as well)
--add builtin constants (dictionary, letterScores) when appropriate
--SVmember (members of objects: change them from calls to getsetters using build_call)
--SLiteralm (literal maps)
--player functionality
--SAssignm (member assigning: change to call setter)
--SNewobj/SNewtobj (allocating space for new objects: set players to garbage vals for non-specified things, charmap/strmap to null,
- list of chars to all 1 (except last), listlist to all elems as fresh 1d list)
+-add new builtins with return types, also match call() with them (remember return types, assigning dictionary
+  (in ostdlib: change return type of setters to void)
+-SLiteralm (literal maps): call setter however many times, but how to get initial pointer
+-player functionality: SVmember and SAssignm as getsetters
+-SNewobj/SNewtobj (allocating space for new objects:
+ set players to malloc, how to set elems: build const ptr and copy it over
 -SNewlis of listlist (and SLiterall for lists of lists)
+ list of chars to all 1 (except last), listlist to all elems as fresh 1d list):
+   involves some sort of for loop-like construct
 -add_terminal for all return types
--add builtins for strlen and others
--null comparisons/null pointer
--foreach and maps: use an iterator, NOT a counter
+-foreach and maps: use an iterator, NOT a counter (ie tmp = tmp->next) if can figure it out
+  (for now, put geti back in; it's still O(n^2))
 
 
 
