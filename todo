@@ -8,7 +8,7 @@ ALL FILES
 
 Semantic Checker
 -add any more builtins that are allowed to be called by the user (check vs lrm)
--check how callm() works and add any builtins as glue (getsetters?) if necessary to line ~57
+-check over Callm()
 -add back in the dictionary stuff
 -add dict as param to correct functions during transformation ()
 -go over and make sure it complies with the specs
@@ -25,8 +25,9 @@ LRM
 -any updates made in syntax (check against parser/semant at very end)
 -variable scope (clarify): one per function (even in cond/loop should be); what is default value (if any: fresh list allocate all null??)
 -lists are NOT immutable. talk about their mutability (implemented as C arrays, attempt to modify out of bounds for allocated GetElemSpace
-is impossible, though other mod methods such as setting elem at index to something else, are totally ok (which may result in a changed dimension))
--check semantics of fresh for diff types
+ is impossible, though other mod methods such as setting elem at index to something else, are totally ok (which may result in a changed dimension))
+-check syntax/semantics of fresh for diff types
+-listToString() and why that is allowed (we don't want users carelessly manipulating strings)
 
 -ASCII max = 127, not 256
 -readdict as a void function (sets dict to null)
@@ -34,10 +35,6 @@ is impossible, though other mod methods such as setting elem at index to somethi
  escaped quote char is poss?, what about "\n?" TEST THIS
 -getsetters (explain the semantics in builtin function section)
 -modifying maps while foreaching them (once that section's written)
-
-
-BUILTINS (ostdlib.c)
--Listlistset, Charlistlet (handle out of bounds case)
 
 
 Standard Library (.olh)

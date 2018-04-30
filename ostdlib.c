@@ -256,27 +256,11 @@ char Charlistget(char *lis, int i) {
 }
 
 //list setters: will do nothing if index out of bounds
-void Listlistset1d(char **lis, int i, char *c) {
+void Listlistset(char **lis, int i, char *c) {
         if (i >= ListlistgetLength(lis))
                 return;
         lis[i] = c; //don't free what's there; we don't know if it's still in use
 }
-
-/*do we need these? user can just do a listlist.get().set()
-void Listlistset2d(char **lis, int i, int j, char c) {
-        if (i >= ListlistgetLength(lis))
-                return;
-        if (j >= strlen(lis[i]))
-                return;
-        lis[i][j] = c;
-}
-char Listlistget2(char **lis, int i, int j) {
-        if (i >= ListlistgetLength(lis))
-                return NULL;
-        if (j >= strlen(lis[i]))
-                return NULL;
-        return lis[i][j];
-}*/
 
 void Charlistset(char *lis, int i, char c) {
         if (i >= strlen(lis))

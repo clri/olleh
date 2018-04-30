@@ -63,8 +63,16 @@ let check (*functions*) (globals, functions) =
                                                  ("CharmapgetLength", Int, [(Stringmap, "k")]);
                                                  ("ListlistgetLength", Int, [(Listlist, "k")]);
                                                  ("CharlistgetLength", Int, [(Charlist, "k")]);
+                                                 ("Listlistget", Charlist, [(Listlist, "k"); (Int, "s")]);
+                                                 ("Charlistget", Char, [(Charlist, "k"); (Int, "s")]);
+                                                 ("Listlistset", Void, [(Listlist, "k"); (Int, "s"); (Char, "c")]);
+                                                 ("Charlistset", Void, [(Charlist, "k"); (Int, "s"); (Char, "c")]);
+                                                 ("stringToList", Charlist, [(String, "lis")]);
                                                  ("readInput", String, []);
-                                                 (*@TODO: Listlistget, Charlistget, stringtoList--include setters*)
+                                                 ("Charmapset", Void, [(Charmap, "k"); (Char, "c"); (Int, "s")]);
+                                                 ("Stringmapset", Void, [(Stringmap, "k"); (String, "c"); (Int, "s")]);
+                                                 ("Stringmapget", Int, [(Stringmap, "k"); (String, "c")]);
+                                                 ("Stringmapget", Int, [(Stringmap, "k"); (Char, "c")])
                                                   ]
   in
 
