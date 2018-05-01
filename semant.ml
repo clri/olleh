@@ -72,7 +72,7 @@ let check (*functions*) (globals, functions) =
                                                  ("Charmapset", Void, [(Charmap, "k"); (Char, "c"); (Int, "s")]);
                                                  ("Stringmapset", Void, [(Stringmap, "k"); (String, "c"); (Int, "s")]);
                                                  ("Stringmapget", Int, [(Stringmap, "k"); (String, "c")]);
-                                                 ("Stringmapget", Int, [(Stringmap, "k"); (Char, "c")])
+                                                 ("Charmapget", Int, [(Stringmap, "k"); (Char, "c")])
                                                   ]
   in
 
