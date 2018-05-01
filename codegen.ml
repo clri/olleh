@@ -293,20 +293,20 @@ let translate (globals, functions) =
 
       | SNewobj _ ->  (* do we need a match expr first?? *)
          let pptr = L.build_malloc (ltype_of_typ gtype) "tmp" builder
-         in let addtoplayer plyr (s, t, g, l) =  (* score, turn, guessed, letters *)
+         (*in let addtoplayer plyr (s, t, g, l) =  (* score, turn, guessed, letters *)
            let s' = expr builder locs s
            and t' = expr builder locs t
            and g' = expr builder locs g
            and l' = expr builder locs l
-         in let added_score = L.build_insertvalue pptr s' 0 "as" builder 
+         in let added_score = L.build_insertvalue pptr s' 0 "as" builder
          in let added_turn = L.build_insertvalue pptr t' 1 "at" builder
          in let added_guessed = L.build_insertvalue pptr g' 2 "ag" builder
          in let added_letters = L.build_insertvalue pptr l' 3 "al" builder
-         
+
          in let plyr = addtomap pptr (score, turn, guessed, letters)
          in let set_plyr (s, t, g, l) =
            L.build_call [|(expr builder locs s); (expr builder locs t); (expr builder locs g); (expr builder locs l)|] "" builder
-         in pptr
+         *)in pptr
       | SNewlis l ->
            if gtype = A.Charlist then  (*1 dimension*)
              let e' = expr builder locs (inddex l 0)
@@ -337,6 +337,16 @@ let translate (globals, functions) =
       | SCall ("InitializeRandom",[]) ->
          L.build_call randi_func [| |]
          "" builder
+      | SCall ("Charmapset", args) ->
+         let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
+         let result = "Charmapget_result" in
+         L.build_call cmapset_func (Array.of_list llargs)
+         result builder
+      | SCall ("Stringmapset", args) ->
+         let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
+         let result = "Stringmapget_result" in
+         L.build_call smapset_func (Array.of_list llargs)
+         result builder
       | SCall (f, args) ->
          let (fdef, fdecl) = try StringMap.find f function_decls with Not_found -> raise (Failure ("FAIL " ^ f)) in
 	 let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in

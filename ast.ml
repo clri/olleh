@@ -99,7 +99,8 @@ let rec string_of_expr e = match e with
     | Variable v -> v
     | Vmember (v, m) -> (string_of_expr v) ^ "." ^ m
     | Literall l -> "[...]"
-    | Literalm m -> "{...}"
+    | Literalm m -> "{" ^ (match m with [] -> ""
+   | (x, y) :: rest -> (string_of_expr x) ^ (string_of_expr y)) ^ "}"
     | Binop (e1, op, e2) ->
         (string_of_expr e1) ^ " " ^ (string_of_op op) ^ " " ^ (string_of_expr e2)
     | Unop (op, e1) -> (string_of_uop op) ^ " " ^ (string_of_expr e1)

@@ -72,7 +72,7 @@ Fatal error: exception Failure("Cannot create new list with non-char/charlist ar
 
 ###### Testing test-map-pos
 ./toplevel tests/test-map-pos.olh > test-map-pos.ll
-Fatal error: exception Failure("Cannot make assignments in  map literals")
+Fatal error: exception Failure("internal error: print not (yet) implemented")
 ###### SUCCESS
 
 ###### Testing test-player-pos
