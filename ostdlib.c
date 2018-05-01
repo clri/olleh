@@ -385,7 +385,7 @@ smap_t *Stringmapdestroy(smap_t *m, char *key) {
 
 //setters: add a node to the map if none exists, or
 //change the existing value
-cmap_t *CharmapSet(cmap_t *m, char k, int v) {
+cmap_t *Charmapset(cmap_t *m, char k, int v) {
         cmap_t *tmp = m;
         cmap_t *tmp2 = tmp;
 
@@ -412,7 +412,7 @@ cmap_t *CharmapSet(cmap_t *m, char k, int v) {
         return m;
 }
 
-smap_t *StringmapSet(smap_t *m, char *k, int v) {
+smap_t *Stringmapset(smap_t *m, char *k, int v) {
         smap_t *tmp = m;
         smap_t *tmp2 = tmp;
 
