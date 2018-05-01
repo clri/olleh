@@ -290,7 +290,23 @@ let translate (globals, functions) =
           | A.Not                  -> L.build_not e' "tmp" builder
           | A.Asc                  -> L.build_call ascii_func [| e' |] "tmp" builder)
       | SNewtobj(t) -> L.const_null (ltype_of_typ t) (*set map to Null*)
-      | SNewobj _ -> L.build_malloc (ltype_of_typ gtype) "tmp" builder (*@TODO: IMPLEMEN: fresh player*)
+
+      | SNewobj _ ->  (* do we need a match expr first?? *)
+         let pptr = L.build_malloc (ltype_of_typ gtype) "tmp" builder
+         in let addtoplayer plyr (s, t, g, l) =  (* score, turn, guessed, letters *)
+           let s' = expr builder locs s
+           and t' = expr builder locs t
+           and g' = expr builder locs g
+           and l' = expr builder locs l
+         in let added_score = L.build_insertvalue pptr s' 0 "as" builder 
+         in let added_turn = L.build_insertvalue pptr t' 1 "at" builder
+         in let added_guessed = L.build_insertvalue pptr g' 2 "ag" builder
+         in let added_letters = L.build_insertvalue pptr l' 3 "al" builder
+         
+         in let plyr = addtomap pptr (score, turn, guessed, letters)
+         in let set_plyr (s, t, g, l) =
+           L.build_call [|(expr builder locs s); (expr builder locs t); (expr builder locs g); (expr builder locs l)|] "" builder
+         in pptr
       | SNewlis l ->
            if gtype = A.Charlist then  (*1 dimension*)
              let e' = expr builder locs (inddex l 0)
