@@ -71,8 +71,18 @@ let translate (globals, functions) =
       L.declare_function "SConcat" charcharchar_t the_module in
   let voidlis_t : L.lltype =
      L.function_type void_t [| string_pointer |] in
+  let voidsmap_t : L.lltype = 
+     L.function_type void_t [| map_ptr_t |] in  
+  let voidcmap_t : L.lltype = 
+     L.function_type void_t [| cmap_ptr_t |] in  
   let printil_func : L.llvalue =
      L.declare_function "PrintCharLis" voidlis_t the_module in
+  let printsmap_func : L.llvalue = 
+     L.declare_function "PrintStringMap" voidsmap_t the_module in 
+  let printcmap_func : L.llvalue = 
+     L.declare_function "PrintCharMap" voidcmap_t the_module in 
+  
+
   (*let voidlislis_t : L.lltype =
      L.function_type void_t [| listlist_ptr |] in
   let printll_func : L.llvalue =
@@ -302,7 +312,6 @@ let translate (globals, functions) =
          in let added_turn = L.build_insertvalue pptr t' 1 "at" builder
          in let added_guessed = L.build_insertvalue pptr g' 2 "ag" builder
          in let added_letters = L.build_insertvalue pptr l' 3 "al" builder
-         
          in let plyr = addtomap pptr (score, turn, guessed, letters)
          in let set_plyr (s, t, g, l) =
            L.build_call [|(expr builder locs s); (expr builder locs t); (expr builder locs g); (expr builder locs l)|] "" builder
@@ -379,6 +388,14 @@ let translate (globals, functions) =
             "" builder in builder
          else if t = Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder locs (t,e)) |]
            "printf" builder in builder
+         (* else if t = Stringmap then    (* not sure if this is the best way to implement this *)
+          let smap = expr builder locs (t, e) in
+          let _ = L.build_call printsmap_func [| ex |] 
+          "" builder in builder
+        else if t = Charmap then
+          let cmap = expr builder locs (t, e) in 
+          let _ = L.build_call printcmap_func [| ex |] 
+          "" builder in builder *)
           else raise (Failure "internal error: print not (yet) implemented") (*@TODO: bool, map, etc*)
       | (SIf (predicate, then_stmt, else_stmt), locs) -> (*lifted from microC, comments removed for brevity*)
          let bool_val = expr builder locs predicate in
