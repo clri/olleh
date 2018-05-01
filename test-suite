@@ -13,7 +13,7 @@ test-while-pos (needs something to print in loop)
 (these use structs not implemented)
 test-map-pos (does not compile completely)
 test-player-pos (does not compile completely)
-test-foreach-pos (does not completely compile)
+test-foreach-pos complains of adding to stringmap or something
 
 Positive
 readdict()

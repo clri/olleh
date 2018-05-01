@@ -72,7 +72,7 @@ let check (*functions*) (globals, functions) =
                                                  ("Charmapset", Void, [(Charmap, "k"); (Char, "c"); (Int, "s")]);
                                                  ("Stringmapset", Void, [(Stringmap, "k"); (String, "c"); (Int, "s")]);
                                                  ("Stringmapget", Int, [(Stringmap, "k"); (String, "c")]);
-                                                 ("Stringmapget", Int, [(Stringmap, "k"); (Char, "c")])
+                                                 ("Charmapget", Int, [(Stringmap, "k"); (Char, "c")])
                                                   ]
   in
 
@@ -185,12 +185,12 @@ let check (*functions*) (globals, functions) =
                 raise (Failure ("List of improper type"))
       | Literalm m ->
           let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
-          let isasnk = List.fold_left is_assign true (List.map fst m) in
-            if isasnk then raise (Failure ("Cannot make assignments in  map literals"))
+          (*let isasnk = List.fold_left is_assign true (List.map fst m) in
+            if isasnk then raise (Failure ("Cannot make assignments in key map literals" ^ (string_of_expr exx)))
           else
           let isasnv = List.fold_left is_assign true (List.map snd m) in
-            if isasnv then raise (Failure ("Cannot make assignments in  map literals"))
-          else
+            if isasnv then raise (Failure ("Cannot make assignments in val map literals"))
+          else*)
           let m' = List.map (map_tup expr symbols) m in
           let m'' = List.map (map_tup_nos fst) m' in
           let is_charkey b ((t, _), _) = b && (t = Char) in

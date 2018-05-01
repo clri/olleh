@@ -43,7 +43,7 @@ cc -o test-for-pos.exe test-for-pos.s ostdlib.o
 
 ###### Testing test-foreach-pos
 ./toplevel tests/test-foreach-pos.olh > test-foreach-pos.ll
-Fatal error: exception Failure("unrecognized function Stringmapset")
+Fatal error: exception Failure("illegal binary operator Stringmap Plus String in z Plus  ")
 ###### SUCCESS
 
 ###### Testing test-func-pos
@@ -67,12 +67,12 @@ cc -o test-int-pos.exe test-int-pos.s ostdlib.o
 
 ###### Testing test-list-pos
 ./toplevel tests/test-list-pos.olh > test-list-pos.ll
-Fatal error: exception Failure("unrecognized function Charlistset")
+Fatal error: exception Failure("Cannot create new list with non-char/charlist arguments")
 ###### SUCCESS
 
 ###### Testing test-map-pos
 ./toplevel tests/test-map-pos.olh > test-map-pos.ll
-Fatal error: exception Failure("unrecognized function Stringmapset")
+Fatal error: exception Failure("internal error: print not (yet) implemented")
 ###### SUCCESS
 
 ###### Testing test-player-pos
@@ -129,6 +129,9 @@ diff -b fail-and-neg.err tests/fail-and-neg.err > fail-and-neg.diff
 ; ModuleID = 'Olleh'
 source_filename = "Olleh"
 
+%charmapt = type { i8, i32, %charmapt* }
+%mapt = type { i8*, i32, %mapt* }
+
 @c = global i8 0
 @fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
 @fmt.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
@@ -137,15 +140,19 @@ declare i32 @printf(i8*, ...)
 
 declare i8* @IntToS(i32)
 
+declare i8* @SConcat(i8*, i8*)
+
+declare void @PrintCharLis(i8*)
+
+declare %charmapt* @Charmapset(%charmapt*, i8, i32)
+
+declare %mapt* @Stringmapset(%mapt*, i8*, i32)
+
 declare void @exit(i32)
 
 declare i8 @ToAscii(i32)
 
 declare void @InitializeRandom()
-
-declare i8* @SConcat(i8*, i8*)
-
-declare void @PrintCharLis(i8*)
 
 define void @main(i8 %c) {
 entry:
@@ -243,6 +250,9 @@ diff -b fail-fpla-neg.err tests/fail-fpla-neg.err > fail-fpla-neg.diff
 ; ModuleID = 'Olleh'
 source_filename = "Olleh"
 
+%charmapt = type { i8, i32, %charmapt* }
+%mapt = type { i8*, i32, %mapt* }
+
 @lis = global i8* null
 @fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
 @fmt.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
@@ -251,15 +261,19 @@ declare i32 @printf(i8*, ...)
 
 declare i8* @IntToS(i32)
 
+declare i8* @SConcat(i8*, i8*)
+
+declare void @PrintCharLis(i8*)
+
+declare %charmapt* @Charmapset(%charmapt*, i8, i32)
+
+declare %mapt* @Stringmapset(%mapt*, i8*, i32)
+
 declare void @exit(i32)
 
 declare i8 @ToAscii(i32)
 
 declare void @InitializeRandom()
-
-declare i8* @SConcat(i8*, i8*)
-
-declare void @PrintCharLis(i8*)
 
 define void @main(i8* %lis) {
 entry:
