@@ -5,6 +5,7 @@
 llc test-add-pos.ll > test-add-pos.s
 cc -o test-add-pos.exe test-add-pos.s ostdlib.o
 ./test-add-pos.exe
+diff -b test-add-pos.out tests/test-add-pos.out > test-add-pos.diff
 ###### SUCCESS
 
 ###### Testing test-assign-pos
@@ -75,9 +76,9 @@ Fatal error: exception Failure("Cannot create new list with non-char/charlist ar
 
 ###### Testing test-map-pos
 ./toplevel tests/test-map-pos.olh > test-map-pos.ll
-Incorrect number of arguments passed to called function!
-  %0 = call %charmapt* @Charmapset(i8 120, i32 4)
-LLVM ERROR: Broken module found, compilation aborted!
+llc test-map-pos.ll > test-map-pos.s
+cc -o test-map-pos.exe test-map-pos.s ostdlib.o
+./test-map-pos.exe
 ###### SUCCESS
 
 ###### Testing test-player-pos

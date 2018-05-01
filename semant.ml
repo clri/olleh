@@ -286,8 +286,8 @@ let check (*functions*) (globals, functions) =
           let args' = List.map2 check_call fd.formals (vname :: args)
           in ((fd.typ, SCall((string_of_typ ty) ^ fname, args')), symbols)
       | Newtobj(t1) ->
-          if t1 = Charmap || t1 = Stringmap then
-                 ((t1, SNewtobj(t1)), symbols)
+          if (t1 = Stringmap) then ((t1, SNewtobj(t1)), symbols)
+          else if (t1 = Charmap) then ((t1, SNewtobj(t1)), symbols)
           else raise (Failure ("Object cannot be initialized with type"))
       | Newlis(t1, e2) ->
           if (t1 = Charlist && List.length e2 != 1) || (t1 = Listlist && List.length e2 != 2) then

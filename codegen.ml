@@ -244,18 +244,20 @@ let translate (globals, functions) =
          | (ke, vl) :: rest ->
            let type_of_ptr = if gtype = A.Charmap then charmap_t else map_t in
          let mptr = L.undef (type_of_ptr)
+         in let mptr' = L.build_malloc (type_of_ptr) "tmp" builder
+         in let mptr_actual = L.build_pointercast mptr' (ltype_of_typ gtype) "aptr" builder
          in let addtap mp (k, v) =
            let k' = expr builder locs k
            and v' = expr builder locs v
            in let added_key = L.build_insertvalue mp k' 0 "ak" builder
            in let added_val = L.build_insertvalue added_key v' 1 "av" builder
            in L.build_insertvalue added_val (L.const_null (ltype_of_typ gtype)) 2 "an" builder
-         in let _ = addtap mptr (ke, vl)
+         in let x = addtap mptr (ke, vl)
+         in let _ = L.build_store x mptr' builder
          in let set_map (k, v) =
            ignore (L.build_call (if gtype = Stringmap then smapset_func else cmapset_func)
-             [|(expr builder locs k); (expr builder locs v)|] "" builder)
+             [| mptr_actual; (expr builder locs k); (expr builder locs v)|] "" builder)
          in let _ =  List.iter set_map rest
-         in let mptr_actual = L.build_pointercast mptr (ltype_of_typ gtype) "aptr" builder
          in mptr_actual
         in mptrr
       | SAssignm (_, s, e) -> let e' = expr builder locs e in
@@ -354,6 +356,15 @@ let translate (globals, functions) =
              in let _ = addtoar (rows') (L.const_null string_pointer) (*sentinel*)
              (*@TODO: for (rows) iterations, add the result of snewlis(cols)*)
              in x
+      (*| SCall ("Stringmapset", args) ->
+        for map setters we need to build a call to assign the result if we
+        are setting a variable (or, in the case of stringmap, a vmember)
+        let (a, b, c) = match args with (aa :: bb :: cc :: []) -> (aa, bb, cc)
+          | _ -> raise (Failure("wrong number of arguments")) in
+        let ans =
+          match
+        in ans
+        *)
       | SCall (f, args) ->
          let llargs = List.rev (List.map (expr builder locs) (List.rev args))
          in let (fdef, result) =

@@ -11,20 +11,19 @@ test-list-pos (no new list of type, need some way of handling empty list i guess
 test-while-pos (needs something to print in loop)
 
 (these use structs not implemented)
-test-map-pos (does not compile completely)
 test-player-pos (does not compile completely)
 test-foreach-pos complains of adding to stringmap or something (illegal binop)
 
 Positive
 readdict()
 anagram()
-null comparison
 other builtins
 null comparison (bw listlist, stringmap)
 getsetters
 vmembers (of many exprs)
 test for/foreach/while with multiple statements in body (determine order)
 test strings with escaped quotes and \n, \0
+zero-length lists
 
 Parser - negatve
 function in a function
@@ -52,16 +51,10 @@ list getsetters (test-list-pos)
 empty 2d list (test-list-pos)
 empty 1d list (test-list-pos)
 two statements on the same line (test-list-pos)
-Assign and print a variable of type map (char and str) (test-map-pos)
 map getsetters (test-map-pos)
-fresh map(string), fresh map(char) (test-map-pos)
-empty map (test-map-pos)
-/*comment*/ on same line as code (test-map-pos)
 Assign player and print its members (test-player-pos)
 fresh player(nothing), fresh player(something) (test-player-pos)
 player getsetters (test-player-pos)
-</>/==/<=/>=/!= (for int and char) (test-compare-pos)
-multiline statement (test-compare-pos)
 foreach of list, foreach of map (test-foreach-pos)
 create function (no args, args, void, real return type) (test-func-pos)
 call function (no args, args, void, real return type) (test-func-pos)
@@ -94,6 +87,12 @@ multiline string? (test-str-pos)
 concat strings, concat string + multiple ints (test-str-pos)
 and/or/not (test-if-pos)
 if noelse (test-if-pos)
+Assign and print a variable of type map (char and str) (test-map-pos)
+fresh map(string), fresh map(char) (test-map-pos)
+empty map (test-map-pos)
+/*comment*/ on same line as code (test-map-pos)
+</>/==/<=/>=/!= (for int and char) (test-compare-pos)
+multiline statement (test-compare-pos)
 
 
 Passing (negative)
