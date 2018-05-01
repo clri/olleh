@@ -7,17 +7,18 @@ fail-freshpla2-neg (why is this assigning something in the map literal i don't u
 
 test-assign-pos (does not completely compile)
 test-func-pos (doesn't print a lot of what's going on)
-test-list-pos (need to implement list printing functs)
+test-list-pos (no new list of type, need some way of handling empty list i guess)
 test-while-pos (needs something to print in loop)
 
 (these use structs not implemented)
 test-map-pos (does not compile completely)
 test-player-pos (does not compile completely)
-test-foreach-pos complains of adding to stringmap or something
+test-foreach-pos complains of adding to stringmap or something (illegal binop)
 
 Positive
 readdict()
 anagram()
+null comparison
 other builtins
 null comparison (bw listlist, stringmap)
 getsetters

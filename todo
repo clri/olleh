@@ -7,6 +7,7 @@ ALL FILES
 
 
 Semantic Checker
+-remove no assign
 -add any more builtins that are allowed to be called by the user (check vs lrm)
 -add back in the dictionary stuff
 -go over and make sure it complies with the specs
@@ -15,6 +16,7 @@ Semantic Checker
 
 Legitimate Test Suite
 -see test-suite
+-but also remove all the fail-asx-neg
 
 
 LRM
@@ -33,16 +35,21 @@ LRM
  escaped quote char is poss?, what about "\n?" TEST THIS
 -getsetters (explain the semantics in builtin function section)
 -modifying maps while foreaching them (once that section's written)
+-remove no assignments rue
 
 
 Standard Library (.olh)
 -Write standard library functions (list here)
+ random
+ reverse
+ scramble
 -Hook them into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
 
 
 Compiler (codegen.ml)
+-remove no assignments rule
 -add new builtins with return types, also match call() with them (remember return types, assigning dictionary
-  (in ostdlib: change return type of setters to void)
+  force setters to assign if the type is a variable or vmember
 -SLiteralm (literal maps): call setter however many times, but how to get initial pointer
 -player functionality: SVmember and SAssignm as getsetters
 -SNewobj/SNewtobj (allocating space for new objects:

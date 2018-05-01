@@ -48,13 +48,9 @@ let check (*functions*) (globals, functions) =
     let add_bind map (name, ty, argus) =
       StringMap.add name { typ = ty; fname = name; formals = argus; body = [] } map
     in List.fold_left add_bind StringMap.empty [ ("InitializeRandom", Void, []);
-                                                 ("scramble", String, [(String, "w")]);
-                                                 ("reverse", String, [(String, "w")]);
                                                  ("anagram", String, [(String, "w")]);
                                                  ("readDict", Void, [(String, "filename")]);
                                                  ("listToString", String, [(Charlist, "lis")]);
-                                                 (*("subStrings", Stringmap, [(String, "w")]);*)
-                                                 ("random", Int, [(Int, "x")]);
                                                  ("Stringmapdestroy", Void, [(Stringmap, "k"); (String, "s")]);
                                                  ("Stringmapcontains", Bool, [(Stringmap, "k"); (String, "s")]);
                                                  ("StringmapgetLength", Int, [(Stringmap, "k")]);
@@ -226,6 +222,8 @@ let check (*functions*) (globals, functions) =
       | Binop(e1, op, e2) as e ->
           let ((t1, e1'), symbols') = expr symbols e1
           in let ((t2, e2'), symbols'') = expr symbols' e2 in
+          let t1' = t1 in let t1 = if e1 = Null then t2 else t1' in
+          let t2' = t2 in let t2 = if e2 = Null then t1 else t2' in
           (* All binary operators require operands of the same type *)
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)

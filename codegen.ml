@@ -71,17 +71,17 @@ let translate (globals, functions) =
       L.declare_function "SConcat" charcharchar_t the_module in
   let voidlis_t : L.lltype =
      L.function_type void_t [| string_pointer |] in
-  let voidsmap_t : L.lltype = 
-     L.function_type void_t [| map_ptr_t |] in  
-  let voidcmap_t : L.lltype = 
-     L.function_type void_t [| cmap_ptr_t |] in  
+  let voidsmap_t : L.lltype =
+     L.function_type void_t [| map_ptr_t |] in
+  let voidcmap_t : L.lltype =
+     L.function_type void_t [| cmap_ptr_t |] in
   let printil_func : L.llvalue =
      L.declare_function "PrintCharLis" voidlis_t the_module in
-  let printsmap_func : L.llvalue = 
-     L.declare_function "PrintStringMap" voidsmap_t the_module in 
-  let printcmap_func : L.llvalue = 
-     L.declare_function "PrintCharMap" voidcmap_t the_module in 
-  
+  let printsmap_func : L.llvalue =
+     L.declare_function "PrintStringMap" voidsmap_t the_module in
+  let printcmap_func : L.llvalue =
+     L.declare_function "PrintCharMap" voidcmap_t the_module in
+
 
   (*let voidlislis_t : L.lltype =
      L.function_type void_t [| listlist_ptr |] in
@@ -210,7 +210,7 @@ let translate (globals, functions) =
       | SLiteralb b -> L.const_int i1_t (if b then 1 else 0)
       | SLiterals s -> L.build_global_stringptr s "" builder
       | SNoexpr -> L.const_int i32_t 0
-      | Null -> L.const_int i32_t 0 (*@TODO: null pointer*)
+      | Null -> L.const_null (ltype_of_typ gtype) 
       | SVariable s -> L.build_load (lookup s locs) s builder
       | SVmember (v, m) ->L.const_int i32_t 0 (*@TODO: change to gep or getter*)
       | SLiterall l ->
@@ -400,11 +400,11 @@ let translate (globals, functions) =
            "printf" builder in builder
          (* else if t = Stringmap then    (* not sure if this is the best way to implement this *)
           let smap = expr builder locs (t, e) in
-          let _ = L.build_call printsmap_func [| ex |] 
+          let _ = L.build_call printsmap_func [| ex |]
           "" builder in builder
         else if t = Charmap then
-          let cmap = expr builder locs (t, e) in 
-          let _ = L.build_call printcmap_func [| ex |] 
+          let cmap = expr builder locs (t, e) in
+          let _ = L.build_call printcmap_func [| ex |]
           "" builder in builder *)
           else raise (Failure "internal error: print not (yet) implemented") (*@TODO: bool, map, etc*)
       | (SIf (predicate, then_stmt, else_stmt), locs) -> (*lifted from microC, comments removed for brevity*)
