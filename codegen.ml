@@ -75,22 +75,20 @@ let translate (globals, functions) =
      L.function_type void_t [| map_ptr_t |] in
   let voidcmap_t : L.lltype =
      L.function_type void_t [| cmap_ptr_t |] in
-  (* let voidbool_t : L.lltype =
-     L.function_type void_t [| i1_t |] *)
+  let voidbool_t : L.lltype =
+     L.function_type void_t [| i1_t |] in
   let printil_func : L.llvalue =
      L.declare_function "PrintCharLis" voidlis_t the_module in
   let printsmap_func : L.llvalue =
-     L.declare_function "PrintStringMap" voidsmap_t the_module in
+     L.declare_function "PrintStringmap" voidsmap_t the_module in
   let printcmap_func : L.llvalue =
-     L.declare_function "PrintCharMap" voidcmap_t the_module in
-  (* let printbool_func : L.llvalue =
-     L.declare_function "PrintBool" voidbool_t the_module in *)
-
-
-  (*let voidlislis_t : L.lltype =
+     L.declare_function "PrintCharmap" voidcmap_t the_module in
+  let printbool_func : L.llvalue =
+     L.declare_function "PrintBool" voidbool_t the_module in
+  let voidlislis_t : L.lltype =
      L.function_type void_t [| listlist_ptr |] in
   let printll_func : L.llvalue =
-     L.declare_function "PrintListList" voidlislis_t the_module in*)
+     L.declare_function "PrintListList" voidlislis_t the_module in
 
   (*builtins: object functions*)
   (*getLength*)
@@ -104,6 +102,14 @@ let translate (globals, functions) =
      L.declare_function "ListlistgetLength" intlislis_t the_module in*)
   (*@TODO: CharmapgetLength, StringmapgetLength,*)
   (*getters: Listlistget, Charlistget, Charmapget, Stringmapget*)
+  let cmapchar_t : L.lltype =
+     L.function_type cmap_ptr_t [| cmap_ptr_t; i8_t |] in
+  let cmapget_func : L.llvalue =
+     L.declare_function "Charmapget" cmapchar_t the_module in
+  let smapchar_t : L.lltype =
+     L.function_type map_ptr_t [| map_ptr_t; string_pointer |] in
+  let smapget_func : L.llvalue =
+     L.declare_function "Stringmapget" smapchar_t the_module in
   (*setters: Charmapset, Stringmapset, Listlistset, Charlistset*)
   let cmapcharint_t : L.lltype =
      L.function_type cmap_ptr_t [| cmap_ptr_t; i8_t; i32_t |] in
@@ -236,7 +242,8 @@ let translate (globals, functions) =
          match m with
            [] -> L.const_null (ltype_of_typ gtype)
          | (ke, vl) :: rest ->
-         let mptr = L.build_malloc (ltype_of_typ gtype) "tmp" builder
+           let type_of_ptr = if gtype = A.Charmap then charmap_t else map_t in
+         let mptr = L.undef (type_of_ptr)
          in let addtap mp (k, v) =
            let k' = expr builder locs k
            and v' = expr builder locs v
@@ -248,7 +255,8 @@ let translate (globals, functions) =
            ignore (L.build_call (if gtype = Stringmap then smapset_func else cmapset_func)
              [|(expr builder locs k); (expr builder locs v)|] "" builder)
          in let _ =  List.iter set_map rest
-         in mptr
+         in let mptr_actual = L.build_pointercast mptr (ltype_of_typ gtype) "aptr" builder
+         in mptr_actual
         in mptrr
       | SAssignm (_, s, e) -> let e' = expr builder locs e in
                           let _  = L.build_store e' (lookup s locs) builder in e' (*@TODO: CALL SETTER FUNCTION*)
@@ -306,7 +314,8 @@ let translate (globals, functions) =
       | SNewtobj(t) -> L.const_null (ltype_of_typ t) (*set map to Null*)
 
       | SNewobj _ ->  (* do we need a match expr first?? *)
-         let pptr = L.build_malloc (ltype_of_typ gtype) "tmp" builder
+         let type_of_ptr = player_t in
+         let pptr = L.build_malloc (type_of_ptr) "tmp" builder
          (*in let addtoplayer plyr (s, t, g, l) =  (* score, turn, guessed, letters *)
            let s' = expr builder locs s
            and t' = expr builder locs t
@@ -345,27 +354,23 @@ let translate (globals, functions) =
              in let _ = addtoar (rows') (L.const_null string_pointer) (*sentinel*)
              (*@TODO: for (rows) iterations, add the result of snewlis(cols)*)
              in x
-      (*| SCall("nameOfBuiltin") ...: @TODO implement for our builtins
-       for a listget it should be a gep and not a function call*)
-      | SCall ("InitializeRandom",[]) ->
-         L.build_call randi_func [| |]
-         "" builder
-      | SCall ("Charmapset", args) ->
-         let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
-         let result = "Charmapget_result" in
-         L.build_call cmapset_func (Array.of_list llargs)
-         result builder
-      | SCall ("Stringmapset", args) ->
-         let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
-         let result = "Stringmapget_result" in
-         L.build_call smapset_func (Array.of_list llargs)
-         result builder
       | SCall (f, args) ->
-         let (fdef, fdecl) = try StringMap.find f function_decls with Not_found -> raise (Failure ("FAIL " ^ f)) in
-	 let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
-	 let result = (match fdecl.styp with
+         let llargs = List.rev (List.map (expr builder locs) (List.rev args))
+         in let (fdef, result) =
+           match f with
+             "InitializeRandom" -> (randi_func, "")
+           | "Charmapset" -> (cmapset_func, "Charmapset_result")
+           | "Charmapget" -> (cmapget_func, "Charmapget_result")
+           | "Stringmapset" -> (smapset_func, "Stringmapset_result")
+           | "Stringmapget" -> (smapget_func, "Stringmapget_result")
+           (*@TODO: rest of builtins here*)
+           | _ ->
+             let (ff, fdecl) = try StringMap.find f function_decls
+             with Not_found -> raise (Failure ("FAIL " ^ f)) in
+             let r = (match fdecl.styp with
                         A.Void -> ""
-                      | _ -> f ^ "_result") in
+                      | _ -> f ^ "_result") in (ff, r)
+         in
          L.build_call fdef (Array.of_list llargs) result builder
     in
 
@@ -396,27 +401,18 @@ let translate (globals, functions) =
       | (SPrint (t, e), locs) ->
           if t = String then let _ = L.build_call printf_func [| str_format_str ; (expr builder local_vars (t,e)) |]
 	    "printf" builder in builder
-         else if t = Charlist then
-           let ex = expr builder locs (t, e) in
-           let _ = L.build_call printil_func [| ex |]
-            "" builder in builder
          else if t = Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder locs (t,e)) |]
            "printf" builder in builder
-         (* else if t = Stringmap then    (* not sure if this is the best way to implement this *)
-           let smapexpr = expr builder locs (t, e) in
-           let _ = L.build_call printsmap_func [| smapexpr |]
+         else
+           let printfun =
+             if t = Stringmap then printsmap_func
+             else if t = Charmap then printcmap_func
+             else if t = Charlist then printil_func
+             else if t = Listlist then printll_func
+             else printbool_func
+             (*non*)
+           in let _ = L.build_call printfun [| (expr builder locs (t, e)) |]
            "" builder in builder
-        else if t = Charmap then
-           let cmapexpr = expr builder locs (t, e) in
-           let _ = L.build_call printcmap_func [| cmapexpr |]
-           "" builder in builder
-        else if t = Bool then
-           let boolexpr = expr builder locs (t, e) in
-           let _ = L.build_call printbool_func [| boolexpr |]
-           "" builder in builder
-      *)
-
-          else raise (Failure "internal error: print not (yet) implemented") (*@TODO: bool, map, etc*)
       | (SIf (predicate, then_stmt, else_stmt), locs) -> (*lifted from microC, comments removed for brevity*)
          let bool_val = expr builder locs predicate in
 	 let merge_bb = L.append_block context "merge" the_function in

@@ -9,7 +9,10 @@ cc -o test-add-pos.exe test-add-pos.s ostdlib.o
 
 ###### Testing test-assign-pos
 ./toplevel tests/test-assign-pos.olh > test-assign-pos.ll
-Fatal error: exception Failure("internal error: print not (yet) implemented")
+Call parameter type does not match function signature!
+  %c14 = load i8, i8* %c6
+ i1  call void @PrintBool(i8 %c14)
+LLVM ERROR: Broken module found, compilation aborted!
 ###### SUCCESS
 
 ###### Testing test-compare-pos
@@ -72,7 +75,9 @@ Fatal error: exception Failure("Cannot create new list with non-char/charlist ar
 
 ###### Testing test-map-pos
 ./toplevel tests/test-map-pos.olh > test-map-pos.ll
-Fatal error: exception Failure("internal error: print not (yet) implemented")
+Incorrect number of arguments passed to called function!
+  %0 = call %charmapt* @Charmapset(i8 120, i32 4)
+LLVM ERROR: Broken module found, compilation aborted!
 ###### SUCCESS
 
 ###### Testing test-player-pos
@@ -129,8 +134,8 @@ diff -b fail-and-neg.err tests/fail-and-neg.err > fail-and-neg.diff
 ; ModuleID = 'Olleh'
 source_filename = "Olleh"
 
-%charmapt = type { i8, i32, %charmapt* }
 %mapt = type { i8*, i32, %mapt* }
+%charmapt = type { i8, i32, %charmapt* }
 
 @c = global i8 0
 @fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
@@ -143,6 +148,18 @@ declare i8* @IntToS(i32)
 declare i8* @SConcat(i8*, i8*)
 
 declare void @PrintCharLis(i8*)
+
+declare void @PrintStringmap(%mapt*)
+
+declare void @PrintCharmap(%charmapt*)
+
+declare void @PrintBool(i1)
+
+declare void @PrintListList(i8**)
+
+declare %charmapt* @Charmapget(%charmapt*, i8)
+
+declare %mapt* @Stringmapget(%mapt*, i8*)
 
 declare %charmapt* @Charmapset(%charmapt*, i8, i32)
 
@@ -250,8 +267,8 @@ diff -b fail-fpla-neg.err tests/fail-fpla-neg.err > fail-fpla-neg.diff
 ; ModuleID = 'Olleh'
 source_filename = "Olleh"
 
-%charmapt = type { i8, i32, %charmapt* }
 %mapt = type { i8*, i32, %mapt* }
+%charmapt = type { i8, i32, %charmapt* }
 
 @lis = global i8* null
 @fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
@@ -264,6 +281,18 @@ declare i8* @IntToS(i32)
 declare i8* @SConcat(i8*, i8*)
 
 declare void @PrintCharLis(i8*)
+
+declare void @PrintStringmap(%mapt*)
+
+declare void @PrintCharmap(%charmapt*)
+
+declare void @PrintBool(i1)
+
+declare void @PrintListList(i8**)
+
+declare %charmapt* @Charmapget(%charmapt*, i8)
+
+declare %mapt* @Stringmapget(%mapt*, i8*)
 
 declare %charmapt* @Charmapset(%charmapt*, i8, i32)
 
