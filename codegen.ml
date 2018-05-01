@@ -81,7 +81,7 @@ let translate (globals, functions) =
   (*builtins: object functions*)
   (*getLength*)
   (*let intstr_t : L.lltype =
-      L.function_type i32_t [| L.string_pointer |] in
+      L.function_type i32_t [| string_pointer |] in
   let cllen_func : L.llvalue =
      L.declare_function "strlen" intstr_t the_module in
   let intlislis_t : L.lltype =
@@ -91,6 +91,14 @@ let translate (globals, functions) =
   (*@TODO: CharmapgetLength, StringmapgetLength,*)
   (*getters: Listlistget, Charlistget, Charmapget, Stringmapget*)
   (*setters: Charmapset, Stringmapset, Listlistset, Charlistset*)
+  let cmapcharint_t : L.lltype =
+     L.function_type cmap_ptr_t [| cmap_ptr_t; i8_t; i32_t |] in
+  let cmapset_func : L.llvalue =
+     L.declare_function "Charmapset" cmapcharint_t the_module in
+  let smapcharint_t : L.lltype =
+     L.function_type map_ptr_t [| map_ptr_t; string_pointer; i32_t |] in
+  let smapset_func : L.llvalue =
+     L.declare_function "Stringmapset" smapcharint_t the_module in
   (*misc: Charmapdestroy, Stringmapdestroy, Charmapcontains, Stringmapcontains,*)
 
   (*builtins: misc*)
@@ -210,21 +218,24 @@ let translate (globals, functions) =
          (*@TODO: Listlist*)
          else raise (Failure "build error")
       | SLiteralm m ->
-         match m with [] -> L.const_null (ltype_of_typ gtype)
-         | (key, val) :: rest ->(
+        let mptrr =
+         match m with
+           [] -> L.const_null (ltype_of_typ gtype)
+         | (ke, vl) :: rest ->
          let mptr = L.build_malloc (ltype_of_typ gtype) "tmp" builder
-         in let addtomap mp (k, v) =
+         in let addtap mp (k, v) =
            let k' = expr builder locs k
            and v' = expr builder locs v
-         in let added_key = L.build_insertvalue mp (ltype_of_typ gtype) k' 0 "ak" builder in
-         let added_val = L.build_insertvalue added_key (ltype_of_typ gtype) v' 1 "av" builder
-         in let added_next = L.build_insertvalue added_val (ltype_of_typ gtype) (L.const_null (ltype_of_typ gtype)) 2 "an" builder
-         in let mp = addtomap mptr (key, val)
+           in let added_key = L.build_insertvalue mp k' 0 "ak" builder
+           in let added_val = L.build_insertvalue added_key v' 1 "av" builder
+           in L.build_insertvalue added_val (L.const_null (ltype_of_typ gtype)) 2 "an" builder
+         in let _ = addtap mptr (ke, vl)
          in let set_map (k, v) =
-           L.build_call (if gtype = Stringmap then smapset_func else cmapset_func)
-             [|(expr builder locs k); (expr builder locs v)|] "" builder
-         in List.iter set_map rest
+           ignore (L.build_call (if gtype = Stringmap then smapset_func else cmapset_func)
+             [|(expr builder locs k); (expr builder locs v)|] "" builder)
+         in let _ =  List.iter set_map rest
          in mptr
+        in mptrr
       | SAssignm (_, s, e) -> let e' = expr builder locs e in
                           let _  = L.build_store e' (lookup s locs) builder in e' (*@TODO: CALL SETTER FUNCTION*)
       | SAssign (s, e) -> let e' = expr builder locs e in
