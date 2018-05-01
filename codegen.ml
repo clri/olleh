@@ -75,12 +75,16 @@ let translate (globals, functions) =
      L.function_type void_t [| map_ptr_t |] in
   let voidcmap_t : L.lltype =
      L.function_type void_t [| cmap_ptr_t |] in
+  (* let voidbool_t : L.lltype =
+     L.function_type void_t [| i1_t |] *)
   let printil_func : L.llvalue =
      L.declare_function "PrintCharLis" voidlis_t the_module in
   let printsmap_func : L.llvalue =
      L.declare_function "PrintStringMap" voidsmap_t the_module in
   let printcmap_func : L.llvalue =
      L.declare_function "PrintCharMap" voidcmap_t the_module in
+  (* let printbool_func : L.llvalue =
+     L.declare_function "PrintBool" voidbool_t the_module in *)
 
 
   (*let voidlislis_t : L.lltype =
@@ -210,7 +214,7 @@ let translate (globals, functions) =
       | SLiteralb b -> L.const_int i1_t (if b then 1 else 0)
       | SLiterals s -> L.build_global_stringptr s "" builder
       | SNoexpr -> L.const_int i32_t 0
-      | Null -> L.const_null (ltype_of_typ gtype) 
+      | Null -> L.const_null (ltype_of_typ gtype)
       | SVariable s -> L.build_load (lookup s locs) s builder
       | SVmember (v, m) ->L.const_int i32_t 0 (*@TODO: change to gep or getter*)
       | SLiterall l ->
@@ -399,13 +403,19 @@ let translate (globals, functions) =
          else if t = Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder locs (t,e)) |]
            "printf" builder in builder
          (* else if t = Stringmap then    (* not sure if this is the best way to implement this *)
-          let smap = expr builder locs (t, e) in
-          let _ = L.build_call printsmap_func [| ex |]
-          "" builder in builder
+           let smapexpr = expr builder locs (t, e) in
+           let _ = L.build_call printsmap_func [| smapexpr |]
+           "" builder in builder
         else if t = Charmap then
-          let cmap = expr builder locs (t, e) in
-          let _ = L.build_call printcmap_func [| ex |]
-          "" builder in builder *)
+           let cmapexpr = expr builder locs (t, e) in
+           let _ = L.build_call printcmap_func [| cmapexpr |]
+           "" builder in builder
+        else if t = Bool then
+           let boolexpr = expr builder locs (t, e) in
+           let _ = L.build_call printbool_func [| boolexpr |]
+           "" builder in builder
+      *)
+
           else raise (Failure "internal error: print not (yet) implemented") (*@TODO: bool, map, etc*)
       | (SIf (predicate, then_stmt, else_stmt), locs) -> (*lifted from microC, comments removed for brevity*)
          let bool_val = expr builder locs predicate in
