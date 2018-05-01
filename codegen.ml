@@ -209,8 +209,22 @@ let translate (globals, functions) =
          in x
          (*@TODO: Listlist*)
          else raise (Failure "build error")
-      | SLiteralm _ -> L.const_int i32_t 0 (*@TODO: IMPLEMENT similar to sliterall but each thing is a call to mapset
-        ie expr builder locs (Sassign(this ptr, elem))**)
+      | SLiteralm m ->
+         match m with [] -> L.const_null (ltype_of_typ gtype)
+         | (key, val) :: rest ->(
+         let mptr = L.build_malloc (ltype_of_typ gtype) "tmp" builder
+         in let addtomap mp (k, v) =
+           let k' = expr builder locs k
+           and v' = expr builder locs v
+         in let added_key = L.build_insertvalue mp (ltype_of_typ gtype) k' 0 "ak" builder in
+         let added_val = L.build_insertvalue added_key (ltype_of_typ gtype) v' 1 "av" builder
+         in let added_next = L.build_insertvalue added_val (ltype_of_typ gtype) (L.const_null (ltype_of_typ gtype)) 2 "an" builder
+         in let mp = addtomap mptr (key, val)
+         in let set_map (k, v) =
+           L.build_call (if gtype = Stringmap then smapset_func else cmapset_func)
+             [|(expr builder locs k); (expr builder locs v)|] "" builder
+         in List.iter set_map rest
+         in mptr
       | SAssignm (_, s, e) -> let e' = expr builder locs e in
                           let _  = L.build_store e' (lookup s locs) builder in e' (*@TODO: CALL SETTER FUNCTION*)
       | SAssign (s, e) -> let e' = expr builder locs e in
@@ -265,7 +279,7 @@ let translate (globals, functions) =
           | A.Not                  -> L.build_not e' "tmp" builder
           | A.Asc                  -> L.build_call ascii_func [| e' |] "tmp" builder)
       | SNewtobj(t) -> L.const_null (ltype_of_typ t) (*set map to Null*)
-      | SNewobj _ -> L.build_malloc (ltype_of_typ gtype) "" builder (*@TODO: IMPLEMEN: fresh player*)
+      | SNewobj _ -> L.build_malloc (ltype_of_typ gtype) "tmp" builder (*@TODO: IMPLEMEN: fresh player*)
       | SNewlis l ->
            if gtype = A.Charlist then  (*1 dimension*)
              let e' = expr builder locs (inddex l 0)
