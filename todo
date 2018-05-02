@@ -9,6 +9,7 @@ ALL FILES
 
 Semantic Checker
 -remove no assign
+-printbool: conditional print
 -add any more builtins that are allowed to be called by the user (check vs lrm)
 -add back in the dictionary stuff
 -go over and make sure it complies with the specs

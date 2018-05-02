@@ -3,7 +3,7 @@ TODO - TESTING
 ERRORS
 fail-freshpla2-neg (why is this assigning something in the map literal i don't understand--may have to change syntax)
 
-test-assign-pos (does not completely compile)
+test-assign-pos (does not completely compile: printbool needs to be resolved)
 test-func-pos (doesn't print a lot of what's going on)
 test-list-pos (no new list of type, need some way of handling empty list i guess)
 test-while-pos (needs something to print in loop)

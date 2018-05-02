@@ -5,14 +5,13 @@
 llc test-add-pos.ll > test-add-pos.s
 cc -o test-add-pos.exe test-add-pos.s ostdlib.o
 ./test-add-pos.exe
-diff -b test-add-pos.out tests/test-add-pos.out > test-add-pos.diff
 ###### SUCCESS
 
 ###### Testing test-assign-pos
 ./toplevel tests/test-assign-pos.olh > test-assign-pos.ll
 Call parameter type does not match function signature!
-  %c14 = load i8, i8* %c6
- i1  call void @PrintBool(i8 %c14)
+  %c16 = load i8, i8* %c8
+ i1  call void @PrintBool(i8 %c16)
 LLVM ERROR: Broken module found, compilation aborted!
 ###### SUCCESS
 
@@ -130,89 +129,6 @@ FAILED fail-add3-neg.err differs from tests/fail-add3-neg.err
 diff -b fail-and-neg.err tests/fail-and-neg.err > fail-and-neg.diff
 ###### SUCCESS
 
-###### Testing fail-aslist-neg
-./toplevel < tests/fail-aslist-neg.olh 2> fail-aslist-neg.err >> testall.log
-; ModuleID = 'Olleh'
-source_filename = "Olleh"
-
-%mapt = type { i8*, i32, %mapt* }
-%charmapt = type { i8, i32, %charmapt* }
-
-@c = global i8 0
-@fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
-@fmt.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
-
-declare i32 @printf(i8*, ...)
-
-declare i8* @IntToS(i32)
-
-declare i8* @SConcat(i8*, i8*)
-
-declare void @PrintCharLis(i8*)
-
-declare void @PrintStringmap(%mapt*)
-
-declare void @PrintCharmap(%charmapt*)
-
-declare void @PrintBool(i1)
-
-declare void @PrintListList(i8**)
-
-declare %charmapt* @Charmapget(%charmapt*, i8)
-
-declare %mapt* @Stringmapget(%mapt*, i8*)
-
-declare %charmapt* @Charmapset(%charmapt*, i8, i32)
-
-declare %mapt* @Stringmapset(%mapt*, i8*, i32)
-
-declare void @exit(i32)
-
-declare i8 @ToAscii(i32)
-
-declare void @InitializeRandom()
-
-define void @main(i8 %c) {
-entry:
-  %c1 = alloca i8
-  store i8 %c, i8* %c1
-  %c2 = alloca i8
-  call void @InitializeRandom()
-  store i8 53, i8* %c2
-  %a1 = tail call i8* @malloc(i32 mul (i32 ptrtoint (i8* getelementptr (i8, i8* null, i32 1) to i32), i32 4))
-  %a3 = getelementptr i8, i8* %a1, i32 0
-  store i8 53, i8* %a3
-  %a33 = getelementptr i8, i8* %a1, i32 1
-  store i8 36, i8* %a33
-  %a34 = getelementptr i8, i8* %a1, i32 2
-  store i8 37, i8* %a34
-  %a35 = getelementptr i8, i8* %a1, i32 3
-  store i8 0, i8* %a35
-  call void @PrintCharLis(i8* %a1)
-  ret void
-}
-
-declare noalias i8* @malloc(i32)
-diff -b fail-aslist-neg.err tests/fail-aslist-neg.err > fail-aslist-neg.diff
-FAILED fail-aslist-neg.err differs from tests/fail-aslist-neg.err
-###### FAILED
-
-###### Testing fail-asparams-neg
-./toplevel < tests/fail-asparams-neg.olh 2> fail-asparams-neg.err >> testall.log
-diff -b fail-asparams-neg.err tests/fail-asparams-neg.err > fail-asparams-neg.diff
-###### SUCCESS
-
-###### Testing fail-asparams2-neg
-./toplevel < tests/fail-asparams2-neg.olh 2> fail-asparams2-neg.err >> testall.log
-diff -b fail-asparams2-neg.err tests/fail-asparams2-neg.err > fail-asparams2-neg.diff
-FAILED fail-asparams2-neg.err differs from tests/fail-asparams2-neg.err
-###### FAILED
-
-###### Testing fail-aspla-neg
-./toplevel < tests/fail-aspla-neg.olh 2> fail-aspla-neg.err >> testall.log
-diff -b fail-aspla-neg.err tests/fail-aspla-neg.err > fail-aspla-neg.diff
-###### SUCCESS
-
 ###### Testing fail-chars-neg
 ./toplevel < tests/fail-chars-neg.olh 2> fail-chars-neg.err >> testall.log
 diff -b fail-chars-neg.err tests/fail-chars-neg.err > fail-chars-neg.diff
@@ -271,6 +187,8 @@ source_filename = "Olleh"
 %mapt = type { i8*, i32, %mapt* }
 %charmapt = type { i8, i32, %charmapt* }
 
+@dictionary = global %mapt* null
+@letterScores = global %charmapt* null
 @lis = global i8* null
 @fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
 @fmt.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
@@ -305,18 +223,22 @@ declare i8 @ToAscii(i32)
 
 declare void @InitializeRandom()
 
-define void @main(i8* %lis) {
+define void @main(%mapt* %dictionary, %charmapt* %letterScores, i8* %lis) {
 entry:
-  %lis1 = alloca i8*
-  store i8* %lis, i8** %lis1
-  %lis2 = alloca i8*
+  %dictionary1 = alloca %mapt*
+  store %mapt* %dictionary, %mapt** %dictionary1
+  %letterScores2 = alloca %charmapt*
+  store %charmapt* %letterScores, %charmapt** %letterScores2
+  %lis3 = alloca i8*
+  store i8* %lis, i8** %lis3
+  %lis4 = alloca i8*
   call void @InitializeRandom()
   %0 = zext i8 98 to i32
   %mallocsize = mul i32 %0, ptrtoint (i8* getelementptr (i8, i8* null, i32 1) to i32)
   %a1 = tail call i8* @malloc(i32 %mallocsize)
   %a3 = getelementptr i8, i8* %a1, i8 98
   store i8 0, i8* %a3
-  store i8* %a1, i8** %lis2
+  store i8* %a1, i8** %lis4
   ret void
 }
 
