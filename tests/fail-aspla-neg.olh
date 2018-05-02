@@ -1,4 +1,0 @@
-//assignment in new player
-boolean b;
-Player p = fresh Player{turn -> b = false};
-

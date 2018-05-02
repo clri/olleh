@@ -1,4 +1,0 @@
-//assignment in list
-char c;
-print [c='5', '$', '%'];
-

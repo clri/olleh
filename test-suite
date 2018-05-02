@@ -1,8 +1,6 @@
 TODO - TESTING
 
 ERRORS
-fail-aslist-neg (passes and it absolutely shouldn't, NO ASSIGNMENTs  IN LIST LITERALS)
-fail-asmparams2-neg (fix getsetters)
 fail-freshpla2-neg (why is this assigning something in the map literal i don't understand--may have to change syntax)
 
 test-assign-pos (does not completely compile)
@@ -51,7 +49,6 @@ list getsetters (test-list-pos)
 empty 2d list (test-list-pos)
 empty 1d list (test-list-pos)
 two statements on the same line (test-list-pos)
-map getsetters (test-map-pos)
 Assign player and print its members (test-player-pos)
 fresh player(nothing), fresh player(something) (test-player-pos)
 player getsetters (test-player-pos)
@@ -63,8 +60,6 @@ use function to manipluate a global variable (test-func-pos)
 test while loops (test-while-pos)
 
 Written (negative)
-assignment in list (fail-aslist-neg)
-assignment in params of var.function call (fail-asparams2-neg)
 fresh player (same field twice) (fail-freshpla2-neg)
 
 
@@ -93,6 +88,7 @@ empty map (test-map-pos)
 /*comment*/ on same line as code (test-map-pos)
 </>/==/<=/>=/!= (for int and char) (test-compare-pos)
 multiline statement (test-compare-pos)
+map getsetters (test-map-pos)
 
 
 Passing (negative)
@@ -127,8 +123,6 @@ fresh list() (fail-freshlis3-neg)
 fresh player (additional field) (fail-freshpla1-neg)
 do something with the result of a void function (fail-voidas-neg)
 negative (noninteger) (fail-nega-neg)
-assignment in params of function call (fail-asparams-neg)
-assignment in new player (fail-aspla-neg)
 print void (fail-voidas-neg)
 foreach on sth that's not a list or map (fail-foreach-neg)
 multiple chars within single quotes (fail-chars-neg)

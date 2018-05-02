@@ -4,6 +4,7 @@ Once item is done/tested, remove it from the list
 ALL FILES
 -comment code, explain anything that's ambiguous or confusing to you (or that you think
   might need explaining to tfs/townsend)
+-do we need everything in ostdlib? check carefully
 
 
 Semantic Checker
@@ -16,7 +17,6 @@ Semantic Checker
 
 Legitimate Test Suite
 -see test-suite
--but also remove all the fail-asx-neg
 
 
 LRM
@@ -47,12 +47,10 @@ Standard Library (.olh)
 
 
 Compiler (codegen.ml)
--remove no assignments rule
 -add new builtins with return types, also match call() with them (remember return types, assigning dictionary
   force setters to assign if the type is a variable or vmember
--SLiteralm (literal maps): call setter however many times, but how to get initial pointer
 -player functionality: SVmember and SAssignm as getsetters
--SNewobj/SNewtobj (allocating space for new objects:
+-SNewobj (allocating space for new objects:
  set players to malloc, how to set elems: build const ptr and copy it over
 -SNewlis of listlist (and SLiterall for lists of lists)
  list of chars to all 1 (except last), listlist to all elems as fresh 1d list):

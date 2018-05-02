@@ -260,8 +260,8 @@ let translate (globals, functions) =
          in let _ =  List.iter set_map rest
          in mptr_actual
         in mptrr
-      | SAssignm (_, s, e) -> let e' = expr builder locs e in
-                          let _  = L.build_store e' (lookup s locs) builder in e' (*@TODO: CALL SETTER FUNCTION*)
+      | SAssignm (_, s, e) -> let e' = expr builder locs e in (*@TODO: struct access*)
+                          let _  = L.build_store e' (lookup s locs) builder in e'
       | SAssign (s, e) -> let e' = expr builder locs e in
                           let _  = L.build_store e' (lookup s locs) builder in e'
       | SBinop (e1, op, e2) ->
@@ -314,7 +314,6 @@ let translate (globals, functions) =
           | A.Not                  -> L.build_not e' "tmp" builder
           | A.Asc                  -> L.build_call ascii_func [| e' |] "tmp" builder)
       | SNewtobj(t) -> L.const_null (ltype_of_typ t) (*set map to Null*)
-
       | SNewobj _ ->  (* do we need a match expr first?? *)
          let type_of_ptr = player_t in
          let pptr = L.build_malloc (type_of_ptr) "tmp" builder
@@ -356,15 +355,28 @@ let translate (globals, functions) =
              in let _ = addtoar (rows') (L.const_null string_pointer) (*sentinel*)
              (*@TODO: for (rows) iterations, add the result of snewlis(cols)*)
              in x
-      (*| SCall ("Stringmapset", args) ->
-        for map setters we need to build a call to assign the result if we
-        are setting a variable (or, in the case of stringmap, a vmember)
+      | SCall ("Stringmapset", args) ->
+        (*for map setters we need to build a call to assign the result if we
+        are setting a variable (or, in the case of stringmap, a vmember)*)
         let (a, b, c) = match args with (aa :: bb :: cc :: []) -> (aa, bb, cc)
           | _ -> raise (Failure("wrong number of arguments")) in
+        let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
         let ans =
-          match
+          match a with (_, SVariable(var)) -> (*@TODO: SVmember when player is working*)
+            let cres = L.build_call smapset_func (Array.of_list llargs) "Smset_result" builder
+            in let _  = L.build_store cres (lookup var locs) builder in cres
+          | _ -> L.build_call smapset_func (Array.of_list llargs) "Smset_result" builder
         in ans
-        *)
+      | SCall ("Charmapset", args) ->
+        let (a, b, c) = match args with (aa :: bb :: cc :: []) -> (aa, bb, cc)
+          | _ -> raise (Failure("wrong number of arguments")) in
+        let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
+        let ans =
+          match a with (_, SVariable(var)) ->
+            let cres = L.build_call cmapset_func (Array.of_list llargs) "Cmset_result" builder
+            in let _  = L.build_store cres (lookup var locs) builder in cres
+          | _ -> L.build_call cmapset_func (Array.of_list llargs) "Cmset_result" builder
+        in ans
       | SCall (f, args) ->
          let llargs = List.rev (List.map (expr builder locs) (List.rev args))
          in let (fdef, result) =
