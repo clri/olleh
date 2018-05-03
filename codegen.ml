@@ -440,10 +440,40 @@ let translate (globals, functions) =
             in let _  = L.build_store cres (lookup var locs) builder in cres
           | _ -> L.build_call cmapset_func (Array.of_list llargs) "Cmset_result" builder
         in ans
-      (*readDict is the same thing only we need to find dictionary*)
-      (*we need to do the same thing for mapdestroy, in case the first node
-      is the one that is destroyed*)
-      (*for contains(), we need to compare the answer to 1 and return that*)
+      | SCall ("Stringmapdestroy", args) -> (*same with destroyers*)
+        let (a, b) = match args with (aa :: bb :: []) -> (aa, bb)
+          | _ -> raise (Failure("wrong number of arguments")) in
+        let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
+        let ans =
+          match a with (_, SVariable(var)) -> (*@TODO: SVmember when player is working*)
+            let cres = L.build_call smapd_func (Array.of_list llargs) "Smdestroy_result" builder
+            in let _  = L.build_store cres (lookup var locs) builder in cres
+          | _ -> L.build_call smapd_func (Array.of_list llargs) "Smdestroy_result" builder
+        in ans
+      | SCall ("Charmapdestroy", args) ->
+        let (a, b) = match args with (aa :: bb :: []) -> (aa, bb)
+          | _ -> raise (Failure("wrong number of arguments")) in
+        let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
+        let ans =
+          match a with (_, SVariable(var)) ->
+            let cres = L.build_call cmapd_func (Array.of_list llargs) "Cmdestroy_result" builder
+            in let _  = L.build_store cres (lookup var locs) builder in cres
+          | _ -> L.build_call cmapd_func (Array.of_list llargs) "Cmdestroy_result" builder
+        in ans
+      | SCall ("readDict", args) -> (*store address of stringmap in dictionary*)
+        let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
+        let dict = L.build_call rdict_funct (Array.of_list llargs) "dict_result" builder
+        in let _  = L.build_store dict (lookup "dictionary" locs) builder in dict
+      | SCall ("Charmapcontains", args) ->
+        let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
+        let res = L.build_call cmapc_func (Array.of_list llargs) "cmcontains_result" builder
+        in let ans = L.build_icmp L.Icmp.Eq res (L.const_int i8_t 1) "tmp" builder
+        in ans
+      | SCall ("Stringmapcontains", args) ->
+        let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
+        let res = L.build_call smapc_func (Array.of_list llargs) "smcontains_result" builder
+        in let ans = L.build_icmp L.Icmp.Eq res (L.const_int i8_t 1) "tmp" builder
+        in ans
       | SCall ("listToString", args) ->
         expr builder locs (inddex args 0)
       | SCall ("stringToList", args) ->

@@ -10,7 +10,6 @@ ALL FILES
 Semantic Checker
 -player: duplicate arguments
 -add any more builtins that are allowed to be called by the user (check vs lrm)
--add back in the dictionary stuff
 -go over and make sure it complies with the specs
 -refactor if there's time
 
@@ -53,10 +52,8 @@ Standard Library (.olh)
 
 
 Compiler (codegen.ml)
--match call() with builtins (destroy, contains, readDict)
-
 -player functionality
--force mapsetters to assign if the type is a variable or vmember
+-stringmap set/destroy for vmember
 -SNewobj (allocating space for new objects:
  set players to malloc, how to set elems: build const ptr and copy it over
 
