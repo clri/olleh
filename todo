@@ -24,7 +24,8 @@ LRM
 -curly quotes to straight; code to courier
 -standardize format (line spacing, font size, all Null, etc)
 -any updates made in syntax (check against parser/semant at very end)
--variable scope (clarify): one per function (even in cond/loop should be); what is default value (default for globals is null, for others is 0)
+-variable scope (clarify): one per function (even in cond/loop should be)
+-what is default value (default for globals is null, for others is whatever's allocated)
 -lists are NOT immutable. talk about their mutability (implemented as C arrays, attempt to modify out of bounds for allocated GetElemSpace
  is impossible, though other mod methods such as setting elem at index to something else, are totally ok (which may result in a changed dimension))
 -check syntax/semantics of fresh for diff types
@@ -37,6 +38,10 @@ LRM
 -getsetters (explain the semantics in builtin function section)
 -modifying maps while foreaching them (once that section's written)
 -remove no assignments rue
+-functions can't start with capital
+-{} being type inferred (empty maps are null or length 0; fresh map if you want to make one)
+-how to set one char of a listlist
+-no statements after return
 
 
 Standard Library (.olh)
@@ -48,15 +53,14 @@ Standard Library (.olh)
 
 
 Compiler (codegen.ml)
--add new builtins with return types, also match call() with them (remember return types, assigning dictionary
-  force setters to assign if the type is a variable or vmember
--add_terminal for all return types
+-match call() with builtins (destroy, contains, readDict)
+
 -player functionality
+-force mapsetters to assign if the type is a variable or vmember
 -SNewobj (allocating space for new objects:
  set players to malloc, how to set elems: build const ptr and copy it over
 
--foreach and maps: use an iterator, NOT a counter (ie tmp = tmp->next) if can figure it out
-  (for now, put geti back in; it's still O(n^2))
+-foreach and maps/list: get next without c function?
 -fill list without calling a C function
 
 

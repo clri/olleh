@@ -185,9 +185,9 @@ let check (*functions*) (globals, functions) =
           let is_intval b (_, (t, _)) = b && (t = Int) in
           let mint = List.fold_left is_intval true m'' in
           if mint then
-            if mchar then ((Charmap, SLiteralm(m'')), symbols) else
-              if mstrng then ((Stringmap, SLiteralm(m'')), symbols) else
-                raise (Failure "Map of improper type")
+            if (mchar && not(mstrng)) then ((Charmap, SLiteralm(m'')), symbols) else
+              if (mstrng && not(mchar)) then ((Stringmap, SLiteralm(m'')), symbols) else
+                raise (Failure ("Map type cannot be inferred"))
           else raise (Failure ("Map value must be integer"))
       | Assign(var, e) as ex ->
           let lt = type_of_identifier var symbols

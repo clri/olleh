@@ -220,15 +220,6 @@ void Charlistset(char *lis, int i, char c) {
         lis[i] = c;
 }
 
-//string to list: doesn't really do much, but
-//olleh pretends there is a difference
-char *listToString(char *lis) {
-        return lis;
-}
-char *stringToList(char *lis) {
-        return lis;
-}
-
 void FillList(char *lis, int e) {
         int i;
 
@@ -292,6 +283,29 @@ int Stringmapget(smap_t *m, char *c) {
         while (tmp != NULL && strcmp(tmp->key,c) != 0)
                 tmp = tmp->next;
         return (tmp == NULL ? m->value : tmp->value);
+}
+
+char Charmapgeti(cmap_t *m, int i) {
+        int ind;
+        cmap_t *tmp = m;
+
+        for (ind = 0; ind < i; ind++) {
+                if (tmp == NULL)
+                        return 0;
+                tmp = tmp->next;
+        }
+        return tmp->key;
+}
+char *Stringmapgeti(smap_t *m, int i) {
+        int ind;
+        smap_t *tmp = m;
+
+        for (ind = 0; ind < i; ind++) {
+                if (tmp == NULL)
+                        return 0;
+                tmp = tmp->next;
+        }
+        return tmp->key;
 }
 
 //destroys element with given key
@@ -468,7 +482,6 @@ char *anagram(smap_t *dictionary, char *s) {
 }
 
 
-//@TODO: charmapgeti, stringmapgeti, fill2dlist
 
 
 //

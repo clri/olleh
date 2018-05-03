@@ -88,16 +88,23 @@ let translate (globals, functions) =
 
   (*builtins: object functions*)
   (*getLength*)
-  (*let intstr_t : L.lltype =
+  let intstr_t : L.lltype =
       L.function_type i32_t [| string_pointer |] in
   let cllen_func : L.llvalue =
      L.declare_function "strlen" intstr_t the_module in
   let intlislis_t : L.lltype =
      L.function_type i32_t [| listlist_ptr |] in
   let lllen_func : L.llvalue =
-     L.declare_function "ListlistgetLength" intlislis_t the_module in*)
-  (*@TODO: CharmapgetLength, StringmapgetLength,*)
-  (*getterst*)
+     L.declare_function "ListlistgetLength" intlislis_t the_module in
+  let intcmap_t : L.lltype =
+     L.function_type i32_t [| cmap_ptr_t |] in
+  let cmlen_func : L.llvalue =
+     L.declare_function "CharmapgetLength" intcmap_t the_module in
+  let intsmap_t : L.lltype =
+     L.function_type i32_t [| map_ptr_t |] in
+  let smlen_func : L.llvalue =
+     L.declare_function "StringmapgetLength" intsmap_t the_module in
+  (*getters*)
   let cmapchar_t : L.lltype =
      L.function_type cmap_ptr_t [| cmap_ptr_t; i8_t |] in
   let cmapget_func : L.llvalue =
@@ -106,8 +113,23 @@ let translate (globals, functions) =
      L.function_type map_ptr_t [| map_ptr_t; string_pointer |] in
   let smapget_func : L.llvalue =
      L.declare_function "Stringmapget" smapchar_t the_module in
-  (*@TODO: geti*)
-  (*setters: Charmapset, Stringmapset, Listlistset, Charlistset*)
+  let charcmap_t : L.lltype =
+     L.function_type i8_t [| cmap_ptr_t; i32_t |] in
+  let cmapgeti_func : L.llvalue =
+     L.declare_function "Charmapgeti" charcmap_t the_module in
+  let strsmap_t : L.lltype =
+     L.function_type string_pointer [| map_ptr_t; i32_t |] in
+  let smapgeti_func : L.llvalue =
+     L.declare_function "Stringmapgeti" strsmap_t the_module in
+  let charclis_t : L.lltype =
+     L.function_type i8_t [| string_pointer; i32_t |] in
+  let clget_func : L.llvalue =
+     L.declare_function "Charlistget" charclis_t the_module in
+  let clslis_t : L.lltype =
+     L.function_type string_pointer [| listlist_ptr; i32_t |] in
+  let llget_func : L.llvalue =
+     L.declare_function "Listlistget" clslis_t the_module in
+  (*setters*)
   let cmapcharint_t : L.lltype =
      L.function_type cmap_ptr_t [| cmap_ptr_t; i8_t; i32_t |] in
   let cmapset_func : L.llvalue =
@@ -116,7 +138,31 @@ let translate (globals, functions) =
      L.function_type map_ptr_t [| map_ptr_t; string_pointer; i32_t |] in
   let smapset_func : L.llvalue =
      L.declare_function "Stringmapset" smapcharint_t the_module in
-  (*misc: Charmapdestroy, Stringmapdestroy, Charmapcontains, Stringmapcontains,fillist, fillistlist*)
+  let voidillislis_t : L.lltype =
+     L.function_type void_t [| listlist_ptr; i32_t; string_pointer |] in
+  let llset_func : L.llvalue =
+     L.declare_function "Listlistset" voidillislis_t the_module in
+  let voidicclis_t : L.lltype =
+     L.function_type void_t [| string_pointer; i32_t; i8_t |] in
+  let clset_func : L.llvalue =
+     L.declare_function "Charlistset" voidicclis_t the_module in
+  (*misc*)
+  let cmapchar_t : L.lltype =
+     L.function_type cmap_ptr_t [| cmap_ptr_t; i8_t |] in
+  let cmapd_func : L.llvalue =
+     L.declare_function "Charmapdestroy" cmapchar_t the_module in
+  let smapstr_t : L.lltype =
+     L.function_type map_ptr_t [| map_ptr_t; string_pointer |] in
+  let smapd_func : L.llvalue =
+     L.declare_function "Stringmapdestroy" smapstr_t the_module in
+  let cmapcharc_t : L.lltype =
+     L.function_type i8_t [| cmap_ptr_t; i8_t |] in
+  let cmapc_func : L.llvalue =
+     L.declare_function "Charmapcontains" cmapcharc_t the_module in
+  let smapstrc_t : L.lltype =
+     L.function_type i8_t [| map_ptr_t; string_pointer |] in
+  let smapc_func : L.llvalue =
+     L.declare_function "Stringmapcontains" smapstrc_t the_module in
   let voidllint_t : L.lltype =
      L.function_type void_t [| listlist_ptr; i32_t; i32_t |] in
   let fillislis_func : L.llvalue =
@@ -135,15 +181,26 @@ let translate (globals, functions) =
      L.function_type i8_t [| i32_t |] in
   let ascii_func : L.llvalue =
      L.declare_function "ToAscii" charint_t the_module in
-  (*let intvoid_t : L.lltype =
+  let intvoid_t : L.lltype =
       L.function_type i32_t [| |] in
   let rand_funct : L.llvalue =
-     L.declare_function "OllehRandom" intvoid_t the_module in*)
+     L.declare_function "OllehRandom" intvoid_t the_module in
+  let strvoid_t : L.lltype =
+      L.function_type string_pointer [| |] in
+  let rinput_funct : L.llvalue =
+     L.declare_function "readInput" strvoid_t the_module in
+  let smstr_t : L.lltype =
+      L.function_type map_ptr_t [| string_pointer |] in
+  let rdict_funct : L.llvalue =
+     L.declare_function "readDictionary" smstr_t the_module in
   let voidvoid_t : L.lltype =
       L.function_type void_t [| |] in
   let randi_func : L.llvalue =
       L.declare_function "InitializeRandom" voidvoid_t the_module in
-  (*@TODO: stringtoList, anagram*)
+  let strstr_t : L.lltype =
+      L.function_type string_pointer [| string_pointer |] in
+  let anagram_func : L.llvalue =
+     L.declare_function "anagram" strstr_t the_module in
 
   (* Define each function (arguments and return type) so we can
    * define it's body and call it later *)
@@ -232,17 +289,16 @@ let translate (globals, functions) =
       | SLiterall l ->
          let l' = List.map (expr builder locs) l in
          let len = (List.length l) + 1 in
-         if gtype = Charlist then
-           let y = L.build_array_malloc i8_t (L.const_int i32_t len) "a1" builder
-           in let x = L.build_pointercast y string_pointer "a2" builder
+         let (pty, sentinel) = if gtype = A.Charlist then (i8_t, L.const_int i8_t 0)
+             else (string_pointer, L.const_null string_pointer) in
+           let y = L.build_array_malloc pty (L.const_int i32_t len) "a1" builder
+           in let x = L.build_pointercast y (ltype_of_typ gtype) "a2" builder
            in let addtoar index elem =
              let xx = L.build_gep x [| L.const_int i32_t index |] "a3" builder
              in ignore (L.build_store elem xx builder)
            in let _ = List.iteri addtoar l'
-           in let _ = addtoar (len - 1) (L.const_int i8_t 0) (*sentinel*)
+           in let _ = addtoar (len - 1) sentinel
          in x
-         (*@TODO: Listlist*)
-         else raise (Failure "build error")
       | SLiteralm m ->
         let mptrr =
          match m with
@@ -384,15 +440,34 @@ let translate (globals, functions) =
             in let _  = L.build_store cres (lookup var locs) builder in cres
           | _ -> L.build_call cmapset_func (Array.of_list llargs) "Cmset_result" builder
         in ans
+      (*readDict is the same thing only we need to find dictionary*)
+      (*we need to do the same thing for mapdestroy, in case the first node
+      is the one that is destroyed*)
+      (*for contains(), we need to compare the answer to 1 and return that*)
+      | SCall ("listToString", args) ->
+        expr builder locs (inddex args 0)
+      | SCall ("stringToList", args) ->
+        expr builder locs (inddex args 0)
       | SCall (f, args) ->
          let llargs = List.rev (List.map (expr builder locs) (List.rev args))
          in let (fdef, result) =
            match f with
              "InitializeRandom" -> (randi_func, "")
-           | "Charmapset" -> (cmapset_func, "Charmapset_result")
+           | "anagram" -> (anagram_func, "anagram_result")
+           | "ListlistgetLength" -> (lllen_func, "llen_result")
+           | "CharlistgetLength" -> (cllen_func, "clen_result")
+           | "StringmapgetLength" -> (smlen_func, "smlen_result")
+           | "CharmapgetLength" -> (cmlen_func, "cmlen_result")
            | "Charmapget" -> (cmapget_func, "Charmapget_result")
-           | "Stringmapset" -> (smapset_func, "Stringmapset_result")
            | "Stringmapget" -> (smapget_func, "Stringmapget_result")
+           | "Charmapgeti" -> (cmapgeti_func, "Charmapgeti_result")
+           | "Stringmapgeti" -> (smapgeti_func, "Stringmapgeti_result")
+           | "Charlistget" -> (clget_func, "Charlistget_result")
+           | "Listlistget" -> (llget_func, "Listlistget_result")
+           | "Charlistset" -> (clset_func, "Charlistset_result")
+           | "Listlistset" -> (llset_func, "Listlistset_result")
+           | "random" -> (rand_funct, "rand_result")
+           | "readInput" -> (rinput_funct, "rinput_result")
            (*@TODO: rest of builtins here*)
            | _ ->
              let (ff, fdecl) = try StringMap.find f function_decls
@@ -520,7 +595,7 @@ let translate (globals, functions) =
         in let locs = add_local locs (A.Int, varname)
         in let get_fun = if t = A.Listlist || t = A.Charlist
           then (A.string_of_typ t) ^ "get"
-          else (A.string_of_typ t) ^ "geti"
+          else (A.string_of_typ t) ^ "getnext"
         in let iterer = SExpr(tos, SAssign(v, (tos, SCall(get_fun, [] (*@TODO: ???*))))) (*do a get*)
         in let while_cond = SBinop((A.Int, SVariable(varname)), A.Less,
                                    (A.Int, SCall("Getlength", []))) (*@TODO: fix call, turn to SCallm when that is fixed*)
