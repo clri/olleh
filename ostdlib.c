@@ -16,14 +16,6 @@ typedef struct stringmap {
         struct stringmap *next;
 } smap_t;
 
-typedef struct player {
-        int score;
-        unsigned char turn; //should be good for alignment
-        char *letters;
-        smap_t *guessedWords;
-} player_t;
-
-
 //concat two strings
 char *SConcat(char *a, char *b) {
         char *ans;
@@ -113,54 +105,15 @@ void PrintCharmap(cmap_t *map) {
 }
 
 
-void PrintBool(unsigned char b) {
-        if (b)
-                printf("true\n");
-        else
-                printf("false\n");
-}
-
-
 //called once at the beginning of each program
 //to initialize the RNG
 void InitializeRandom(void) {
         srand(time(NULL));
 }
-
 //random() function maps to this
 int OllehRandom(int max) {
         return rand() % max;
 }
-
-//scramble(): scrambles a string as specified in LRM
-char* scramble(char* w) {
-        int r;
-        int i = 0;
-        int len = strlen(w);
-        char *ans = malloc(len + 1);
-
-        memset(ans, 0, len+1);
-
-        while (i < len) {
-                r = OllehRandom(len);
-                if (ans[r] == 0)
-                        ans[r] = w[i++];
-        }
-        return ans;
-}
-
-//returns the reverse of a string
-char* reverse(char* w) {
-        int i;
-        int len = strlen(w);
-        char *ans = malloc(len + 1);
-
-        for (i = 0; i < len; i++) {
-                ans[i] = w[len - i - 1];
-        }
-        ans[len] = 0;
-        return ans;
-};
 
 //returns a line without newline char
 char* readInput(void) {
@@ -229,7 +182,6 @@ char ToAscii(int i) {
         return (char)i;
 }
 
-
 //LIST FUNCTIONS
 //length: we can just use strlen for Charlist.
 //here we use a null pointer as a sentinel for listlists
@@ -268,19 +220,32 @@ void Charlistset(char *lis, int i, char c) {
         lis[i] = c;
 }
 
-//list to string: doesn't really do much, but
+//string to list: doesn't really do much, but
 //olleh pretends there is a difference
 char *listToString(char *lis) {
         return lis;
 }
-
-//neither does stringToList, but since
-//we don't want users to manipulate strings
-//as strings they'll have to do it as a list
 char *stringToList(char *lis) {
         return lis;
 }
 
+void FillList(char *lis, int e) {
+        int i;
+
+        for (i = 0; i < e; i++)
+                lis[i] = 1;
+}
+
+//fill a 2d list with 0-terminated strings
+void FillListlist(char **lis, int r, int c) {
+        int i;
+
+        for (i = 0; i < r; i++) {
+                lis[i] = malloc(c * sizeof(char) + 1);
+                lis[i][c] = 0;
+                FillList(lis[i], c);
+        }
+}
 
 //MAP FUNCTIONS
 int CharmapgetLength(cmap_t *m) {
@@ -502,6 +467,8 @@ char *anagram(smap_t *dictionary, char *s) {
         return NULL;
 }
 
+
+//@TODO: charmapgeti, stringmapgeti, fill2dlist
 
 
 //

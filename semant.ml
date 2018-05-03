@@ -166,10 +166,6 @@ let check (*functions*) (globals, functions) =
         let tov = type_of_vmember t' m in
         ((tov, SVmember((t', e'), m)), symbols')
       | Literall l ->
-          let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
-          let isasn = List.fold_left is_assign true l in
-            if isasn then raise (Failure ("Cannot make assignments in list literals"))
-          else
           let l' = map_over_two expr symbols l in
           let is_char b ((t, _), _) = b && (t = Char) in
           let lchar = List.fold_left is_char true l' in
@@ -180,13 +176,6 @@ let check (*functions*) (globals, functions) =
               if llist then ((Listlist, SLiterall(l'')), symbols) else
                 raise (Failure ("List of improper type"))
       | Literalm m ->
-          let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
-          (*let isasnk = List.fold_left is_assign true (List.map fst m) in
-            if isasnk then raise (Failure ("Cannot make assignments in key map literals" ^ (string_of_expr exx)))
-          else
-          let isasnv = List.fold_left is_assign true (List.map snd m) in
-            if isasnv then raise (Failure ("Cannot make assignments in val map literals"))
-          else*)
           let m' = List.map (map_tup expr symbols) m in
           let m'' = List.map (map_tup_nos fst) m' in
           let is_charkey b ((t, _), _) = b && (t = Char) in
@@ -256,13 +245,9 @@ let check (*functions*) (globals, functions) =
                             " arguments in " ^ string_of_expr call))
           else let check_call (ft, _) e =
             let ((et, e'), _) = expr symbols e in
-              (match e' with
-                  SAssign _ -> raise (Failure "Cannot Assign in Call")
-                | SAssignm _ -> raise (Failure "Cannot Assign in Call")
-                | _ ->
             let err = "illegal argument found " ^ string_of_typ et ^
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-            in (check_assign ft et err, e'))
+            in (check_assign ft et err, e')
           in
           let args' = List.map2 check_call fd.formals args
           in ((fd.typ, SCall(fname, args')), symbols)
@@ -275,13 +260,9 @@ let check (*functions*) (globals, functions) =
                             " arguments in " ^ string_of_expr call))
           else let check_call (ft, _) e =
             let ((et, e'), _) = expr symbols e in
-            (match e' with
-                SAssign _ -> raise (Failure "Cannot Assign in Call")
-              | SAssignm _ -> raise (Failure "Cannot Assign in Call")
-              | _ ->
             let err = "illegal argument found " ^ string_of_typ et ^
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-            in (check_assign ft et err, e'))
+            in (check_assign ft et err, e')
           in
           let args' = List.map2 check_call fd.formals (vname :: args)
           in ((fd.typ, SCall((string_of_typ ty) ^ fname, args')), symbols)
@@ -293,15 +274,10 @@ let check (*functions*) (globals, functions) =
           if (t1 = Charlist && List.length e2 != 1) || (t1 = Listlist && List.length e2 != 2) then
             raise (Failure "Unexpected fatal compiler error") (*parser should have caught this*)
           else
-              let is_assign b exo = b && (match exo with Assign(_) -> true | Assignm(_) -> true | _ -> false) in
-              let isasnk = List.fold_left is_assign true e2 in
-              if isasnk then raise (Failure ("Cannot assign in new list")) else
               let l' = map_over_two expr symbols e2 in
-              let is_char b ((t, _), _) = b && (t = Char) in
-              let lint = List.fold_left is_char true l' in
-              let is_list b ((t, _), _) = b && (t = Charlist) in
-              let llis = List.fold_left is_list true l' in
-              if not (lint || llis) then raise (Failure ("Cannot create new list with non-char/charlist arguments"))
+              let is_int b ((t, _), _) = b && (t = Int) in
+              let lint = List.fold_left is_int true l' in
+              if not lint then raise (Failure ("Cannot create new list of non-integer args"))
               else ((t1, SNewlis(List.map fst l')), symbols)
       | Newobj(t1, argus)  ->
           match t1 with
@@ -309,10 +285,6 @@ let check (*functions*) (globals, functions) =
                 let rec pla ars = match ars with
                     [] -> []
                   | (v, ex) :: ars' ->
-                      match ex with
-                          Assign(_) -> raise (Failure("Cannot assign in new Player"))
-                        | Assignm(_) -> raise (Failure("Cannot assign in new Player"))
-                        | _ ->
                       let sv va = match va with Variable(x) -> SVariable(x)
                        | _ -> raise (Failure "compiler error") in
                       let ((t, ex'), _) = expr symbols ex in
@@ -367,7 +339,8 @@ let check (*functions*) (globals, functions) =
           if t != Charlist && t!= Listlist && t != Stringmap && t != Charmap then
             raise (Failure "Can't foreach if it's not a list or map")
             else
-          let syms = add_local_symbol (t, v) symbols' in
+          let ty = if t = Listlist then Charlist else if t = Stringmap then String else Char
+          in let syms = add_local_symbol (ty, v) symbols' in
           let (sths, stm') = check_stmt_list syms (List.rev sl) in
           (SForeach(v, (t, e'), sths), stm')
       | Exit(i) -> (SExit(i), symbols)

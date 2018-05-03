@@ -71,20 +71,16 @@ let translate (globals, functions) =
       L.declare_function "SConcat" charcharchar_t the_module in
   let voidlis_t : L.lltype =
      L.function_type void_t [| string_pointer |] in
-  let voidsmap_t : L.lltype =
-     L.function_type void_t [| map_ptr_t |] in
-  let voidcmap_t : L.lltype =
-     L.function_type void_t [| cmap_ptr_t |] in
-  let voidbool_t : L.lltype =
-     L.function_type void_t [| i1_t |] in
   let printil_func : L.llvalue =
      L.declare_function "PrintCharLis" voidlis_t the_module in
+  let voidsmap_t : L.lltype =
+     L.function_type void_t [| map_ptr_t |] in
   let printsmap_func : L.llvalue =
      L.declare_function "PrintStringmap" voidsmap_t the_module in
+  let voidcmap_t : L.lltype =
+     L.function_type void_t [| cmap_ptr_t |] in
   let printcmap_func : L.llvalue =
      L.declare_function "PrintCharmap" voidcmap_t the_module in
-  let printbool_func : L.llvalue =
-     L.declare_function "PrintBool" voidbool_t the_module in
   let voidlislis_t : L.lltype =
      L.function_type void_t [| listlist_ptr |] in
   let printll_func : L.llvalue =
@@ -101,7 +97,7 @@ let translate (globals, functions) =
   let lllen_func : L.llvalue =
      L.declare_function "ListlistgetLength" intlislis_t the_module in*)
   (*@TODO: CharmapgetLength, StringmapgetLength,*)
-  (*getters: Listlistget, Charlistget, Charmapget, Stringmapget*)
+  (*getterst*)
   let cmapchar_t : L.lltype =
      L.function_type cmap_ptr_t [| cmap_ptr_t; i8_t |] in
   let cmapget_func : L.llvalue =
@@ -110,6 +106,7 @@ let translate (globals, functions) =
      L.function_type map_ptr_t [| map_ptr_t; string_pointer |] in
   let smapget_func : L.llvalue =
      L.declare_function "Stringmapget" smapchar_t the_module in
+  (*@TODO: geti*)
   (*setters: Charmapset, Stringmapset, Listlistset, Charlistset*)
   let cmapcharint_t : L.lltype =
      L.function_type cmap_ptr_t [| cmap_ptr_t; i8_t; i32_t |] in
@@ -119,7 +116,15 @@ let translate (globals, functions) =
      L.function_type map_ptr_t [| map_ptr_t; string_pointer; i32_t |] in
   let smapset_func : L.llvalue =
      L.declare_function "Stringmapset" smapcharint_t the_module in
-  (*misc: Charmapdestroy, Stringmapdestroy, Charmapcontains, Stringmapcontains,*)
+  (*misc: Charmapdestroy, Stringmapdestroy, Charmapcontains, Stringmapcontains,fillist, fillistlist*)
+  let voidllint_t : L.lltype =
+     L.function_type void_t [| listlist_ptr; i32_t; i32_t |] in
+  let fillislis_func : L.llvalue =
+     L.declare_function "FillListlist" voidllint_t the_module in
+  let voidlint_t : L.lltype =
+     L.function_type void_t [| string_pointer; i32_t |] in
+  let fillis_func : L.llvalue =
+     L.declare_function "FillList" voidlint_t the_module in
 
   (*builtins: misc*)
   let voidint_t : L.lltype =
@@ -158,6 +163,7 @@ let translate (globals, functions) =
 
      let str_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
      let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
+     let char_format_str = L.build_global_stringptr "'%c'\n" "fmt" builder in
 
      (* Construct the function's "locals": formal arguments and locally
         declared variables.  Allocate each on the stack, initialize their
@@ -341,12 +347,12 @@ let translate (globals, functions) =
                in ignore (L.build_store elem xx builder)
              in let _ = addtoar (e'') (L.const_int i8_t 0) (*sentinel*)
              (*@TODO: for (e') iterations, fill array with 1*)
+             in let _ = L.build_call fillis_func [| x; e' |] "" builder
              in x
            else (*2D*)
              let rows = expr builder locs (inddex l 0)
              in let rows' = L.build_add rows (L.const_int i32_t 1) "tmp" builder
              in let cols = expr builder locs (inddex l 1)
-             in let cols' = L.build_add cols (L.const_int i32_t 1) "tmp2" builder
              in let y = L.build_array_malloc string_pointer rows' "a1" builder
              in let x = L.build_pointercast y listlist_ptr "a2" builder
              in let addtoar index elem =
@@ -354,6 +360,7 @@ let translate (globals, functions) =
                in ignore (L.build_store elem xx builder)
              in let _ = addtoar (rows') (L.const_null string_pointer) (*sentinel*)
              (*@TODO: for (rows) iterations, add the result of snewlis(cols)*)
+             in let _ = L.build_call fillislis_func [| x; rows; cols |] "" builder
              in x
       | SCall ("Stringmapset", args) ->
         (*for map setters we need to build a call to assign the result if we
@@ -422,18 +429,23 @@ let translate (globals, functions) =
     let rec stmt builder = function
         (SExpr e, locs) -> let _ = expr builder locs e in builder
       | (SPrint (t, e), locs) ->
-          if t = String then let _ = L.build_call printf_func [| str_format_str ; (expr builder local_vars (t,e)) |]
+          if t = A.String then let _ = L.build_call printf_func [| str_format_str ; (expr builder local_vars (t,e)) |]
 	    "printf" builder in builder
-         else if t = Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder locs (t,e)) |]
+         else if t = A.Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder locs (t,e)) |]
            "printf" builder in builder
+         else if t = A.Char then let _ = L.build_call printf_func [| char_format_str ; (expr builder locs (t,e)) |]
+           "printf" builder in builder
+         else if t = A.Bool then
+           let thens = [SPrint((A.String, SLiterals("true")))]
+           in let elses = [SPrint((A.String, SLiterals("false")))]
+           in stmt builder (SIf((t, e), thens, elses), locs)
          else
            let printfun =
-             if t = Stringmap then printsmap_func
-             else if t = Charmap then printcmap_func
-             else if t = Charlist then printil_func
-             else if t = Listlist then printll_func
-             else printbool_func
-             (*non*)
+             if t = A.Stringmap then printsmap_func
+             else if t = A.Charmap then printcmap_func
+             else if t = A.Charlist then printil_func
+             else if t = A.Listlist then printll_func
+             else raise (Failure ("Fail " ^ (A.string_of_typ t)))
            in let _ = L.build_call printfun [| (expr builder locs (t, e)) |]
            "" builder in builder
       | (SIf (predicate, then_stmt, else_stmt), locs) -> (*lifted from microC, comments removed for brevity*)

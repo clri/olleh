@@ -9,10 +9,9 @@ cc -o test-add-pos.exe test-add-pos.s ostdlib.o
 
 ###### Testing test-assign-pos
 ./toplevel tests/test-assign-pos.olh > test-assign-pos.ll
-Call parameter type does not match function signature!
-  %c16 = load i8, i8* %c8
- i1  call void @PrintBool(i8 %c16)
-LLVM ERROR: Broken module found, compilation aborted!
+llc test-assign-pos.ll > test-assign-pos.s
+cc -o test-assign-pos.exe test-assign-pos.s ostdlib.o
+./test-assign-pos.exe
 ###### SUCCESS
 
 ###### Testing test-compare-pos
@@ -46,7 +45,7 @@ cc -o test-for-pos.exe test-for-pos.s ostdlib.o
 
 ###### Testing test-foreach-pos
 ./toplevel tests/test-foreach-pos.olh > test-foreach-pos.ll
-Fatal error: exception Failure("illegal binary operator Stringmap Plus String in z Plus  ")
+Fatal error: exception Failure("FAIL Charlistget")
 ###### SUCCESS
 
 ###### Testing test-func-pos
@@ -70,7 +69,7 @@ cc -o test-int-pos.exe test-int-pos.s ostdlib.o
 
 ###### Testing test-list-pos
 ./toplevel tests/test-list-pos.olh > test-list-pos.ll
-Fatal error: exception Failure("Cannot create new list with non-char/charlist arguments")
+Fatal error: exception Failure("expecting 2 arguments in lis_2.set(...)")
 ###### SUCCESS
 
 ###### Testing test-map-pos
@@ -181,68 +180,6 @@ diff -b fail-fpla-neg.err tests/fail-fpla-neg.err > fail-fpla-neg.diff
 
 ###### Testing fail-freshlis1-neg
 ./toplevel < tests/fail-freshlis1-neg.olh 2> fail-freshlis1-neg.err >> testall.log
-; ModuleID = 'Olleh'
-source_filename = "Olleh"
-
-%mapt = type { i8*, i32, %mapt* }
-%charmapt = type { i8, i32, %charmapt* }
-
-@dictionary = global %mapt* null
-@letterScores = global %charmapt* null
-@lis = global i8* null
-@fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
-@fmt.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
-
-declare i32 @printf(i8*, ...)
-
-declare i8* @IntToS(i32)
-
-declare i8* @SConcat(i8*, i8*)
-
-declare void @PrintCharLis(i8*)
-
-declare void @PrintStringmap(%mapt*)
-
-declare void @PrintCharmap(%charmapt*)
-
-declare void @PrintBool(i1)
-
-declare void @PrintListList(i8**)
-
-declare %charmapt* @Charmapget(%charmapt*, i8)
-
-declare %mapt* @Stringmapget(%mapt*, i8*)
-
-declare %charmapt* @Charmapset(%charmapt*, i8, i32)
-
-declare %mapt* @Stringmapset(%mapt*, i8*, i32)
-
-declare void @exit(i32)
-
-declare i8 @ToAscii(i32)
-
-declare void @InitializeRandom()
-
-define void @main(%mapt* %dictionary, %charmapt* %letterScores, i8* %lis) {
-entry:
-  %dictionary1 = alloca %mapt*
-  store %mapt* %dictionary, %mapt** %dictionary1
-  %letterScores2 = alloca %charmapt*
-  store %charmapt* %letterScores, %charmapt** %letterScores2
-  %lis3 = alloca i8*
-  store i8* %lis, i8** %lis3
-  %lis4 = alloca i8*
-  call void @InitializeRandom()
-  %0 = zext i8 98 to i32
-  %mallocsize = mul i32 %0, ptrtoint (i8* getelementptr (i8, i8* null, i32 1) to i32)
-  %a1 = tail call i8* @malloc(i32 %mallocsize)
-  %a3 = getelementptr i8, i8* %a1, i8 98
-  store i8 0, i8* %a3
-  store i8* %a1, i8** %lis4
-  ret void
-}
-
-declare noalias i8* @malloc(i32)
 diff -b fail-freshlis1-neg.err tests/fail-freshlis1-neg.err > fail-freshlis1-neg.diff
 FAILED fail-freshlis1-neg.err differs from tests/fail-freshlis1-neg.err
 ###### FAILED
@@ -265,8 +202,7 @@ diff -b fail-freshpla1-neg.err tests/fail-freshpla1-neg.err > fail-freshpla1-neg
 ###### Testing fail-freshpla2-neg
 ./toplevel < tests/fail-freshpla2-neg.olh 2> fail-freshpla2-neg.err >> testall.log
 diff -b fail-freshpla2-neg.err tests/fail-freshpla2-neg.err > fail-freshpla2-neg.diff
-FAILED fail-freshpla2-neg.err differs from tests/fail-freshpla2-neg.err
-###### FAILED
+###### SUCCESS
 
 ###### Testing fail-glist-neg
 ./toplevel < tests/fail-glist-neg.olh 2> fail-glist-neg.err >> testall.log
@@ -301,7 +237,8 @@ diff -b fail-intlist2-neg.err tests/fail-intlist2-neg.err > fail-intlist2-neg.di
 ###### Testing fail-list-neg
 ./toplevel < tests/fail-list-neg.olh 2> fail-list-neg.err >> testall.log
 diff -b fail-list-neg.err tests/fail-list-neg.err > fail-list-neg.diff
-###### SUCCESS
+FAILED fail-list-neg.err differs from tests/fail-list-neg.err
+###### FAILED
 
 ###### Testing fail-listlistlist-neg
 ./toplevel < tests/fail-listlistlist-neg.olh 2> fail-listlistlist-neg.err >> testall.log
