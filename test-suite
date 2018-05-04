@@ -2,10 +2,7 @@ TODO - TESTING
 
 ERRORS
 test-func-pos (does not manipulate the global)
-test-list-pos (illegal argument in semant for setting listlist)
 test-foreach-pos (refuses to work with stringmap, segfaults with with charmap)
-
-(these use structs not implemented)
 test-player-pos (does not compile completely)
 
 
@@ -17,7 +14,7 @@ null comparison (bw listlist, stringmap)
 vmembers (of many exprs)
 test for/foreach/while with multiple statements in body (determine order)
 test strings with escaped quotes and \n, \0
-zero-length lists
+zero-length fresh lists
 
 Parser - negatve
 function in a function
@@ -41,14 +38,10 @@ fresh list with negative integers
 Written (positive)
 foreach of map (test-foreach-pos)
 use function to manipluate a global variable (test-func-pos)
-list getsetters (test-list-pos)
-empty 2d list (test-list-pos)
-empty 1d list (test-list-pos)
-
-
 Assign player and print its members (test-player-pos)
 fresh player(nothing), fresh player(something) (test-player-pos)
 player getsetters (test-player-pos)
+
 
 Written (negative)
 fresh player (same field twice) (fail-freshpla2-neg)
@@ -89,6 +82,9 @@ foreach of list (test-foreach-pos)
 Assign and print a variable of type list (1d and 2d) (test-list-pos)
 fresh list(x), fresh list(x,y) (test-list-pos)
 two statements on the same line (test-list-pos)
+empty 2d list (test-list-pos)
+empty 1d list (test-list-pos)
+list getsetters (test-list-pos)
 
 
 Passing (negative)

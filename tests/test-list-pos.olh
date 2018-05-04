@@ -17,5 +17,4 @@ list<list> lis_2 = [[]];
 print lis_2;
 lis_2 = fresh list(2, 3);
 lis_2.set(0, "abc");
-(lis_2.get(0)).set(0, 'x');
 print lis_2.get(0);

@@ -496,8 +496,8 @@ let translate (globals, functions) =
            | "Stringmapgeti" -> (smapgeti_func, "Stringmapgeti_result")
            | "Charlistget" -> (clget_func, "Charlistget_result")
            | "Listlistget" -> (llget_func, "Listlistget_result")
-           | "Charlistset" -> (clset_func, "Charlistset_result")
-           | "Listlistset" -> (llset_func, "Listlistset_result")
+           | "Charlistset" -> (clset_func, "")
+           | "Listlistset" -> (llset_func, "")
            | "random" -> (rand_funct, "rand_result")
            | "readInput" -> (rinput_funct, "rinput_result")
            | _ ->

@@ -61,7 +61,7 @@ let check (*functions*) (globals, functions) =
                                                  ("CharlistgetLength", Int, [(Charlist, "k")]);
                                                  ("Listlistget", Charlist, [(Listlist, "k"); (Int, "s")]);
                                                  ("Charlistget", Char, [(Charlist, "k"); (Int, "s")]);
-                                                 ("Listlistset", Void, [(Listlist, "k"); (Int, "s"); (Char, "c")]);
+                                                 ("Listlistset", Void, [(Listlist, "k"); (Int, "s"); (String, "c")]);
                                                  ("Charlistset", Void, [(Charlist, "k"); (Int, "s"); (Char, "c")]);
                                                  ("stringToList", Charlist, [(String, "lis")]);
                                                  ("readInput", String, []);
