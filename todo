@@ -4,7 +4,6 @@ Once item is done/tested, remove it from the list
 ALL FILES
 -comment code, explain anything that's ambiguous or confusing to you (or that you think
   might need explaining to tfs/townsend)
--do we need everything in ostdlib? check carefully
 
 
 Semantic Checker
@@ -17,6 +16,7 @@ Semantic Checker
 Legitimate Test Suite
 -see test-suite
 -also, edit testall.sh so all are comparing vs a diff file
+-and make sure tests/output do match
 
 
 LRM
@@ -55,11 +55,10 @@ Standard Library (.olh)
 Compiler (codegen.ml)
 -player functionality
 -stringmap set/destroy for vmember
+-map foreach
 -SNewobj (allocating space for new objects:
  set players to malloc, how to set elems: build const ptr and copy it over
 
--foreach and maps/list: get next without c function?
--fill list without calling a C function
 
 
 

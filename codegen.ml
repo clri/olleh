@@ -630,7 +630,11 @@ let translate (globals, functions) =
         in let _ = expr builder locs'' (tos, SAssign(v, (tos, SCall(gf, [ (t, s); (A.Int, SLiterali(0)) ]))))
         in let e = (A.Int, SCall((A.string_of_typ t) ^ "getLength", [ (t, s) ]))
         in let sx' = SBinop((A.Int, SVariable(varname)), A.Less, e)
-        in let body' = body @
+        in let iiter = SExpr(tos,
+                             SAssign(v,
+                                    (tos, SCall(gf, [ (t, s); (A.Int, SVariable(varname)) ])
+                                    )))
+        in let body' = (iiter :: body) @
           [SExpr(A.Int,
                  SAssign(varname,
                         (A.Int, SBinop((A.Int, SVariable(varname)),
@@ -638,12 +642,7 @@ let translate (globals, functions) =
                                         (A.Int, SLiterali(1))
                                        )
                         ))
-                );
-           SExpr(tos,
-                  SAssign(v,
-                         (tos, SCall(gf, [ (t, s); (A.Int, SVariable(varname)) ])
-                         ))
-                 )] in
+                )] in
          let builder = stmt builder ((SWhile((A.Bool, sx'), body')), locs'') in builder
     | (SExit i, _) ->
         let _ = (L.build_call exit_func [| L.const_int i32_t i |]

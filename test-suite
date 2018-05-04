@@ -2,7 +2,7 @@ TODO - TESTING
 
 ERRORS
 test-func-pos (does not manipulate the global)
-test-foreach-pos (refuses to work with stringmap, segfaults with with charmap)
+test-foreach-pos (refuses to compile with stringmap)
 test-player-pos (does not compile completely)
 
 
@@ -78,7 +78,7 @@ create function (no args, args, void, real return type) (test-func-pos)
 call function (no args, args, void, real return type) (test-func-pos)
 use the result of a function in statement (test-func-pos)
 test while loops (test-while-pos)
-foreach of list (test-foreach-pos)
+foreach of list(char, list), charmap (test-foreach-pos)
 Assign and print a variable of type list (1d and 2d) (test-list-pos)
 fresh list(x), fresh list(x,y) (test-list-pos)
 two statements on the same line (test-list-pos)

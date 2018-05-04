@@ -48,7 +48,6 @@ cc -o test-for-pos.exe test-for-pos.s ostdlib.o
 llc test-foreach-pos.ll > test-foreach-pos.s
 cc -o test-foreach-pos.exe test-foreach-pos.s ostdlib.o
 ./test-foreach-pos.exe
-./testall.sh: line 64: 92859 Segmentation fault: 11  ./test-foreach-pos.exe
 ###### SUCCESS
 
 ###### Testing test-func-pos

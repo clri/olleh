@@ -56,7 +56,7 @@ let check (*functions*) (globals, functions) =
                                                  ("StringmapgetLength", Int, [(Stringmap, "k")]);
                                                  ("Charmapdestroy", Void, [(Charmap, "k"); (Char, "s")]);
                                                  ("Charmapcontains", Bool, [(Charmap, "k"); (Char, "s")]);
-                                                 ("CharmapgetLength", Int, [(Stringmap, "k")]);
+                                                 ("CharmapgetLength", Int, [(Charmap, "k")]);
                                                  ("ListlistgetLength", Int, [(Listlist, "k")]);
                                                  ("CharlistgetLength", Int, [(Charlist, "k")]);
                                                  ("Listlistget", Charlist, [(Listlist, "k"); (Int, "s")]);
@@ -68,7 +68,7 @@ let check (*functions*) (globals, functions) =
                                                  ("Charmapset", Void, [(Charmap, "k"); (Char, "c"); (Int, "s")]);
                                                  ("Stringmapset", Void, [(Stringmap, "k"); (String, "c"); (Int, "s")]);
                                                  ("Stringmapget", Int, [(Stringmap, "k"); (String, "c")]);
-                                                 ("Charmapget", Int, [(Stringmap, "k"); (Char, "c")])
+                                                 ("Charmapget", Int, [(Charmap, "k"); (Char, "c")])
                                                   ]
   in
 
