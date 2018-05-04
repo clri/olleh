@@ -125,6 +125,35 @@ char* readInput(void) {
         return ans;
 }
 
+smap_t *Stringmapset(smap_t *m, char *k, int v) {
+        smap_t *tmp = m;
+        smap_t *tmp2 = tmp;
+
+        if (m == NULL) {
+                m = malloc(sizeof(smap_t));
+                m->key = k;
+                m->value = v;
+                m->next = NULL;
+                return m;
+        }
+        while (tmp != NULL) {
+                if (strcmp(tmp->key, k) == 0)
+                        break;
+                tmp2 = tmp;
+                tmp = tmp->next;
+        }
+        if (tmp == NULL) {
+                tmp = malloc(sizeof(smap_t));
+                tmp->key = k;
+                tmp->value = v;
+                tmp->next = NULL;
+                tmp2->next = tmp;
+        } else
+                tmp->value = v;
+
+        return m;
+}
+
 //readDict: returns the dictionary. NULL if error reading in or empty file.
 //user sees it as a void function.
 smap_t *readDict(char* filename) {
@@ -139,6 +168,7 @@ smap_t *readDict(char* filename) {
                 fprintf(stderr, "Error reading file %s\n", filename);
                 return NULL;
         }
+        fprintf(stderr, "here\n");
         //read line, parse, allocate
         err = getline(&buf, &len, fp);
         if (!err) {
@@ -147,7 +177,12 @@ smap_t *readDict(char* filename) {
                 fprintf(stderr, "Error reading file %s\n", filename);
                 return NULL;
         }
+        fprintf(stderr, "read a line\n");
 
+        if (strlen(buf) == 0 || (strlen(buf) == 1 && buf[0] == '\n')) {
+                 fprintf(stderr, "Error: dictionary formatted incorrectly\n");
+                 return NULL;
+        }
         ans = malloc(sizeof(smap_t));
         buf[strlen(buf) - 1] = 0; //remove newline
         ans->key = buf;
@@ -157,16 +192,12 @@ smap_t *readDict(char* filename) {
         buf = NULL;
         len = 0;
         err = getline(&buf, &len, fp);
-        while (err) {
-                tmp->next = malloc(sizeof(smap_t));
-                tmp = tmp->next;
+        while (err && buf != NULL && strlen(buf)) {
                 buf[strlen(buf) - 1] = 0; //remove newline
-                tmp->key = buf;
-                tmp->value = 1;
-                tmp->next = NULL;
-                err = getline(&buf, &len, fp);
+                tmp = Stringmapset(ans, buf, 1);
                 buf = NULL;
                 len = 0;
+                err = getline(&buf, &len, fp);
         }
         free(buf); //after getline
 
@@ -393,47 +424,6 @@ cmap_t *Charmapset(cmap_t *m, char k, int v) {
         return m;
 }
 
-int MyStrcmp(char *a, char *b) {
-        int i;
-
-        if (strlen(a) != strlen(b))
-                return -1;
-        for (i = 0; i < strlen(a); i++) {
-                if (a[i] != b[i])
-                        return -1;
-        }
-        return 0;
-}
-
-smap_t *Stringmapset(smap_t *m, char *k, int v) {
-        smap_t *tmp = m;
-        smap_t *tmp2 = tmp;
-
-        if (m == NULL) {
-                m = malloc(sizeof(smap_t));
-                m->key = k;
-                m->value = v;
-                m->next = NULL;
-                return m;
-        }
-        while (tmp != NULL) {
-                if (MyStrcmp(tmp->key, k) == 0)
-                        break;
-                tmp2 = tmp;
-                tmp = tmp->next;
-        }
-        if (tmp == NULL) {
-                tmp = malloc(sizeof(smap_t));
-                tmp->key = k;
-                tmp->value = v;
-                tmp->next = NULL;
-                tmp2->next = tmp;
-        } else
-                tmp->value = v;
-
-        return m;
-}
-
 //for contains, how to return a bool? use unsigned char
 unsigned char Charmapcontains(cmap_t *m, char k) {
         cmap_t *tmp = m;
@@ -468,6 +458,8 @@ int IsAnagram(char *s1, char *s2) {
         int a1[256] = { 0 };
         int a2[256] = { 0 };
 
+        if (s1 == NULL || s2 == NULL)
+                return 0;
         if (strlen(s1) != strlen(s2))
                 return 0;
         if (strcmp(s1, s2) == 0)

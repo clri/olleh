@@ -71,15 +71,15 @@ declare void @exit(i32)
 
 declare i8 @ToAscii(i32)
 
-declare i32 @OllehRandom()
+declare i32 @OllehRandom(i32)
 
 declare i8* @readInput()
 
-declare %mapt* @readDictionary(i8*)
+declare %mapt* @readDict(i8*)
 
 declare void @InitializeRandom()
 
-declare i8* @anagram(i8*)
+declare i8* @anagram(%mapt*, i8*)
 
 define void @main() {
 entry:

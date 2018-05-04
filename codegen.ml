@@ -181,10 +181,10 @@ let translate (globals, functions) =
      L.function_type i8_t [| i32_t |] in
   let ascii_func : L.llvalue =
      L.declare_function "ToAscii" charint_t the_module in
-  let intvoid_t : L.lltype =
-      L.function_type i32_t [| |] in
+  let intint_t : L.lltype =
+      L.function_type i32_t [| i32_t |] in
   let rand_funct : L.llvalue =
-     L.declare_function "OllehRandom" intvoid_t the_module in
+     L.declare_function "OllehRandom" intint_t the_module in
   let strvoid_t : L.lltype =
       L.function_type string_pointer [| |] in
   let rinput_funct : L.llvalue =
@@ -192,13 +192,13 @@ let translate (globals, functions) =
   let smstr_t : L.lltype =
       L.function_type map_ptr_t [| string_pointer |] in
   let rdict_funct : L.llvalue =
-     L.declare_function "readDictionary" smstr_t the_module in
+     L.declare_function "readDict" smstr_t the_module in
   let voidvoid_t : L.lltype =
       L.function_type void_t [| |] in
   let randi_func : L.llvalue =
       L.declare_function "InitializeRandom" voidvoid_t the_module in
   let strstr_t : L.lltype =
-      L.function_type string_pointer [| string_pointer |] in
+      L.function_type string_pointer [| map_ptr_t; string_pointer |] in
   let anagram_func : L.llvalue =
      L.declare_function "anagram" strstr_t the_module in
 
@@ -484,12 +484,14 @@ let translate (globals, functions) =
         expr builder locs (inddex args 0)
       | SCall ("stringToList", args) ->
         expr builder locs (inddex args 0)
+      | SCall ("anagram", args) ->
+        L.build_call anagram_func [| L.build_load (lookup "dictionary" locs) "dictionary" builder;
+          (expr builder locs (inddex args 0)) |] "anagram_result" builder
       | SCall (f, args) ->
          let llargs = List.rev (List.map (expr builder locs) (List.rev args))
          in let (fdef, result) =
            match f with
              "InitializeRandom" -> (randi_func, "")
-           | "anagram" -> (anagram_func, "anagram_result")
            | "ListlistgetLength" -> (lllen_func, "llen_result")
            | "CharlistgetLength" -> (cllen_func, "clen_result")
            | "StringmapgetLength" -> (smlen_func, "smlen_result")

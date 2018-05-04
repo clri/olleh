@@ -5,11 +5,10 @@ test-player-pos (does not compile completely)
 
 
 Positive
-readdict()
-anagram()
-other builtins: random, destroy, listToString, stringtolist
+standard library
+vmembers (of many exprs) -- add to test-player-pos
+
 null comparison (bw listlist, stringmap)
-vmembers (of many exprs)
 test for/foreach/while with multiple statements in body (determine order)
 test strings with escaped quotes and \n, \0
 zero-length fresh lists
@@ -83,6 +82,7 @@ empty 1d list (test-list-pos)
 list getsetters (test-list-pos)
 foreach of stringmap (test-foreach-pos)
 use function to manipluate a global variable (test-func-pos)
+builtins: random, destroy, listToString, stringtolist, readdict, anagram (test-builtin-pos)
 
 
 Passing (negative)

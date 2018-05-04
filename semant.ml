@@ -49,6 +49,7 @@ let check (*functions*) (globals, functions) =
       StringMap.add name { typ = ty; fname = name; formals = argus; body = [] } map
     in List.fold_left add_bind StringMap.empty [ ("InitializeRandom", Void, []);
                                                  ("anagram", String, [(String, "w")]);
+                                                 ("random", Int, [(Int, "w")]);
                                                  ("readDict", Void, [(String, "filename")]);
                                                  ("listToString", String, [(Charlist, "lis")]);
                                                  ("Stringmapdestroy", Void, [(Stringmap, "k"); (String, "s")]);
@@ -105,8 +106,8 @@ let check (*functions*) (globals, functions) =
   let check_function func =
     (* Make sure no formals are void or duplicates *)
     let formals' = check_binds "formal" (func.formals) in
-    (*let formals'' = check_binds "formal" (func.formals @ globals') in*)
-    let locals' = formals' in
+    let formals'' = check_binds "formal" (func.formals @ globals') in
+    let locals' = formals'' in
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
@@ -116,8 +117,10 @@ let check (*functions*) (globals, functions) =
     in
 
     (* Build local symbol table of variables for this function *)
-    let symbolz = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-	                StringMap.empty (locals' @ globals')
+    let symbolz' = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+	                StringMap.empty (locals')
+    in let symbolz = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+        symbolz' [(Stringmap, "dictionary") ; (Charmap, "letterScores")]
     in
     let add_local_symbol (ty, name) symbols =
         let x = try StringMap.find name symbols with Not_found -> Void
@@ -127,6 +130,8 @@ let check (*functions*) (globals, functions) =
 
     (* Return a variable from our local symbol table *)
     let type_of_identifier s symbols =
+        match s with "dictionary" -> Stringmap
+      | "letterScores" -> Charmap | _ ->
       try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
     let type_of_vmember tvs m  =
