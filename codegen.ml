@@ -209,6 +209,7 @@ let translate (globals, functions) =
        let name = fdecl.sfname
        and formal_types =
  	Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
+        (*in let _ = List.map (fun x -> print_string (A.string_of_typ (fst x))) fdecl.sformals*)
        in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
        StringMap.add name (L.define_function name ftype the_module, fdecl) m in
      List.fold_left function_decl StringMap.empty functions in
@@ -644,9 +645,10 @@ let translate (globals, functions) =
     (* Add a return if the last block falls off the end *)
     add_terminal builder (match fdecl.styp with
         A.Void -> L.build_ret_void
-      | _ -> raise (Failure "internal error: return type not (yet) implemented"))
-      (*
-      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0)) @TODO: IMPLEMENT*)
+      | A.Int -> L.build_ret (L.const_int i32_t 0)
+      | A.Bool -> L.build_ret (L.const_int i1_t 0)
+      | A.Char -> L.build_ret (L.const_int i8_t 0)
+      | t -> L.build_ret (L.const_null (ltype_of_typ t)))
   in
 
   List.iter build_function_body functions;

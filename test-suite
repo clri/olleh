@@ -1,7 +1,7 @@
 TODO - TESTING
 
 ERRORS
-test-func-pos (doesn't print a lot of what's going on)
+test-func-pos (does not manipulate the global)
 test-list-pos (when we figure out foreach)
 test-while-pos (needs something to print in loop)
 test-foreach-pos (link up builtins)
@@ -49,9 +49,6 @@ Assign player and print its members (test-player-pos)
 fresh player(nothing), fresh player(something) (test-player-pos)
 player getsetters (test-player-pos)
 foreach of list, foreach of map (test-foreach-pos)
-create function (no args, args, void, real return type) (test-func-pos)
-call function (no args, args, void, real return type) (test-func-pos)
-use the result of a function in statement (test-func-pos)
 use function to manipluate a global variable (test-func-pos)
 test while loops (test-while-pos)
 
@@ -86,6 +83,9 @@ empty map (test-map-pos)
 multiline statement (test-compare-pos)
 map getsetters (test-map-pos)
 Assign and print a variable of type: int (pos, neg, zero), char, string, bool (test-assign-pos)
+create function (no args, args, void, real return type) (test-func-pos)
+call function (no args, args, void, real return type) (test-func-pos)
+use the result of a function in statement (test-func-pos)
 
 
 Passing (negative)

@@ -104,8 +104,9 @@ let check (*functions*) (globals, functions) =
 
   let check_function func =
     (* Make sure no formals are void or duplicates *)
-    let formals' = check_binds "formal" (func.formals @ globals') in
-    let locals' = formals' (*(check_binds "formal" (func.formals)) @ gic*) in
+    let formals' = check_binds "formal" (func.formals) in
+    let formals'' = check_binds "formal" (func.formals @ globals') in
+    let locals' = formals'' in
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)

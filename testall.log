@@ -45,12 +45,14 @@ cc -o test-for-pos.exe test-for-pos.s ostdlib.o
 
 ###### Testing test-foreach-pos
 ./toplevel tests/test-foreach-pos.olh > test-foreach-pos.ll
-Fatal error: exception Failure("FAIL Charlistget")
+Fatal error: exception Not_found
 ###### SUCCESS
 
 ###### Testing test-func-pos
 ./toplevel tests/test-func-pos.olh > test-func-pos.ll
-Fatal error: exception Failure("internal error: return type not (yet) implemented")
+llc test-func-pos.ll > test-func-pos.s
+cc -o test-func-pos.exe test-func-pos.s ostdlib.o
+./test-func-pos.exe
 ###### SUCCESS
 
 ###### Testing test-if-pos
@@ -74,9 +76,7 @@ Fatal error: exception Failure("expecting 2 arguments in lis_2.set(...)")
 
 ###### Testing test-map-pos
 ./toplevel tests/test-map-pos.olh > test-map-pos.ll
-llc test-map-pos.ll > test-map-pos.s
-cc -o test-map-pos.exe test-map-pos.s ostdlib.o
-./test-map-pos.exe
+Fatal error: exception Failure("Map type cannot be inferred")
 ###### SUCCESS
 
 ###### Testing test-player-pos
@@ -110,7 +110,9 @@ cc -o test-str-pos.exe test-str-pos.s ostdlib.o
 llc test-while-pos.ll > test-while-pos.s
 cc -o test-while-pos.exe test-while-pos.s ostdlib.o
 ./test-while-pos.exe
-###### SUCCESS
+diff -b test-while-pos.out tests/test-while-pos.out > test-while-pos.diff
+FAILED test-while-pos.out differs from tests/test-while-pos.out
+###### FAILED
 
 ###### Testing fail-add1-neg
 ./toplevel < tests/fail-add1-neg.olh 2> fail-add1-neg.err >> testall.log
@@ -201,8 +203,102 @@ diff -b fail-freshpla1-neg.err tests/fail-freshpla1-neg.err > fail-freshpla1-neg
 
 ###### Testing fail-freshpla2-neg
 ./toplevel < tests/fail-freshpla2-neg.olh 2> fail-freshpla2-neg.err >> testall.log
+; ModuleID = 'Olleh'
+source_filename = "Olleh"
+
+%mapt = type { i8*, i32, %mapt* }
+%charmapt = type { i8, i32, %charmapt* }
+%playert = type { i32, i1, i8*, %mapt }
+
+@dictionary = global %mapt* null
+@letterScores = global %charmapt* null
+@player = global %playert* null
+@fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
+@fmt.2 = private unnamed_addr constant [6 x i8] c"'%c'\0A\00"
+
+declare i32 @printf(i8*, ...)
+
+declare i8* @IntToS(i32)
+
+declare i8* @SConcat(i8*, i8*)
+
+declare void @PrintCharLis(i8*)
+
+declare void @PrintStringmap(%mapt*)
+
+declare void @PrintCharmap(%charmapt*)
+
+declare void @PrintListList(i8**)
+
+declare i32 @strlen(i8*)
+
+declare i32 @ListlistgetLength(i8**)
+
+declare i32 @CharmapgetLength(%charmapt*)
+
+declare i32 @StringmapgetLength(%mapt*)
+
+declare %charmapt* @Charmapget(%charmapt*, i8)
+
+declare %mapt* @Stringmapget(%mapt*, i8*)
+
+declare i8 @Charmapgeti(%charmapt*, i32)
+
+declare i8* @Stringmapgeti(%mapt*, i32)
+
+declare i8 @Charlistget(i8*, i32)
+
+declare i8* @Listlistget(i8**, i32)
+
+declare %charmapt* @Charmapset(%charmapt*, i8, i32)
+
+declare %mapt* @Stringmapset(%mapt*, i8*, i32)
+
+declare void @Listlistset(i8**, i32, i8*)
+
+declare void @Charlistset(i8*, i32, i8)
+
+declare %charmapt* @Charmapdestroy(%charmapt*, i8)
+
+declare %mapt* @Stringmapdestroy(%mapt*, i8*)
+
+declare i8 @Charmapcontains(%charmapt*, i8)
+
+declare i8 @Stringmapcontains(%mapt*, i8*)
+
+declare void @FillListlist(i8**, i32, i32)
+
+declare void @FillList(i8*, i32)
+
+declare void @exit(i32)
+
+declare i8 @ToAscii(i32)
+
+declare i32 @OllehRandom()
+
+declare i8* @readInput()
+
+declare %mapt* @readDictionary(i8*)
+
+declare void @InitializeRandom()
+
+declare i8* @anagram(i8*)
+
+define void @main() {
+entry:
+  %player = alloca %playert*
+  call void @InitializeRandom()
+  %malloccall = tail call i8* @malloc(i32 ptrtoint (%playert* getelementptr (%playert, %playert* null, i32 1) to i32))
+  %tmp = bitcast i8* %malloccall to %playert*
+  store %playert* %tmp, %playert** %player
+  ret void
+}
+
+declare noalias i8* @malloc(i32)
 diff -b fail-freshpla2-neg.err tests/fail-freshpla2-neg.err > fail-freshpla2-neg.diff
-###### SUCCESS
+FAILED fail-freshpla2-neg.err differs from tests/fail-freshpla2-neg.err
+###### FAILED
 
 ###### Testing fail-glist-neg
 ./toplevel < tests/fail-glist-neg.olh 2> fail-glist-neg.err >> testall.log
@@ -255,7 +351,8 @@ FAILED fail-listype-neg.err differs from tests/fail-listype-neg.err
 ###### Testing fail-mapkey-neg
 ./toplevel < tests/fail-mapkey-neg.olh 2> fail-mapkey-neg.err >> testall.log
 diff -b fail-mapkey-neg.err tests/fail-mapkey-neg.err > fail-mapkey-neg.diff
-###### SUCCESS
+FAILED fail-mapkey-neg.err differs from tests/fail-mapkey-neg.err
+###### FAILED
 
 ###### Testing fail-maptype-neg
 ./toplevel < tests/fail-maptype-neg.olh 2> fail-maptype-neg.err >> testall.log
@@ -276,7 +373,8 @@ diff -b fail-mixcmp-neg.err tests/fail-mixcmp-neg.err > fail-mixcmp-neg.diff
 ###### Testing fail-mixmap-neg
 ./toplevel < tests/fail-mixmap-neg.olh 2> fail-mixmap-neg.err >> testall.log
 diff -b fail-mixmap-neg.err tests/fail-mixmap-neg.err > fail-mixmap-neg.diff
-###### SUCCESS
+FAILED fail-mixmap-neg.err differs from tests/fail-mixmap-neg.err
+###### FAILED
 
 ###### Testing fail-mod-neg
 ./toplevel < tests/fail-mod-neg.olh 2> fail-mod-neg.err >> testall.log
