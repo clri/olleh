@@ -45,9 +45,7 @@ cc -o test-for-pos.exe test-for-pos.s ostdlib.o
 
 ###### Testing test-foreach-pos
 ./toplevel tests/test-foreach-pos.olh > test-foreach-pos.ll
-Basic Block in function 'main' does not have terminator!
-label %merge
-LLVM ERROR: Broken module found, compilation aborted!
+Fatal error: exception Failure("FAIL var y")
 ###### SUCCESS
 
 ###### Testing test-func-pos
