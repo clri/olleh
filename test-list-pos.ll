@@ -35,9 +35,9 @@ declare i32 @CharmapgetLength(%charmapt*)
 
 declare i32 @StringmapgetLength(%mapt*)
 
-declare %charmapt* @Charmapget(%charmapt*, i8)
+declare i32 @Charmapget(%charmapt*, i8)
 
-declare %mapt* @Stringmapget(%mapt*, i8*)
+declare i32 @Stringmapget(%mapt*, i8*)
 
 declare i8 @Charmapgeti(%charmapt*, i32)
 

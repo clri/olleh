@@ -10,18 +10,25 @@ foreach ey [['a','b','c'],['d']]:
 end;
 
 map<char> m1 = {'x'->0};
+m1.set('y', 4);
 print m1.getLength();
-foreach yy {'x'->0}:
+foreach yy m1:
         print yy;
         print m1.get(yy);
 end;
 
 
-/*
 map<String> m = fresh map(String);
 
 m.set("example", 5);
-m.set("another example", 0);
+print m.getLength();
+print m.getLength();
+m = { "a" -> 3, "egxample" -> 5};
+print m.getLength();
+m.set("anotherr example", -9);
+print m.getLength();
 foreach z m:
-        print z + " " + m.get(z);
-end;*/
+        print m.get(z);
+        //print z + m.get(z);
+        print z;
+end;

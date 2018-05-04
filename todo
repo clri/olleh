@@ -55,7 +55,6 @@ Standard Library (.olh)
 Compiler (codegen.ml)
 -player functionality
 -stringmap set/destroy for vmember
--map foreach
 -SNewobj (allocating space for new objects:
  set players to malloc, how to set elems: build const ptr and copy it over
 

@@ -106,11 +106,11 @@ let translate (globals, functions) =
      L.declare_function "StringmapgetLength" intsmap_t the_module in
   (*getters*)
   let cmapchar_t : L.lltype =
-     L.function_type cmap_ptr_t [| cmap_ptr_t; i8_t |] in
+     L.function_type i32_t [| cmap_ptr_t; i8_t |] in
   let cmapget_func : L.llvalue =
      L.declare_function "Charmapget" cmapchar_t the_module in
   let smapchar_t : L.lltype =
-     L.function_type map_ptr_t [| map_ptr_t; string_pointer |] in
+     L.function_type i32_t [| map_ptr_t; string_pointer |] in
   let smapget_func : L.llvalue =
      L.declare_function "Stringmapget" smapchar_t the_module in
   let charcmap_t : L.lltype =
@@ -247,6 +247,10 @@ let translate (globals, functions) =
       let rec onlybind lis = match lis with
           [] -> []
         | SBind(x, y) :: es -> (x, y) :: (onlybind es)
+        | SForeach (v, (t, _), _) :: es ->
+          let t' = if t = A.Listlist then A.Charlist else if t = A.Stringmap then A.String
+            else Char in
+          (t', v) :: (onlybind es)
         | _ :: es -> onlybind es
       in let localds = onlybind fdecl.sbody in
       List.fold_left add_local formals localds (*@TODO: ADD LATERfdecl.slocals*)
@@ -618,12 +622,12 @@ let translate (globals, functions) =
         in let add_local m (t, n) =
          let local_var = L.build_alloca (ltype_of_typ t) n builder
          in StringMap.add n local_var m
-        in let locs' = add_local locs (tos, v)
+        (*in let locs' = add_local locs (tos, v)*)
         in let rec counterbind s =
           try let _ = StringMap.find s local_vars in (counterbind (s ^ s))
           with Not_found -> s
         in let varname = counterbind "_"
-        in let locs'' = add_local locs' (A.Int, varname)
+        in let locs'' = add_local locs (A.Int, varname)
         in let _ = expr builder locs'' (A.Int, SAssign(varname, (A.Int, SLiterali(0))))
         in let gf = if t = A.Stringmap || t = A.Charmap then
           (A.string_of_typ t) ^ "geti" else (A.string_of_typ t) ^ "get"

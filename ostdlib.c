@@ -383,14 +383,26 @@ cmap_t *Charmapset(cmap_t *m, char k, int v) {
         }
         if (tmp == NULL) {
                 tmp = malloc(sizeof(cmap_t));
-                tmp2->next = tmp;
                 tmp->key = k;
                 tmp->value = v;
                 tmp->next = NULL;
+                tmp2->next = tmp;
         } else
                 tmp->value = v;
 
         return m;
+}
+
+int MyStrcmp(char *a, char *b) {
+        int i;
+
+        if (strlen(a) != strlen(b))
+                return -1;
+        for (i = 0; i < strlen(a); i++) {
+                if (a[i] != b[i])
+                        return -1;
+        }
+        return 0;
 }
 
 smap_t *Stringmapset(smap_t *m, char *k, int v) {
@@ -404,16 +416,18 @@ smap_t *Stringmapset(smap_t *m, char *k, int v) {
                 m->next = NULL;
                 return m;
         }
-        while (tmp != NULL && !strcmp(tmp->key, k)) {
+        while (tmp != NULL) {
+                if (MyStrcmp(tmp->key, k) == 0)
+                        break;
                 tmp2 = tmp;
                 tmp = tmp->next;
         }
         if (tmp == NULL) {
                 tmp = malloc(sizeof(smap_t));
-                tmp2->next = tmp;
                 tmp->key = k;
                 tmp->value = v;
                 tmp->next = NULL;
+                tmp2->next = tmp;
         } else
                 tmp->value = v;
 
