@@ -256,7 +256,8 @@ let translate (globals, functions) =
      * locals, then globals *)
 
     let lookup n lcs = try StringMap.find n lcs
-                   with Not_found -> StringMap.find n global_vars
+                   with Not_found ->  try StringMap.find n global_vars
+                     with Not_found -> raise (Failure ("FAIL var " ^ n))
     in
     (*let lookupmem v m = (*let t =*) try StringMap.find v local_vars (*lcs*)
         with Not_found -> StringMap.find v global_vars
@@ -610,12 +611,11 @@ let translate (globals, functions) =
                                       )
                        ))
                )] in
-        let builder = stmt builder ((SWhile((A.Int, sx'), body')), locs) in builder
+        let builder = stmt builder ((SWhile((A.Bool, sx'), body')), locs) in builder
      | (SForeach(v, (t, s), body), locs) ->
         let type_of_s tr = match tr with A.Listlist -> A.Charlist | A.Charlist -> A.Char
           | A.Charmap -> A.Char | A.Stringmap -> A.String | _ -> raise (Failure "Fatal error: Foreach")
         in let tos = type_of_s t (*the type of v*)
-        in let _ = stmt builder ((SBind(tos, v)), locs) (*build space for your temp var*)
         in let rec counterbind s =
           try let _ = StringMap.find s locs in (counterbind (s ^ s))
           with Not_found -> s
@@ -623,15 +623,34 @@ let translate (globals, functions) =
         in let add_local m (t, n) =
          let local_var = L.build_alloca (ltype_of_typ t) n builder
          in StringMap.add n local_var m
-        in let locs = add_local locs (A.Int, varname)
+        in let locs' = add_local locs (A.Int, varname)
+        in let locs'' = add_local locs' (tos, v)
+        in let _ = expr builder locs'' (A.Int, SAssign(varname, (A.Int, SLiterali(0))))
         in let get_fun = if t = A.Listlist || t = A.Charlist
           then (A.string_of_typ t) ^ "get"
-          else (A.string_of_typ t) ^ "getnext"
-        in let iterer = SExpr(tos, SAssign(v, (tos, SCall(get_fun, [] (*@TODO: ???*))))) (*do a get*)
+          else (A.string_of_typ t) ^ "geti"
+        in let getlen_fun = (A.string_of_typ t) ^ "getLength"
+        in let iterer = SExpr(tos, SAssign(v, (tos,
+                                               SCall(get_fun,
+                                                    [ (t, s);
+                                                      (A.Int, SVariable(varname)) ]
+                                                    )
+                              ))) (*do a get*)
         in let while_cond = SBinop((A.Int, SVariable(varname)), A.Less,
-                                   (A.Int, SCall("Getlength", []))) (*@TODO: fix call, turn to SCallm when that is fixed*)
+                                   (A.Int, SCall(getlen_fun,
+                                                 [ (t, s) ]
+                                   )))
         in let body' = iterer :: body
-        in let _ = stmt builder ((SWhile((A.Int, while_cond), body')), locs)
+        in let body'' = body' @
+          [SExpr(A.Int,
+                 SAssign(varname,
+                        (A.Int, SBinop((A.Int, SVariable(varname)),
+                                        A.Add,
+                                        (A.Int, SLiterali(1))
+                                       )
+                        ))
+                )]
+        in let _ = stmt builder ((SWhile((A.Bool, while_cond), body'')), locs'')
         in builder
     | (SExit i, _) ->
         let _ = (L.build_call exit_func [| L.const_int i32_t i |]

@@ -1,9 +1,11 @@
 //test-foreach-pos: testing foreach loops
 
+
 foreach x ['a','b','c']:
         print x;
 end;
 
+/*
 map<String> m = fresh map(String);
 foreach y m: //should have no visible output
         print y;
@@ -13,4 +15,4 @@ m.set("example", 5);
 m.set("another example", 0);
 foreach z m:
         print z + " " + m.get(z);
-end;
+end;*/
