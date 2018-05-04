@@ -253,14 +253,14 @@ let translate (globals, functions) =
           (t', v) :: (onlybind es)
         | _ :: es -> onlybind es
       in let localds = onlybind fdecl.sbody in
-      List.fold_left add_local formals localds (*@TODO: ADD LATERfdecl.slocals*)
+      List.fold_left add_local formals localds
     in
 
     (* Return the value for a variable or formal argument. First check
      * locals, then globals *)
 
-    let lookup n lcs = try StringMap.find n lcs
-                   with Not_found ->  try StringMap.find n global_vars
+    let lookup n lcs = try StringMap.find n global_vars
+                   with Not_found ->  try StringMap.find n lcs
                      with Not_found -> raise (Failure ("FAIL var " ^ n))
     in
     (*let lookupmem v m = (*let t =*) try StringMap.find v local_vars (*lcs*)
@@ -539,7 +539,7 @@ let translate (globals, functions) =
     let rec stmt builder = function
         (SExpr e, locs) -> let _ = expr builder locs e in builder
       | (SPrint (t, e), locs) ->
-          if t = A.String then let _ = L.build_call printf_func [| str_format_str ; (expr builder local_vars (t,e)) |]
+          if t = A.String then let _ = L.build_call printf_func [| str_format_str ; (expr builder locs (t,e)) |]
 	    "printf" builder in builder
          else if t = A.Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder locs (t,e)) |]
            "printf" builder in builder
@@ -596,7 +596,7 @@ let translate (globals, functions) =
      | (SFor (e, body), locs) ->
        (*build temporary counter variable in order to implement for as while*)
        let rec counterbind s =
-         try let _ = StringMap.find s local_vars in (counterbind (s ^ s))
+         try let _ = StringMap.find s locs in (counterbind (s ^ s))
          with Not_found -> s
        in let varname = counterbind "_"
        in let add_local m (t, n) =
@@ -624,7 +624,7 @@ let translate (globals, functions) =
          in StringMap.add n local_var m
         (*in let locs' = add_local locs (tos, v)*)
         in let rec counterbind s =
-          try let _ = StringMap.find s local_vars in (counterbind (s ^ s))
+          try let _ = StringMap.find s locs in (counterbind (s ^ s))
           with Not_found -> s
         in let varname = counterbind "_"
         in let locs'' = add_local locs (A.Int, varname)

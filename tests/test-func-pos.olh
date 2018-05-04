@@ -30,9 +30,11 @@ function String stringFun(int a1, int a2):
 end;
 print stringFun(1,3);
 
+
 print "x before: " + x;
 function void manipGlobal():
         x = x - 7;
+        print "x during: " + x;
 end;
 manipGlobal();
 print "x after: " + x;

@@ -1,7 +1,6 @@
 TODO - TESTING
 
 ERRORS
-test-func-pos (does not manipulate the global)
 test-player-pos (does not compile completely)
 
 
@@ -35,7 +34,6 @@ fresh list with negative integers
 
 
 Written (positive)
-use function to manipluate a global variable (test-func-pos)
 Assign player and print its members (test-player-pos)
 fresh player(nothing), fresh player(something) (test-player-pos)
 player getsetters (test-player-pos)
@@ -84,6 +82,7 @@ empty 2d list (test-list-pos)
 empty 1d list (test-list-pos)
 list getsetters (test-list-pos)
 foreach of stringmap (test-foreach-pos)
+use function to manipluate a global variable (test-func-pos)
 
 
 Passing (negative)

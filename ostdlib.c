@@ -41,7 +41,7 @@ int GetElemSpace(int e) {
 //int to string, used only in printing
 char *IntToS(int e) {
         char *ans;
-        int s = GetElemSpace(e) + 2;
+        int s = GetElemSpace(e) + 3;
         ans = malloc(s);
         sprintf(ans, "%d", e);
         ans[s - 1] = 0;

@@ -295,7 +295,7 @@ entry:
   call void @InitializeRandom()
   %malloccall = tail call i8* @malloc(i32 ptrtoint (%playert* getelementptr (%playert, %playert* null, i32 1) to i32))
   %tmp = bitcast i8* %malloccall to %playert*
-  store %playert* %tmp, %playert** %player
+  store %playert* %tmp, %playert** @player
   ret void
 }
 
@@ -311,8 +311,106 @@ diff -b fail-glist-neg.err tests/fail-glist-neg.err > fail-glist-neg.diff
 
 ###### Testing fail-glofo-neg
 ./toplevel < tests/fail-glofo-neg.olh 2> fail-glofo-neg.err >> testall.log
+; ModuleID = 'Olleh'
+source_filename = "Olleh"
+
+%mapt = type { i8*, i32, %mapt* }
+%charmapt = type { i8, i32, %charmapt* }
+
+@dictionary = global %mapt* null
+@letterScores = global %charmapt* null
+@y = global i32 0
+@fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
+@fmt.2 = private unnamed_addr constant [6 x i8] c"'%c'\0A\00"
+@fmt.3 = private unnamed_addr constant [4 x i8] c"%s\0A\00"
+@fmt.4 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
+@fmt.5 = private unnamed_addr constant [6 x i8] c"'%c'\0A\00"
+
+declare i32 @printf(i8*, ...)
+
+declare i8* @IntToS(i32)
+
+declare i8* @SConcat(i8*, i8*)
+
+declare void @PrintCharLis(i8*)
+
+declare void @PrintStringmap(%mapt*)
+
+declare void @PrintCharmap(%charmapt*)
+
+declare void @PrintListList(i8**)
+
+declare i32 @strlen(i8*)
+
+declare i32 @ListlistgetLength(i8**)
+
+declare i32 @CharmapgetLength(%charmapt*)
+
+declare i32 @StringmapgetLength(%mapt*)
+
+declare i32 @Charmapget(%charmapt*, i8)
+
+declare i32 @Stringmapget(%mapt*, i8*)
+
+declare i8 @Charmapgeti(%charmapt*, i32)
+
+declare i8* @Stringmapgeti(%mapt*, i32)
+
+declare i8 @Charlistget(i8*, i32)
+
+declare i8* @Listlistget(i8**, i32)
+
+declare %charmapt* @Charmapset(%charmapt*, i8, i32)
+
+declare %mapt* @Stringmapset(%mapt*, i8*, i32)
+
+declare void @Listlistset(i8**, i32, i8*)
+
+declare void @Charlistset(i8*, i32, i8)
+
+declare %charmapt* @Charmapdestroy(%charmapt*, i8)
+
+declare %mapt* @Stringmapdestroy(%mapt*, i8*)
+
+declare i8 @Charmapcontains(%charmapt*, i8)
+
+declare i8 @Stringmapcontains(%mapt*, i8*)
+
+declare void @FillListlist(i8**, i32, i32)
+
+declare void @FillList(i8*, i32)
+
+declare void @exit(i32)
+
+declare i8 @ToAscii(i32)
+
+declare i32 @OllehRandom()
+
+declare i8* @readInput()
+
+declare %mapt* @readDictionary(i8*)
+
+declare void @InitializeRandom()
+
+declare i8* @anagram(i8*)
+
+define void @main() {
+entry:
+  %y = alloca i32
+  call void @InitializeRandom()
+  ret void
+}
+
+define void @wrong(i32 %y) {
+entry:
+  %y1 = alloca i32
+  store i32 %y, i32* %y1
+  ret void
+}
 diff -b fail-glofo-neg.err tests/fail-glofo-neg.err > fail-glofo-neg.diff
-###### SUCCESS
+FAILED fail-glofo-neg.err differs from tests/fail-glofo-neg.err
+###### FAILED
 
 ###### Testing fail-glolo-neg
 ./toplevel < tests/fail-glolo-neg.olh 2> fail-glolo-neg.err >> testall.log
