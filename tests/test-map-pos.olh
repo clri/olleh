@@ -9,7 +9,5 @@ print x.get("hello"); /*3*/
 print x.get("asdf"); //undefined?
 
 map<char> y;
-y = {};
-print y;
 y = {'x' -> 4, 'y' -> 45};
 print y;

@@ -45,7 +45,10 @@ cc -o test-for-pos.exe test-for-pos.s ostdlib.o
 
 ###### Testing test-foreach-pos
 ./toplevel tests/test-foreach-pos.olh > test-foreach-pos.ll
-Fatal error: exception Failure("FAIL var y")
+llc test-foreach-pos.ll > test-foreach-pos.s
+cc -o test-foreach-pos.exe test-foreach-pos.s ostdlib.o
+./test-foreach-pos.exe
+./testall.sh: line 64: 88708 Segmentation fault: 11  ./test-foreach-pos.exe
 ###### SUCCESS
 
 ###### Testing test-func-pos
@@ -71,12 +74,14 @@ cc -o test-int-pos.exe test-int-pos.s ostdlib.o
 
 ###### Testing test-list-pos
 ./toplevel tests/test-list-pos.olh > test-list-pos.ll
-Fatal error: exception Failure("expecting 2 arguments in lis_2.set(...)")
+Fatal error: exception Failure("illegal argument found String expected Char in abc")
 ###### SUCCESS
 
 ###### Testing test-map-pos
 ./toplevel tests/test-map-pos.olh > test-map-pos.ll
-Fatal error: exception Failure("Map type cannot be inferred")
+llc test-map-pos.ll > test-map-pos.s
+cc -o test-map-pos.exe test-map-pos.s ostdlib.o
+./test-map-pos.exe
 ###### SUCCESS
 
 ###### Testing test-player-pos
@@ -110,9 +115,7 @@ cc -o test-str-pos.exe test-str-pos.s ostdlib.o
 llc test-while-pos.ll > test-while-pos.s
 cc -o test-while-pos.exe test-while-pos.s ostdlib.o
 ./test-while-pos.exe
-diff -b test-while-pos.out tests/test-while-pos.out > test-while-pos.diff
-FAILED test-while-pos.out differs from tests/test-while-pos.out
-###### FAILED
+###### SUCCESS
 
 ###### Testing fail-add1-neg
 ./toplevel < tests/fail-add1-neg.olh 2> fail-add1-neg.err >> testall.log

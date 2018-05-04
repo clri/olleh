@@ -500,7 +500,6 @@ let translate (globals, functions) =
            | "Listlistset" -> (llset_func, "Listlistset_result")
            | "random" -> (rand_funct, "rand_result")
            | "readInput" -> (rinput_funct, "rinput_result")
-           (*@TODO: rest of builtins here*)
            | _ ->
              let (ff, fdecl) = try StringMap.find f function_decls
              with Not_found -> raise (Failure ("FAIL " ^ f)) in

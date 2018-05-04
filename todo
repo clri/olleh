@@ -41,6 +41,7 @@ LRM
 -{} being type inferred (empty maps are null or length 0; fresh map if you want to make one)
 -how to set one char of a listlist
 -no statements after return
+-foreach on null is a bad idea
 
 
 Standard Library (.olh)

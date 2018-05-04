@@ -2,13 +2,12 @@ TODO - TESTING
 
 ERRORS
 test-func-pos (does not manipulate the global)
-test-list-pos (when we figure out foreach)
-test-while-pos (needs something to print in loop)
-test-foreach-pos (link up builtins)
+test-list-pos (illegal argument in semant for setting listlist)
+test-foreach-pos (refuses to work with stringmap, segfaults with with charmap)
 
 (these use structs not implemented)
 test-player-pos (does not compile completely)
-//check for {}
+
 
 Positive
 readdict()
@@ -32,6 +31,7 @@ Semant - negative
 == for non-int/char/bool? What can be equals
 return that's not the last statement (?)
 map with same key twice? how to detect and avoid?
+map that is {}
 
 
 Codegen - negative
@@ -39,18 +39,16 @@ fresh list with negative integers
 
 
 Written (positive)
-Assign and print a variable of type list (1d and 2d) (test-list-pos)
-fresh list(x), fresh list(x,y) (test-list-pos)
+foreach of map (test-foreach-pos)
+use function to manipluate a global variable (test-func-pos)
 list getsetters (test-list-pos)
 empty 2d list (test-list-pos)
 empty 1d list (test-list-pos)
-two statements on the same line (test-list-pos)
+
+
 Assign player and print its members (test-player-pos)
 fresh player(nothing), fresh player(something) (test-player-pos)
 player getsetters (test-player-pos)
-foreach of list, foreach of map (test-foreach-pos)
-use function to manipluate a global variable (test-func-pos)
-test while loops (test-while-pos)
 
 Written (negative)
 fresh player (same field twice) (fail-freshpla2-neg)
@@ -86,6 +84,11 @@ Assign and print a variable of type: int (pos, neg, zero), char, string, bool (t
 create function (no args, args, void, real return type) (test-func-pos)
 call function (no args, args, void, real return type) (test-func-pos)
 use the result of a function in statement (test-func-pos)
+test while loops (test-while-pos)
+foreach of list (test-foreach-pos)
+Assign and print a variable of type list (1d and 2d) (test-list-pos)
+fresh list(x), fresh list(x,y) (test-list-pos)
+two statements on the same line (test-list-pos)
 
 
 Passing (negative)

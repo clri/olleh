@@ -2,8 +2,8 @@
 
 boolean b = true;
 while (b):
+	print "a loop";
 	b = false;
 end;
 
 //@TODO: add other tests
-

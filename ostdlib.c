@@ -302,7 +302,7 @@ char *Stringmapgeti(smap_t *m, int i) {
 
         for (ind = 0; ind < i; ind++) {
                 if (tmp == NULL)
-                        return NULL;
+                        return "";
                 tmp = tmp->next;
         }
         return tmp->key;
