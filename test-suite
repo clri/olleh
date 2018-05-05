@@ -4,7 +4,7 @@ ERRORS
 test-player-pos (does not compile completely)
 
 
-Positive
+Positive (to write)
 standard library (test-stdlib-pos)
  getWordScore
  setLetterScore
@@ -13,38 +13,21 @@ standard library (test-stdlib-pos)
  getLength (of a string)
  reverse
  scramble
-vmembers (of many exprs) -- add to test-player-pos
 
-null comparison (bw listlist, stringmap, charlist, charmap, string) (test-null-pos)
-
-Parser - negatve
-function in a function (test-funcfunc-neg)
-empty body of for? 
-empty body of foreach?
-empty body of if?
-if w/o parens
-double quote in string
-
-Semant - negative
-(*@TODO: test calling wrong thing, eg player.columns*)
-== for non-int/char/bool? What can be equals
-return that's not the last statement (?)
-map with same key twice? how to detect and avoid?
-map that is {}
-
-
-Codegen - negative
-fresh list with negative integers
 
 
 Written (positive)
 Assign player and print its members (test-player-pos)
 fresh player(nothing), fresh player(something) (test-player-pos)
-player getsetters (test-player-pos)
+vmembers (test-player-pos)
+null comparison (bw listlist, stringmap, charlist, charmap, string) (test-null-pos)
 
 
 Written (negative)
 fresh player (same field twice) (fail-freshpla2-neg)
+== for non-int/char/bool (string/string) (fail-eq-neg)
+null comparison for disallowed type (int) (fail-null-neg)
+map that is {} (fail-ambigmap-neg)
 
 
 
@@ -92,6 +75,8 @@ test strings with \n, \0 (test-str-pos)
 test for/foreach/while with multiple statements in body (test-loop-pos)
 builtins: destroy, listToString, stringtolist, readdict, contains, anagram (test-builtin-pos)
 zero-length fresh lists (test-list-pos)
+empty body of for/while/if/foreach (test-emptybody-pos)
+map with same key twice (gets resolved to the last value) (test-builtin-pos)
 
 
 Passing (negative)
@@ -148,6 +133,10 @@ emtpy if() (fail-eif-neg)
 empty for() (fail-efor-neg)
 3d list (fail-listlistlist-neg)
 redeclaring variable within the same function's conditionals(fail-condscope-neg)
+function in a function (fail-funcfunc-neg)
+if w/o parens (fail-noparens-neg)
+double quote in string (fail-doublequote-neg)
+return that's not the last statement of a function (fail-returns-neg)
 
 
 

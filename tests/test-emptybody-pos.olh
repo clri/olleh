@@ -1,0 +1,16 @@
+//empty body of while/for/if/foreach 
+
+while (false):
+end;
+
+for (2):
+end;
+
+if (true):
+end;
+
+foreach x ['l']:
+end;
+
+
+

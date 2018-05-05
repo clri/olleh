@@ -1,0 +1,4 @@
+//double quote within a string
+
+String x = "abcd\"asdf";
+

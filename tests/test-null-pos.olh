@@ -1,0 +1,40 @@
+//testing null comparison
+
+List<char> lis;
+
+if (lis == Null):
+	if (Null == lis):
+		print "it's null";
+	end;
+end;
+
+list<list> lis2;
+if (lis2 == Null):
+	if (Null == lis2):
+		print "it's null";
+	end;
+end;
+
+
+map<char> xx;
+if (xx == Null):
+	if (Null == xx):
+		print "it's null";
+	end;
+end;
+
+map<String> xxx;
+if (xxx == Null):
+	if (Null == xxx):
+		print "it's null";
+	end;
+end;
+
+
+String x;
+if (x == Null):
+	if (Null == x):
+		print "it's null";
+	end;
+end;
+

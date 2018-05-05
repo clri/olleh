@@ -1,0 +1,5 @@
+//map of ambiguous type
+
+map<char> m = {};
+
+

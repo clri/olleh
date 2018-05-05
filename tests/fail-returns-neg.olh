@@ -1,0 +1,9 @@
+//return that is not the last statement of a function
+
+function void x():
+	return;
+	int y;
+end;
+
+x();
+

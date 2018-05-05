@@ -1,0 +1,4 @@
+//equality of disallowed type
+
+print "x" == "asdf";
+

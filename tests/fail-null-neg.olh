@@ -1,0 +1,8 @@
+//null comparison where it's not allowed
+
+if (3 == Null):
+	print "it is null";
+end;
+
+
+

@@ -1,8 +1,18 @@
 //test-player-pos: positive test for player functionality
 
 Player player = fresh Player{};
-player.set(turn, true);
+player.turn = true;
 print player.turn;
 
 player = fresh Player{turn -> true, letters -> ['a','b']};
 print player.letters;
+
+print (fresh Player{turn->true}).turn;
+player.score = 89;
+print player.score;
+print player.guessedWords;
+
+player.guessedWords = {"a"->1, "blah"->1};
+print player.guessedWords;
+
+

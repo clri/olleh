@@ -1,0 +1,8 @@
+//function in a function
+
+function void failure():
+	function void inner():
+		return;
+	end;
+end;
+
