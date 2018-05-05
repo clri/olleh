@@ -168,7 +168,6 @@ smap_t *readDict(char* filename) {
                 fprintf(stderr, "Error reading file %s\n", filename);
                 return NULL;
         }
-        fprintf(stderr, "here\n");
         //read line, parse, allocate
         err = getline(&buf, &len, fp);
         if (!err) {
@@ -177,7 +176,6 @@ smap_t *readDict(char* filename) {
                 fprintf(stderr, "Error reading file %s\n", filename);
                 return NULL;
         }
-        fprintf(stderr, "read a line\n");
 
         if (strlen(buf) == 0 || (strlen(buf) == 1 && buf[0] == '\n')) {
                  fprintf(stderr, "Error: dictionary formatted incorrectly\n");

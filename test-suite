@@ -5,12 +5,14 @@ test-player-pos (does not compile completely)
 
 
 Positive
-standard library
+standard library (test-stdlib-pos)
 vmembers (of many exprs) -- add to test-player-pos
+get length of a string???
 
-null comparison (bw listlist, stringmap)
-test for/foreach/while with multiple statements in body (determine order)
-test strings with escaped quotes and \n, \0
+inttostring (test-builtin-pos)
+null comparison (bw listlist, stringmap) (test-null-pos)
+test for/foreach/while with multiple statements in body (test-loop-pos)
+test strings with escaped quotes and \n, \0 (test-str-pos)
 zero-length fresh lists
 
 Parser - negatve

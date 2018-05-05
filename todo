@@ -7,6 +7,8 @@ ALL FILES
 
 
 Semantic Checker
+-remove letterscores
+-inttostring as func
 -player: duplicate arguments
 -add any more builtins that are allowed to be called by the user (check vs lrm)
 -go over and make sure it complies with the specs
@@ -23,36 +25,26 @@ LRM
 -curly quotes to straight; code to courier
 -standardize format (line spacing, font size, all Null, etc)
 -any updates made in syntax (check against parser/semant at very end)
--variable scope (clarify): one per function (even in cond/loop should be)
--what is default value (default for globals is null, for others is whatever's allocated)
--lists are NOT immutable. talk about their mutability (implemented as C arrays, attempt to modify out of bounds for allocated GetElemSpace
- is impossible, though other mod methods such as setting elem at index to something else, are totally ok (which may result in a changed dimension))
--check syntax/semantics of fresh for diff types
--listToString() and why that is allowed (we don't want users carelessly manipulating strings)
+-no statements after return (if that's a thing)
 
--ASCII max = 127, not 256
--readdict as a void function (sets dict to null on error)
--limits on string literals (they can have newlines literals!),
- escaped quote char is poss?, what about "\n?" TEST THIS
--getsetters (explain the semantics in builtin function section)
 -modifying maps while foreaching them (once that section's written)
--remove no assignments rue
--functions can't start with capital
--{} being type inferred (empty maps are null or length 0; fresh map if you want to make one)
--how to set one char of a listlist
--no statements after return
--foreach on null is a bad idea
-
+-fresh list default
 
 Standard Library (.olh)
 -Write standard library functions (list here)
- random
+ letterScores constant map
+ getWordScore
+ setLetterScore
+ checkWord
+ setLetters
+ getLength (of a string)
  reverse
  scramble
 -Hook them into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
 
 
 Compiler (codegen.ml)
+-inttostring
 -player functionality
 -stringmap set/destroy for vmember
 -SNewobj (allocating space for new objects:

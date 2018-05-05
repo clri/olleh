@@ -12,3 +12,10 @@ print str;
 
 str = "asdf " + " asdf";
 print str;
+
+str = "adsf\nx";
+print str;
+str = "abcd";
+print str;
+str = "\0ooo";
+print str;
