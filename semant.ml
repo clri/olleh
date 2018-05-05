@@ -38,7 +38,7 @@ let check (*functions*) (globals, functions) =
   in
 
   let globals' = check_binds "global" (List.map bind_to_formalbind (*globals in*)
-    (Bind(Stringmap, "dictionary") :: (Bind(Charmap, "letterScores") :: globals))) in
+    (Bind(Stringmap, "dictionary") :: globals)) in
 
   (**** Checking Functions ****)
 
@@ -65,6 +65,7 @@ let check (*functions*) (globals, functions) =
                                                  ("Listlistset", Void, [(Listlist, "k"); (Int, "s"); (String, "c")]);
                                                  ("Charlistset", Void, [(Charlist, "k"); (Int, "s"); (Char, "c")]);
                                                  ("stringToList", Charlist, [(String, "lis")]);
+                                                 ("intToString", String, [(Int, "i")]);
                                                  ("readInput", String, []);
                                                  ("Charmapset", Void, [(Charmap, "k"); (Char, "c"); (Int, "s")]);
                                                  ("Stringmapset", Void, [(Stringmap, "k"); (String, "c"); (Int, "s")]);
@@ -117,10 +118,8 @@ let check (*functions*) (globals, functions) =
     in
 
     (* Build local symbol table of variables for this function *)
-    let symbolz' = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+    let symbolz = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
 	                StringMap.empty (locals')
-    in let symbolz = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-        symbolz' [(Stringmap, "dictionary") ; (Charmap, "letterScores")]
     in
     let add_local_symbol (ty, name) symbols =
         let x = try StringMap.find name symbols with Not_found -> Void
@@ -131,7 +130,7 @@ let check (*functions*) (globals, functions) =
     (* Return a variable from our local symbol table *)
     let type_of_identifier s symbols =
         match s with "dictionary" -> Stringmap
-      | "letterScores" -> Charmap | _ ->
+      | _ ->
       try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
     let type_of_vmember tvs m  =

@@ -1,0 +1,21 @@
+//tests loops with multi-statement bodies
+
+int x = 3;
+while (x > 0):
+        print x;
+        x = x - 1;
+        print x;
+end;
+
+for (5):
+        print "five times this statement";
+        print "and this one";
+        print "and the other";
+end;
+
+foreach z ['a', 'b', 'c', 'd']:
+        if (z > 'b'):
+                print "z is greater than b";
+        end;
+        print z;
+end;

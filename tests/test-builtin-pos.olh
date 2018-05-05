@@ -7,16 +7,24 @@ foreach w dictionary:
         print w + ": " + dictionary.get(w);
 end;
 
-int x = random(5);
-print x;
-x = random(10);
-print x;
-
 print anagram("asdkf");
 print anagram("margana");
 
+print dictionary.contains("anagram");
+
+map<char> mp = fresh map(char);
+print mp.contains('x');
+mp.destroy('x');
+mp.set('5', 5);
+print mp;
+mp.destroy('5');
+print mp;
+
 dictionary.destroy("anagram");
 print dictionary;
+
+String xx = intToString(45);
+print xx;
 
 String banana = "banana";
 print banana;

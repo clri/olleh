@@ -7,10 +7,8 @@ ALL FILES
 
 
 Semantic Checker
--remove letterscores
--inttostring as func
+-compare string to null
 -player: duplicate arguments
--add any more builtins that are allowed to be called by the user (check vs lrm)
 -go over and make sure it complies with the specs
 -refactor if there's time
 
@@ -19,6 +17,7 @@ Legitimate Test Suite
 -see test-suite
 -also, edit testall.sh so all are comparing vs a diff file
 -and make sure tests/output do match
+-there's no way to test random() or readInput()--put that in LRM note maybe
 
 
 LRM
@@ -29,22 +28,15 @@ LRM
 
 -modifying maps while foreaching them (once that section's written)
 -fresh list default
+-setLetters is lowercase; will set player's letters only for the size of their letters currently
+-printing null will print (null) for string but not for map/list
+-string rep of zero size charlist is ['']
 
-Standard Library (.olh)
--Write standard library functions (list here)
- letterScores constant map
- getWordScore
- setLetterScore
- checkWord
- setLetters
- getLength (of a string)
- reverse
- scramble
--Hook them into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
+Standard Library (standard-lib.olh)
+-Hook into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
 
 
 Compiler (codegen.ml)
--inttostring
 -player functionality
 -stringmap set/destroy for vmember
 -SNewobj (allocating space for new objects:

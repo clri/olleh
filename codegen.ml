@@ -64,7 +64,7 @@ let translate (globals, functions) =
   let strint_t : L.lltype =
       L.function_type string_pointer [| i32_t |] in
   let intToString_func : L.llvalue =
-     L.declare_function "IntToS" strint_t the_module in (*helper function for printing/concatenation*)
+     L.declare_function "intToString" strint_t the_module in (*helper function for printing/concatenation*)
   let charcharchar_t : L.lltype =
       L.function_type string_pointer [| string_pointer; string_pointer |] in
   let strcati_func : L.llvalue =
@@ -504,6 +504,7 @@ let translate (globals, functions) =
            | "Listlistget" -> (llget_func, "Listlistget_result")
            | "Charlistset" -> (clset_func, "")
            | "Listlistset" -> (llset_func, "")
+           | "intToString" -> (intToString_func, "intToString_result")
            | "random" -> (rand_funct, "rand_result")
            | "readInput" -> (rinput_funct, "rinput_result")
            | _ ->

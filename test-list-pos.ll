@@ -5,17 +5,17 @@ source_filename = "Olleh"
 %charmapt = type { i8, i32, %charmapt* }
 
 @dictionary = global %mapt* null
-@letterScores = global %charmapt* null
 @lis_2 = global i8** null
 @lis = global i8* null
 @fmt = private unnamed_addr constant [4 x i8] c"%s\0A\00"
 @fmt.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00"
 @fmt.2 = private unnamed_addr constant [6 x i8] c"'%c'\0A\00"
-@0 = private unnamed_addr constant [4 x i8] c"abc\00"
+@0 = private unnamed_addr constant [11 x i8] c"zero list:\00"
+@1 = private unnamed_addr constant [4 x i8] c"abc\00"
 
 declare i32 @printf(i8*, ...)
 
-declare i8* @IntToS(i32)
+declare i8* @intToString(i32)
 
 declare i8* @SConcat(i8*, i8*)
 
@@ -121,27 +121,35 @@ entry:
   %lis14 = load i8*, i8** @lis
   call void @PrintCharLis(i8* %lis14)
   %a115 = tail call i8* @malloc(i32 ptrtoint (i8* getelementptr (i8, i8* null, i32 1) to i32))
-  %a316 = getelementptr i8, i8* %a115, i32 0
+  %a316 = getelementptr i8, i8* %a115, i32 1
   store i8 0, i8* %a316
+  call void @FillList(i8* %a115, i32 0)
+  store i8* %a115, i8** @lis
+  %printf17 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @fmt, i32 0, i32 0), i8* getelementptr inbounds ([11 x i8], [11 x i8]* @0, i32 0, i32 0))
+  %lis18 = load i8*, i8** @lis
+  call void @PrintCharLis(i8* %lis18)
+  %a119 = tail call i8* @malloc(i32 ptrtoint (i8* getelementptr (i8, i8* null, i32 1) to i32))
+  %a320 = getelementptr i8, i8* %a119, i32 0
+  store i8 0, i8* %a320
   %malloccall = tail call i8* @malloc(i32 mul (i32 ptrtoint (i1** getelementptr (i1*, i1** null, i32 1) to i32), i32 2))
-  %a117 = bitcast i8* %malloccall to i8**
-  %a318 = getelementptr i8*, i8** %a117, i32 0
-  store i8* %a115, i8** %a318
-  %a319 = getelementptr i8*, i8** %a117, i32 1
-  store i8* null, i8** %a319
-  store i8** %a117, i8*** @lis_2
-  %lis_220 = load i8**, i8*** @lis_2
-  call void @PrintListList(i8** %lis_220)
-  %malloccall21 = tail call i8* @malloc(i32 mul (i32 ptrtoint (i1** getelementptr (i1*, i1** null, i32 1) to i32), i32 3))
-  %a122 = bitcast i8* %malloccall21 to i8**
-  %a323 = getelementptr i8*, i8** %a122, i32 3
+  %a121 = bitcast i8* %malloccall to i8**
+  %a322 = getelementptr i8*, i8** %a121, i32 0
+  store i8* %a119, i8** %a322
+  %a323 = getelementptr i8*, i8** %a121, i32 1
   store i8* null, i8** %a323
-  call void @FillListlist(i8** %a122, i32 2, i32 3)
-  store i8** %a122, i8*** @lis_2
+  store i8** %a121, i8*** @lis_2
   %lis_224 = load i8**, i8*** @lis_2
-  call void @Listlistset(i8** %lis_224, i32 0, i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0))
-  %lis_225 = load i8**, i8*** @lis_2
-  %Listlistget_result = call i8* @Listlistget(i8** %lis_225, i32 0)
+  call void @PrintListList(i8** %lis_224)
+  %malloccall25 = tail call i8* @malloc(i32 mul (i32 ptrtoint (i1** getelementptr (i1*, i1** null, i32 1) to i32), i32 3))
+  %a126 = bitcast i8* %malloccall25 to i8**
+  %a327 = getelementptr i8*, i8** %a126, i32 3
+  store i8* null, i8** %a327
+  call void @FillListlist(i8** %a126, i32 2, i32 3)
+  store i8** %a126, i8*** @lis_2
+  %lis_228 = load i8**, i8*** @lis_2
+  call void @Listlistset(i8** %lis_228, i32 0, i8* getelementptr inbounds ([4 x i8], [4 x i8]* @1, i32 0, i32 0))
+  %lis_229 = load i8**, i8*** @lis_2
+  %Listlistget_result = call i8* @Listlistget(i8** %lis_229, i32 0)
   call void @PrintCharLis(i8* %Listlistget_result)
   ret void
 }

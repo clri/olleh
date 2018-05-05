@@ -38,8 +38,7 @@ int GetElemSpace(int e) {
         return ans;
 }
 
-//int to string, used only in printing
-char *IntToS(int e) {
+char *intToString(int e) {
         char *ans;
         int s = GetElemSpace(e) + 3;
         ans = malloc(s);

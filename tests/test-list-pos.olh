@@ -13,6 +13,10 @@ lis = fresh list(2);
 print lis;
 lis = []; print lis;
 
+lis = fresh list(0);
+print "zero list:";
+print lis;
+
 list<list> lis_2 = [[]];
 print lis_2;
 lis_2 = fresh list(2, 3);

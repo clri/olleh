@@ -6,21 +6,24 @@ test-player-pos (does not compile completely)
 
 Positive
 standard library (test-stdlib-pos)
+ getWordScore
+ setLetterScore
+ checkWord
+ setLetters
+ getLength (of a string)
+ reverse
+ scramble
 vmembers (of many exprs) -- add to test-player-pos
-get length of a string???
 
-inttostring (test-builtin-pos)
-null comparison (bw listlist, stringmap) (test-null-pos)
-test for/foreach/while with multiple statements in body (test-loop-pos)
-test strings with escaped quotes and \n, \0 (test-str-pos)
-zero-length fresh lists
+null comparison (bw listlist, stringmap, charlist, charmap, string) (test-null-pos)
 
 Parser - negatve
-function in a function
-empty body of for?
+function in a function (test-funcfunc-neg)
+empty body of for? 
 empty body of foreach?
 empty body of if?
 if w/o parens
+double quote in string
 
 Semant - negative
 (*@TODO: test calling wrong thing, eg player.columns*)
@@ -84,7 +87,11 @@ empty 1d list (test-list-pos)
 list getsetters (test-list-pos)
 foreach of stringmap (test-foreach-pos)
 use function to manipluate a global variable (test-func-pos)
-builtins: random, destroy, listToString, stringtolist, readdict, anagram (test-builtin-pos)
+inttostring (test-builtin-pos)
+test strings with \n, \0 (test-str-pos)
+test for/foreach/while with multiple statements in body (test-loop-pos)
+builtins: destroy, listToString, stringtolist, readdict, contains, anagram (test-builtin-pos)
+zero-length fresh lists (test-list-pos)
 
 
 Passing (negative)
