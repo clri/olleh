@@ -1,6 +1,6 @@
 //testing null comparison
 
-List<char> lis;
+list<char> lis;
 
 if (lis == Null):
 	if (Null == lis):

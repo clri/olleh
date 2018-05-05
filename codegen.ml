@@ -333,7 +333,7 @@ let translate (globals, functions) =
       | SAssign (s, e) -> let e' = expr builder locs e in
                           let _  = L.build_store e' (lookup s locs) builder in e'
       | SBinop (e1, op, e2) ->
-	  let (t, _) = e1 and (tt, _) = e2
+	  let (t, ee1) = e1 and (tt, ee2) = e2
 	  and e1' = expr builder locs e1
 	  and e2' = expr builder locs e2 in
 	  if t = A.Int then (match op with
@@ -350,6 +350,8 @@ let translate (globals, functions) =
 	  | A.Geq     -> L.build_icmp L.Icmp.Sge
           | _ -> raise (Failure "semantic error in codegen")
 	      ) e1' e2' "tmp" builder
+          else if ee1 = Null || ee2 = Null then
+            L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
           else if t = A.String then
             if op = A.Add then
               if tt = A.Int then

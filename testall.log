@@ -7,15 +7,6 @@ cc -o test-add-pos.exe test-add-pos.s ostdlib.o
 ./test-add-pos.exe
 ###### SUCCESS
 
-###### Testing test-asdf-pos
-./toplevel tests/test-asdf-pos.olh > test-asdf-pos.ll
-llc test-asdf-pos.ll > test-asdf-pos.s
-cc -o test-asdf-pos.exe test-asdf-pos.s ostdlib.o
-./test-asdf-pos.exe
-diff -b test-asdf-pos.out tests/test-asdf-pos.out > test-asdf-pos.diff
-FAILED test-asdf-pos.out differs from tests/test-asdf-pos.out
-###### FAILED
-
 ###### Testing test-assign-pos
 ./toplevel tests/test-assign-pos.olh > test-assign-pos.ll
 llc test-assign-pos.ll > test-assign-pos.s
@@ -30,13 +21,6 @@ cc -o test-builtin-pos.exe test-builtin-pos.s ostdlib.o
 ./test-builtin-pos.exe
 ###### SUCCESS
 
-###### Testing test-checkk-pos
-./toplevel tests/test-checkk-pos.olh > test-checkk-pos.ll
-llc test-checkk-pos.ll > test-checkk-pos.s
-cc -o test-checkk-pos.exe test-checkk-pos.s ostdlib.o
-./test-checkk-pos.exe
-###### SUCCESS
-
 ###### Testing test-compare-pos
 ./toplevel tests/test-compare-pos.olh > test-compare-pos.ll
 llc test-compare-pos.ll > test-compare-pos.s
@@ -49,4 +33,101 @@ cc -o test-compare-pos.exe test-compare-pos.s ostdlib.o
 llc test-concat-pos.ll > test-concat-pos.s
 cc -o test-concat-pos.exe test-concat-pos.s ostdlib.o
 ./test-concat-pos.exe
+###### SUCCESS
+
+###### Testing test-emptybody-pos
+./toplevel tests/test-emptybody-pos.olh > test-emptybody-pos.ll
+llc test-emptybody-pos.ll > test-emptybody-pos.s
+cc -o test-emptybody-pos.exe test-emptybody-pos.s ostdlib.o
+./test-emptybody-pos.exe
+###### SUCCESS
+
+###### Testing test-exit-pos
+./toplevel tests/test-exit-pos.olh > test-exit-pos.ll
+llc test-exit-pos.ll > test-exit-pos.s
+cc -o test-exit-pos.exe test-exit-pos.s ostdlib.o
+./test-exit-pos.exe
+diff -b test-exit-pos.out tests/test-exit-pos.out > test-exit-pos.diff
+###### SUCCESS
+
+###### Testing test-for-pos
+./toplevel tests/test-for-pos.olh > test-for-pos.ll
+llc test-for-pos.ll > test-for-pos.s
+cc -o test-for-pos.exe test-for-pos.s ostdlib.o
+./test-for-pos.exe
+###### SUCCESS
+
+###### Testing test-foreach-pos
+./toplevel tests/test-foreach-pos.olh > test-foreach-pos.ll
+llc test-foreach-pos.ll > test-foreach-pos.s
+cc -o test-foreach-pos.exe test-foreach-pos.s ostdlib.o
+./test-foreach-pos.exe
+###### SUCCESS
+
+###### Testing test-func-pos
+./toplevel tests/test-func-pos.olh > test-func-pos.ll
+llc test-func-pos.ll > test-func-pos.s
+cc -o test-func-pos.exe test-func-pos.s ostdlib.o
+./test-func-pos.exe
+###### SUCCESS
+
+###### Testing test-if-pos
+./toplevel tests/test-if-pos.olh > test-if-pos.ll
+llc test-if-pos.ll > test-if-pos.s
+cc -o test-if-pos.exe test-if-pos.s ostdlib.o
+./test-if-pos.exe
+###### SUCCESS
+
+###### Testing test-int-pos
+./toplevel tests/test-int-pos.olh > test-int-pos.ll
+llc test-int-pos.ll > test-int-pos.s
+cc -o test-int-pos.exe test-int-pos.s ostdlib.o
+./test-int-pos.exe
+###### SUCCESS
+
+###### Testing test-list-pos
+./toplevel tests/test-list-pos.olh > test-list-pos.ll
+llc test-list-pos.ll > test-list-pos.s
+cc -o test-list-pos.exe test-list-pos.s ostdlib.o
+./test-list-pos.exe
+###### SUCCESS
+
+###### Testing test-loop-pos
+./toplevel tests/test-loop-pos.olh > test-loop-pos.ll
+llc test-loop-pos.ll > test-loop-pos.s
+cc -o test-loop-pos.exe test-loop-pos.s ostdlib.o
+./test-loop-pos.exe
+###### SUCCESS
+
+###### Testing test-map-pos
+./toplevel tests/test-map-pos.olh > test-map-pos.ll
+llc test-map-pos.ll > test-map-pos.s
+cc -o test-map-pos.exe test-map-pos.s ostdlib.o
+./test-map-pos.exe
+###### SUCCESS
+
+###### Testing test-null-pos
+./toplevel tests/test-null-pos.olh > test-null-pos.ll
+llc test-null-pos.ll > test-null-pos.s
+cc -o test-null-pos.exe test-null-pos.s ostdlib.o
+./test-null-pos.exe
+###### SUCCESS
+
+###### Testing test-player-pos
+./toplevel tests/test-player-pos.olh > test-player-pos.ll
+Fatal error: exception Failure("illegal assignment Player = Bool in player.turn = true")
+###### SUCCESS
+
+###### Testing test-print-pos
+./toplevel tests/test-print-pos.olh > test-print-pos.ll
+llc test-print-pos.ll > test-print-pos.s
+cc -o test-print-pos.exe test-print-pos.s ostdlib.o
+./test-print-pos.exe
+###### SUCCESS
+
+###### Testing test-printbasic-pos
+./toplevel tests/test-printbasic-pos.olh > test-printbasic-pos.ll
+llc test-printbasic-pos.ll > test-printbasic-pos.s
+cc -o test-printbasic-pos.exe test-printbasic-pos.s ostdlib.o
+./test-printbasic-pos.exe
 ###### SUCCESS

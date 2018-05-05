@@ -216,8 +216,6 @@ let check (*functions*) (globals, functions) =
       | Binop(e1, op, e2) as e ->
           let ((t1, e1'), symbols') = expr symbols e1
           in let ((t2, e2'), symbols'') = expr symbols' e2 in
-          let t1' = t1 in let t1 = if e1 = Null then t2 else t1' in
-          let t2' = t2 in let t2 = if e2 = Null then t1 else t2' in
           (* All binary operators require operands of the same type *)
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)
@@ -226,8 +224,8 @@ let check (*functions*) (globals, functions) =
           | Add when same && t1 = String -> String
           | Add when t1 = String && t2 = Int -> String
           | Equal | Neq when same && (t1 = Int || t1 = Char || t1 = Bool)  -> Bool
-          | Equal when ((e1 = Null && (t2 = Listlist || t2 = Stringmap))
-            || (e2 = Null && (t1 = Listlist || t1 = Stringmap))) -> Bool
+          | Equal when ((e1 = Null && (t2 = Listlist || t2 = Stringmap || t2 = Charlist || t2 = String || t2 = Charmap))
+            || (e2 = Null && (t1 = Listlist || t1 = Stringmap|| t1 = Charlist || t1 = String || t1 = Charmap))) -> Bool
           | Less | Leq | Greater | Geq
                      when same && (t1 = Int || t1 = Char) -> Bool
           | And | Or when same && t1 = Bool -> Bool
@@ -235,7 +233,9 @@ let check (*functions*) (globals, functions) =
 	      Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
-          in ((ty, SBinop((t1, e1'), op, (t2, e2'))), symbols'')
+          in let t1' = t1 in let t1 = if e1 = Null then t2 else t1' in
+          let t2' = t2 in let t2 = if e2 = Null then t1 else t2' in
+          ((ty, SBinop((t1, e1'), op, (t2, e2'))), symbols'')
       | Assignm(var, mem, e) as ex ->
           let ((lt, var'), sy') = expr symbols var in
           let ((rt, e'), symbols') = expr sy' e in
