@@ -15,3 +15,10 @@ print player.guessedWords;
 
 player.guessedWords = {"a"->1, "blah"->1};
 print player.guessedWords;
+
+player.guessedWords.set("asdf", 1);
+print player.guessedWords;
+
+player.guessedWords = fresh map(String);
+player.guessedWords.set("asdf", 1);
+print player.guessedWords;

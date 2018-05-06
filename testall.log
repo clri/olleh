@@ -5,6 +5,7 @@
 llc test-add-pos.ll > test-add-pos.s
 cc -o test-add-pos.exe test-add-pos.s ostdlib.o
 ./test-add-pos.exe
+diff -b test-add-pos.out tests/test-add-pos.out > test-add-pos.diff
 ###### SUCCESS
 
 ###### Testing test-assign-pos
@@ -12,13 +13,16 @@ cc -o test-add-pos.exe test-add-pos.s ostdlib.o
 llc test-assign-pos.ll > test-assign-pos.s
 cc -o test-assign-pos.exe test-assign-pos.s ostdlib.o
 ./test-assign-pos.exe
-###### SUCCESS
+diff -b test-assign-pos.out tests/test-assign-pos.out > test-assign-pos.diff
+FAILED test-assign-pos.out differs from tests/test-assign-pos.out
+###### FAILED
 
 ###### Testing test-builtin-pos
 ./toplevel tests/test-builtin-pos.olh > test-builtin-pos.ll
 llc test-builtin-pos.ll > test-builtin-pos.s
 cc -o test-builtin-pos.exe test-builtin-pos.s ostdlib.o
 ./test-builtin-pos.exe
+diff -b test-builtin-pos.out tests/test-builtin-pos.out > test-builtin-pos.diff
 ###### SUCCESS
 
 ###### Testing test-compare-pos
@@ -26,6 +30,7 @@ cc -o test-builtin-pos.exe test-builtin-pos.s ostdlib.o
 llc test-compare-pos.ll > test-compare-pos.s
 cc -o test-compare-pos.exe test-compare-pos.s ostdlib.o
 ./test-compare-pos.exe
+diff -b test-compare-pos.out tests/test-compare-pos.out > test-compare-pos.diff
 ###### SUCCESS
 
 ###### Testing test-concat-pos
@@ -33,6 +38,7 @@ cc -o test-compare-pos.exe test-compare-pos.s ostdlib.o
 llc test-concat-pos.ll > test-concat-pos.s
 cc -o test-concat-pos.exe test-concat-pos.s ostdlib.o
 ./test-concat-pos.exe
+diff -b test-concat-pos.out tests/test-concat-pos.out > test-concat-pos.diff
 ###### SUCCESS
 
 ###### Testing test-emptybody-pos
@@ -40,6 +46,7 @@ cc -o test-concat-pos.exe test-concat-pos.s ostdlib.o
 llc test-emptybody-pos.ll > test-emptybody-pos.s
 cc -o test-emptybody-pos.exe test-emptybody-pos.s ostdlib.o
 ./test-emptybody-pos.exe
+diff -b test-emptybody-pos.out tests/test-emptybody-pos.out > test-emptybody-pos.diff
 ###### SUCCESS
 
 ###### Testing test-exit-pos
@@ -47,188 +54,3 @@ cc -o test-emptybody-pos.exe test-emptybody-pos.s ostdlib.o
 llc test-exit-pos.ll > test-exit-pos.s
 cc -o test-exit-pos.exe test-exit-pos.s ostdlib.o
 ./test-exit-pos.exe
-diff -b test-exit-pos.out tests/test-exit-pos.out > test-exit-pos.diff
-###### SUCCESS
-
-###### Testing test-for-pos
-./toplevel tests/test-for-pos.olh > test-for-pos.ll
-llc test-for-pos.ll > test-for-pos.s
-cc -o test-for-pos.exe test-for-pos.s ostdlib.o
-./test-for-pos.exe
-###### SUCCESS
-
-###### Testing test-foreach-pos
-./toplevel tests/test-foreach-pos.olh > test-foreach-pos.ll
-llc test-foreach-pos.ll > test-foreach-pos.s
-cc -o test-foreach-pos.exe test-foreach-pos.s ostdlib.o
-./test-foreach-pos.exe
-###### SUCCESS
-
-###### Testing test-func-pos
-./toplevel tests/test-func-pos.olh > test-func-pos.ll
-llc test-func-pos.ll > test-func-pos.s
-cc -o test-func-pos.exe test-func-pos.s ostdlib.o
-./test-func-pos.exe
-###### SUCCESS
-
-###### Testing test-if-pos
-./toplevel tests/test-if-pos.olh > test-if-pos.ll
-llc test-if-pos.ll > test-if-pos.s
-cc -o test-if-pos.exe test-if-pos.s ostdlib.o
-./test-if-pos.exe
-###### SUCCESS
-
-###### Testing test-int-pos
-./toplevel tests/test-int-pos.olh > test-int-pos.ll
-llc test-int-pos.ll > test-int-pos.s
-cc -o test-int-pos.exe test-int-pos.s ostdlib.o
-./test-int-pos.exe
-###### SUCCESS
-
-###### Testing test-list-pos
-./toplevel tests/test-list-pos.olh > test-list-pos.ll
-llc test-list-pos.ll > test-list-pos.s
-cc -o test-list-pos.exe test-list-pos.s ostdlib.o
-./test-list-pos.exe
-###### SUCCESS
-
-###### Testing test-loop-pos
-./toplevel tests/test-loop-pos.olh > test-loop-pos.ll
-llc test-loop-pos.ll > test-loop-pos.s
-cc -o test-loop-pos.exe test-loop-pos.s ostdlib.o
-./test-loop-pos.exe
-###### SUCCESS
-
-###### Testing test-map-pos
-./toplevel tests/test-map-pos.olh > test-map-pos.ll
-llc test-map-pos.ll > test-map-pos.s
-cc -o test-map-pos.exe test-map-pos.s ostdlib.o
-./test-map-pos.exe
-###### SUCCESS
-
-###### Testing test-null-pos
-./toplevel tests/test-null-pos.olh > test-null-pos.ll
-llc test-null-pos.ll > test-null-pos.s
-cc -o test-null-pos.exe test-null-pos.s ostdlib.o
-./test-null-pos.exe
-###### SUCCESS
-
-###### Testing test-player-pos
-./toplevel tests/test-player-pos.olh > test-player-pos.ll
-llc test-player-pos.ll > test-player-pos.s
-cc -o test-player-pos.exe test-player-pos.s ostdlib.o
-./test-player-pos.exe
-###### SUCCESS
-
-###### Testing test-print-pos
-./toplevel tests/test-print-pos.olh > test-print-pos.ll
-llc test-print-pos.ll > test-print-pos.s
-cc -o test-print-pos.exe test-print-pos.s ostdlib.o
-./test-print-pos.exe
-###### SUCCESS
-
-###### Testing test-printbasic-pos
-./toplevel tests/test-printbasic-pos.olh > test-printbasic-pos.ll
-llc test-printbasic-pos.ll > test-printbasic-pos.s
-cc -o test-printbasic-pos.exe test-printbasic-pos.s ostdlib.o
-./test-printbasic-pos.exe
-###### SUCCESS
-
-###### Testing test-stdlib-pos
-./toplevel tests/test-stdlib-pos.olh > test-stdlib-pos.ll
-Fatal error: exception Parsing.Parse_error
-###### SUCCESS
-
-###### Testing test-str-pos
-./toplevel tests/test-str-pos.olh > test-str-pos.ll
-llc test-str-pos.ll > test-str-pos.s
-cc -o test-str-pos.exe test-str-pos.s ostdlib.o
-./test-str-pos.exe
-###### SUCCESS
-
-###### Testing test-while-pos
-./toplevel tests/test-while-pos.olh > test-while-pos.ll
-llc test-while-pos.ll > test-while-pos.s
-cc -o test-while-pos.exe test-while-pos.s ostdlib.o
-./test-while-pos.exe
-###### SUCCESS
-
-###### Testing fail-add1-neg
-./toplevel < tests/fail-add1-neg.olh 2> fail-add1-neg.err >> testall.log
-diff -b fail-add1-neg.err tests/fail-add1-neg.err > fail-add1-neg.diff
-###### SUCCESS
-
-###### Testing fail-add3-neg
-./toplevel < tests/fail-add3-neg.olh 2> fail-add3-neg.err >> testall.log
-diff -b fail-add3-neg.err tests/fail-add3-neg.err > fail-add3-neg.diff
-###### SUCCESS
-
-###### Testing fail-ambigmap-neg
-./toplevel < tests/fail-ambigmap-neg.olh 2> fail-ambigmap-neg.err >> testall.log
-diff -b fail-ambigmap-neg.err tests/fail-ambigmap-neg.err > fail-ambigmap-neg.diff
-###### SUCCESS
-
-###### Testing fail-and-neg
-./toplevel < tests/fail-and-neg.olh 2> fail-and-neg.err >> testall.log
-diff -b fail-and-neg.err tests/fail-and-neg.err > fail-and-neg.diff
-###### SUCCESS
-
-###### Testing fail-chars-neg
-./toplevel < tests/fail-chars-neg.olh 2> fail-chars-neg.err >> testall.log
-diff -b fail-chars-neg.err tests/fail-chars-neg.err > fail-chars-neg.diff
-###### SUCCESS
-
-###### Testing fail-cmp-neg
-./toplevel < tests/fail-cmp-neg.olh 2> fail-cmp-neg.err >> testall.log
-diff -b fail-cmp-neg.err tests/fail-cmp-neg.err > fail-cmp-neg.diff
-###### SUCCESS
-
-###### Testing fail-comment-neg
-./toplevel < tests/fail-comment-neg.olh 2> fail-comment-neg.err >> testall.log
-diff -b fail-comment-neg.err tests/fail-comment-neg.err > fail-comment-neg.diff
-###### SUCCESS
-
-###### Testing fail-condscope-neg
-./toplevel < tests/fail-condscope-neg.olh 2> fail-condscope-neg.err >> testall.log
-diff -b fail-condscope-neg.err tests/fail-condscope-neg.err > fail-condscope-neg.diff
-###### SUCCESS
-
-###### Testing fail-div-neg
-./toplevel < tests/fail-div-neg.olh 2> fail-div-neg.err >> testall.log
-diff -b fail-div-neg.err tests/fail-div-neg.err > fail-div-neg.diff
-###### SUCCESS
-
-###### Testing fail-doublequote-neg
-./toplevel < tests/fail-doublequote-neg.olh 2> fail-doublequote-neg.err >> testall.log
-diff -b fail-doublequote-neg.err tests/fail-doublequote-neg.err > fail-doublequote-neg.diff
-###### SUCCESS
-
-###### Testing fail-efor-neg
-./toplevel < tests/fail-efor-neg.olh 2> fail-efor-neg.err >> testall.log
-diff -b fail-efor-neg.err tests/fail-efor-neg.err > fail-efor-neg.diff
-###### SUCCESS
-
-###### Testing fail-eif-neg
-./toplevel < tests/fail-eif-neg.olh 2> fail-eif-neg.err >> testall.log
-diff -b fail-eif-neg.err tests/fail-eif-neg.err > fail-eif-neg.diff
-###### SUCCESS
-
-###### Testing fail-eq-neg
-./toplevel < tests/fail-eq-neg.olh 2> fail-eq-neg.err >> testall.log
-diff -b fail-eq-neg.err tests/fail-eq-neg.err > fail-eq-neg.diff
-###### SUCCESS
-
-###### Testing fail-folo-neg
-./toplevel < tests/fail-folo-neg.olh 2> fail-folo-neg.err >> testall.log
-diff -b fail-folo-neg.err tests/fail-folo-neg.err > fail-folo-neg.diff
-###### SUCCESS
-
-###### Testing fail-foreach-neg
-./toplevel < tests/fail-foreach-neg.olh 2> fail-foreach-neg.err >> testall.log
-diff -b fail-foreach-neg.err tests/fail-foreach-neg.err > fail-foreach-neg.diff
-###### SUCCESS
-
-###### Testing fail-fpla-neg
-./toplevel < tests/fail-fpla-neg.olh 2> fail-fpla-neg.err >> testall.log
-diff -b fail-fpla-neg.err tests/fail-fpla-neg.err > fail-fpla-neg.diff
-###### SUCCESS

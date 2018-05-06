@@ -17,6 +17,7 @@ Legitimate Test Suite
 -also, edit testall.sh so all are comparing vs a diff file
 -and make sure tests/output do match
 -there's no way to test random() or readInput()--put that in LRM note maybe
+-test empty dictionary, redefining stdlib functions
 
 
 LRM
