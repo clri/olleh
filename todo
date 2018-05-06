@@ -14,10 +14,8 @@ Semantic Checker
 
 Legitimate Test Suite
 -see test-suite
--also, edit testall.sh so all are comparing vs a diff file
 -and make sure tests/output do match
 -there's no way to test random() or readInput()--put that in LRM note maybe
--test empty dictionary, redefining stdlib functions
 
 
 LRM
@@ -40,8 +38,6 @@ LRM
 -reserved keywords of stdlib local variables (you may not use them for global names)
  (w_, temp_, lett_, letters_, len_, i_, ch_, temp2_, temp3_, x_)
 
-Compiler (codegen.ml)
--stringmap set/destroy for vmember
 
 
 

@@ -19,3 +19,5 @@ hello.ll
 /*.err
 test-*.ll
 fail-*.ll
+*.olhi
+

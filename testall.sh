@@ -128,7 +128,7 @@ CheckFail() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
-    RunFail "$OLLEH" "<" $1 "2>" "${basename}.err" ">>" $globallog #&&
+    RunFail "$OLLEH" $1 "2>" "${basename}.err" ">>" $globallog #&&
     Compare ${basename}.err ${reffile}.err ${basename}.diff
 
     # Report the status and clean up the generated files
@@ -194,6 +194,6 @@ do
     esac
 done
 
-rm tets/*.olhi #cleanup
+rm tests/*.olhi #cleanup
 
 exit $globalerror

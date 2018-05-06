@@ -34,7 +34,7 @@ end;
 String x;
 if (x == Null):
 	if (Null == x):
-		print "it's not null";
+		print "it's null";
 	end;
 end;
 

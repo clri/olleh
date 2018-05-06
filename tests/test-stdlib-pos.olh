@@ -11,17 +11,17 @@ print checkWord("asdkf");
 setLetterScore({'x' -> 4});
 print letterScores.get('x');
 
-string anagram1 = scramble("anagram");
-if (checkWord(anagram1) or (anagram(anagram1) != Null)):
-        print "scrambled: " + anagram1;
+String anagram1 = scramble("anagram");
+if (checkWord(anagram1) || (anagram(anagram1) != Null)):
+        print "scrambled!";
 end;
 
 
-Player player = fresh Player{letters -> fresh list<char>{3}};
-player.setLetters();
+Player player = fresh Player{letters -> fresh list(3)};
+setLetters(player);
 setLetterScore({'x' -> 1});
 int total = 0;
 foreach lett player.letters:
-        total += player.letters.get(lett);
+        total = total + letterScores.get(lett);
 end;
 print total; //should be 3
