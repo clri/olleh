@@ -158,8 +158,7 @@ llc test-stdlib-pos.ll > test-stdlib-pos.s
 cc -o test-stdlib-pos.exe test-stdlib-pos.s ostdlib.o
 ./test-stdlib-pos.exe
 diff -b test-stdlib-pos.out tests/test-stdlib-pos.out > test-stdlib-pos.diff
-FAILED test-stdlib-pos.out differs from tests/test-stdlib-pos.out
-###### FAILED
+###### SUCCESS
 
 ###### Testing test-str-pos
 ./toplevel tests/test-str-pos.olh > test-str-pos.ll
@@ -189,3 +188,330 @@ diff -b fail-add3-neg.err tests/fail-add3-neg.err > fail-add3-neg.diff
 
 ###### Testing fail-ambigmap-neg
 ./toplevel tests/fail-ambigmap-neg.olh 2> fail-ambigmap-neg.err >> testall.log
+diff -b fail-ambigmap-neg.err tests/fail-ambigmap-neg.err > fail-ambigmap-neg.diff
+###### SUCCESS
+
+###### Testing fail-and-neg
+./toplevel tests/fail-and-neg.olh 2> fail-and-neg.err >> testall.log
+diff -b fail-and-neg.err tests/fail-and-neg.err > fail-and-neg.diff
+###### SUCCESS
+
+###### Testing fail-chars-neg
+./toplevel tests/fail-chars-neg.olh 2> fail-chars-neg.err >> testall.log
+diff -b fail-chars-neg.err tests/fail-chars-neg.err > fail-chars-neg.diff
+###### SUCCESS
+
+###### Testing fail-cmp-neg
+./toplevel tests/fail-cmp-neg.olh 2> fail-cmp-neg.err >> testall.log
+diff -b fail-cmp-neg.err tests/fail-cmp-neg.err > fail-cmp-neg.diff
+###### SUCCESS
+
+###### Testing fail-comment-neg
+./toplevel tests/fail-comment-neg.olh 2> fail-comment-neg.err >> testall.log
+diff -b fail-comment-neg.err tests/fail-comment-neg.err > fail-comment-neg.diff
+###### SUCCESS
+
+###### Testing fail-condscope-neg
+./toplevel tests/fail-condscope-neg.olh 2> fail-condscope-neg.err >> testall.log
+diff -b fail-condscope-neg.err tests/fail-condscope-neg.err > fail-condscope-neg.diff
+###### SUCCESS
+
+###### Testing fail-div-neg
+./toplevel tests/fail-div-neg.olh 2> fail-div-neg.err >> testall.log
+diff -b fail-div-neg.err tests/fail-div-neg.err > fail-div-neg.diff
+###### SUCCESS
+
+###### Testing fail-doublequote-neg
+./toplevel tests/fail-doublequote-neg.olh 2> fail-doublequote-neg.err >> testall.log
+diff -b fail-doublequote-neg.err tests/fail-doublequote-neg.err > fail-doublequote-neg.diff
+###### SUCCESS
+
+###### Testing fail-efor-neg
+./toplevel tests/fail-efor-neg.olh 2> fail-efor-neg.err >> testall.log
+diff -b fail-efor-neg.err tests/fail-efor-neg.err > fail-efor-neg.diff
+###### SUCCESS
+
+###### Testing fail-eif-neg
+./toplevel tests/fail-eif-neg.olh 2> fail-eif-neg.err >> testall.log
+diff -b fail-eif-neg.err tests/fail-eif-neg.err > fail-eif-neg.diff
+###### SUCCESS
+
+###### Testing fail-eq-neg
+./toplevel tests/fail-eq-neg.olh 2> fail-eq-neg.err >> testall.log
+diff -b fail-eq-neg.err tests/fail-eq-neg.err > fail-eq-neg.diff
+###### SUCCESS
+
+###### Testing fail-folo-neg
+./toplevel tests/fail-folo-neg.olh 2> fail-folo-neg.err >> testall.log
+diff -b fail-folo-neg.err tests/fail-folo-neg.err > fail-folo-neg.diff
+###### SUCCESS
+
+###### Testing fail-foreach-neg
+./toplevel tests/fail-foreach-neg.olh 2> fail-foreach-neg.err >> testall.log
+diff -b fail-foreach-neg.err tests/fail-foreach-neg.err > fail-foreach-neg.diff
+###### SUCCESS
+
+###### Testing fail-fpla-neg
+./toplevel tests/fail-fpla-neg.olh 2> fail-fpla-neg.err >> testall.log
+diff -b fail-fpla-neg.err tests/fail-fpla-neg.err > fail-fpla-neg.diff
+###### SUCCESS
+
+###### Testing fail-freshlis1-neg
+./toplevel tests/fail-freshlis1-neg.olh 2> fail-freshlis1-neg.err >> testall.log
+diff -b fail-freshlis1-neg.err tests/fail-freshlis1-neg.err > fail-freshlis1-neg.diff
+###### SUCCESS
+
+###### Testing fail-freshlis2-neg
+./toplevel tests/fail-freshlis2-neg.olh 2> fail-freshlis2-neg.err >> testall.log
+diff -b fail-freshlis2-neg.err tests/fail-freshlis2-neg.err > fail-freshlis2-neg.diff
+###### SUCCESS
+
+###### Testing fail-freshlis3-neg
+./toplevel tests/fail-freshlis3-neg.olh 2> fail-freshlis3-neg.err >> testall.log
+diff -b fail-freshlis3-neg.err tests/fail-freshlis3-neg.err > fail-freshlis3-neg.diff
+###### SUCCESS
+
+###### Testing fail-freshpla1-neg
+./toplevel tests/fail-freshpla1-neg.olh 2> fail-freshpla1-neg.err >> testall.log
+diff -b fail-freshpla1-neg.err tests/fail-freshpla1-neg.err > fail-freshpla1-neg.diff
+###### SUCCESS
+
+###### Testing fail-freshpla2-neg
+./toplevel tests/fail-freshpla2-neg.olh 2> fail-freshpla2-neg.err >> testall.log
+diff -b fail-freshpla2-neg.err tests/fail-freshpla2-neg.err > fail-freshpla2-neg.diff
+###### SUCCESS
+
+###### Testing fail-funcfunc-neg
+./toplevel tests/fail-funcfunc-neg.olh 2> fail-funcfunc-neg.err >> testall.log
+diff -b fail-funcfunc-neg.err tests/fail-funcfunc-neg.err > fail-funcfunc-neg.diff
+###### SUCCESS
+
+###### Testing fail-glist-neg
+./toplevel tests/fail-glist-neg.olh 2> fail-glist-neg.err >> testall.log
+diff -b fail-glist-neg.err tests/fail-glist-neg.err > fail-glist-neg.diff
+###### SUCCESS
+
+###### Testing fail-glofo-neg
+./toplevel tests/fail-glofo-neg.olh 2> fail-glofo-neg.err >> testall.log
+diff -b fail-glofo-neg.err tests/fail-glofo-neg.err > fail-glofo-neg.diff
+###### SUCCESS
+
+###### Testing fail-glolo-neg
+./toplevel tests/fail-glolo-neg.olh 2> fail-glolo-neg.err >> testall.log
+diff -b fail-glolo-neg.err tests/fail-glolo-neg.err > fail-glolo-neg.diff
+###### SUCCESS
+
+###### Testing fail-gmap-neg
+./toplevel tests/fail-gmap-neg.olh 2> fail-gmap-neg.err >> testall.log
+diff -b fail-gmap-neg.err tests/fail-gmap-neg.err > fail-gmap-neg.diff
+###### SUCCESS
+
+###### Testing fail-intlist-neg
+./toplevel tests/fail-intlist-neg.olh 2> fail-intlist-neg.err >> testall.log
+diff -b fail-intlist-neg.err tests/fail-intlist-neg.err > fail-intlist-neg.diff
+###### SUCCESS
+
+###### Testing fail-intlist2-neg
+./toplevel tests/fail-intlist2-neg.olh 2> fail-intlist2-neg.err >> testall.log
+diff -b fail-intlist2-neg.err tests/fail-intlist2-neg.err > fail-intlist2-neg.diff
+###### SUCCESS
+
+###### Testing fail-list-neg
+./toplevel tests/fail-list-neg.olh 2> fail-list-neg.err >> testall.log
+diff -b fail-list-neg.err tests/fail-list-neg.err > fail-list-neg.diff
+###### SUCCESS
+
+###### Testing fail-listlistlist-neg
+./toplevel tests/fail-listlistlist-neg.olh 2> fail-listlistlist-neg.err >> testall.log
+diff -b fail-listlistlist-neg.err tests/fail-listlistlist-neg.err > fail-listlistlist-neg.diff
+###### SUCCESS
+
+###### Testing fail-listype-neg
+./toplevel tests/fail-listype-neg.olh 2> fail-listype-neg.err >> testall.log
+diff -b fail-listype-neg.err tests/fail-listype-neg.err > fail-listype-neg.diff
+###### SUCCESS
+
+###### Testing fail-mapkey-neg
+./toplevel tests/fail-mapkey-neg.olh 2> fail-mapkey-neg.err >> testall.log
+diff -b fail-mapkey-neg.err tests/fail-mapkey-neg.err > fail-mapkey-neg.diff
+###### SUCCESS
+
+###### Testing fail-maptype-neg
+./toplevel tests/fail-maptype-neg.olh 2> fail-maptype-neg.err >> testall.log
+diff -b fail-maptype-neg.err tests/fail-maptype-neg.err > fail-maptype-neg.diff
+###### SUCCESS
+
+###### Testing fail-mapval-neg
+./toplevel tests/fail-mapval-neg.olh 2> fail-mapval-neg.err >> testall.log
+diff -b fail-mapval-neg.err tests/fail-mapval-neg.err > fail-mapval-neg.diff
+###### SUCCESS
+
+###### Testing fail-mixcmp-neg
+./toplevel tests/fail-mixcmp-neg.olh 2> fail-mixcmp-neg.err >> testall.log
+diff -b fail-mixcmp-neg.err tests/fail-mixcmp-neg.err > fail-mixcmp-neg.diff
+###### SUCCESS
+
+###### Testing fail-mixmap-neg
+./toplevel tests/fail-mixmap-neg.olh 2> fail-mixmap-neg.err >> testall.log
+diff -b fail-mixmap-neg.err tests/fail-mixmap-neg.err > fail-mixmap-neg.diff
+###### SUCCESS
+
+###### Testing fail-mod-neg
+./toplevel tests/fail-mod-neg.olh 2> fail-mod-neg.err >> testall.log
+diff -b fail-mod-neg.err tests/fail-mod-neg.err > fail-mod-neg.diff
+###### SUCCESS
+
+###### Testing fail-mult-neg
+./toplevel tests/fail-mult-neg.olh 2> fail-mult-neg.err >> testall.log
+diff -b fail-mult-neg.err tests/fail-mult-neg.err > fail-mult-neg.diff
+###### SUCCESS
+
+###### Testing fail-nega-neg
+./toplevel tests/fail-nega-neg.olh 2> fail-nega-neg.err >> testall.log
+diff -b fail-nega-neg.err tests/fail-nega-neg.err > fail-nega-neg.diff
+###### SUCCESS
+
+###### Testing fail-noparens-neg
+./toplevel tests/fail-noparens-neg.olh 2> fail-noparens-neg.err >> testall.log
+diff -b fail-noparens-neg.err tests/fail-noparens-neg.err > fail-noparens-neg.diff
+###### SUCCESS
+
+###### Testing fail-not-neg
+./toplevel tests/fail-not-neg.olh 2> fail-not-neg.err >> testall.log
+diff -b fail-not-neg.err tests/fail-not-neg.err > fail-not-neg.diff
+###### SUCCESS
+
+###### Testing fail-not2-neg
+./toplevel tests/fail-not2-neg.olh 2> fail-not2-neg.err >> testall.log
+diff -b fail-not2-neg.err tests/fail-not2-neg.err > fail-not2-neg.diff
+###### SUCCESS
+
+###### Testing fail-null-neg
+./toplevel tests/fail-null-neg.olh 2> fail-null-neg.err >> testall.log
+diff -b fail-null-neg.err tests/fail-null-neg.err > fail-null-neg.diff
+###### SUCCESS
+
+###### Testing fail-or-neg
+./toplevel tests/fail-or-neg.olh 2> fail-or-neg.err >> testall.log
+diff -b fail-or-neg.err tests/fail-or-neg.err > fail-or-neg.diff
+###### SUCCESS
+
+###### Testing fail-paramnum-neg
+./toplevel tests/fail-paramnum-neg.olh 2> fail-paramnum-neg.err >> testall.log
+diff -b fail-paramnum-neg.err tests/fail-paramnum-neg.err > fail-paramnum-neg.diff
+###### SUCCESS
+
+###### Testing fail-paramtype-neg
+./toplevel tests/fail-paramtype-neg.olh 2> fail-paramtype-neg.err >> testall.log
+diff -b fail-paramtype-neg.err tests/fail-paramtype-neg.err > fail-paramtype-neg.diff
+###### SUCCESS
+
+###### Testing fail-prefix-neg
+./toplevel tests/fail-prefix-neg.olh 2> fail-prefix-neg.err >> testall.log
+diff -b fail-prefix-neg.err tests/fail-prefix-neg.err > fail-prefix-neg.diff
+###### SUCCESS
+
+###### Testing fail-print-neg
+./toplevel tests/fail-print-neg.olh 2> fail-print-neg.err >> testall.log
+diff -b fail-print-neg.err tests/fail-print-neg.err > fail-print-neg.diff
+###### SUCCESS
+
+###### Testing fail-printplayer-neg
+./toplevel tests/fail-printplayer-neg.olh 2> fail-printplayer-neg.err >> testall.log
+diff -b fail-printplayer-neg.err tests/fail-printplayer-neg.err > fail-printplayer-neg.diff
+###### SUCCESS
+
+###### Testing fail-prior-neg
+./toplevel tests/fail-prior-neg.olh 2> fail-prior-neg.err >> testall.log
+diff -b fail-prior-neg.err tests/fail-prior-neg.err > fail-prior-neg.diff
+###### SUCCESS
+
+###### Testing fail-quote-neg
+./toplevel tests/fail-quote-neg.olh 2> fail-quote-neg.err >> testall.log
+diff -b fail-quote-neg.err tests/fail-quote-neg.err > fail-quote-neg.diff
+###### SUCCESS
+
+###### Testing fail-ret-neg
+./toplevel tests/fail-ret-neg.olh 2> fail-ret-neg.err >> testall.log
+diff -b fail-ret-neg.err tests/fail-ret-neg.err > fail-ret-neg.diff
+###### SUCCESS
+
+###### Testing fail-returns-neg
+./toplevel tests/fail-returns-neg.olh 2> fail-returns-neg.err >> testall.log
+diff -b fail-returns-neg.err tests/fail-returns-neg.err > fail-returns-neg.diff
+###### SUCCESS
+
+###### Testing fail-scope-neg
+./toplevel tests/fail-scope-neg.olh 2> fail-scope-neg.err >> testall.log
+diff -b fail-scope-neg.err tests/fail-scope-neg.err > fail-scope-neg.diff
+###### SUCCESS
+
+###### Testing fail-semi-neg
+./toplevel tests/fail-semi-neg.olh 2> fail-semi-neg.err >> testall.log
+diff -b fail-semi-neg.err tests/fail-semi-neg.err > fail-semi-neg.diff
+###### SUCCESS
+
+###### Testing fail-slist-neg
+./toplevel tests/fail-slist-neg.olh 2> fail-slist-neg.err >> testall.log
+diff -b fail-slist-neg.err tests/fail-slist-neg.err > fail-slist-neg.diff
+###### SUCCESS
+
+###### Testing fail-smap-neg
+./toplevel tests/fail-smap-neg.olh 2> fail-smap-neg.err >> testall.log
+diff -b fail-smap-neg.err tests/fail-smap-neg.err > fail-smap-neg.diff
+###### SUCCESS
+
+###### Testing fail-subtract-neg
+./toplevel tests/fail-subtract-neg.olh 2> fail-subtract-neg.err >> testall.log
+diff -b fail-subtract-neg.err tests/fail-subtract-neg.err > fail-subtract-neg.diff
+###### SUCCESS
+
+###### Testing fail-undef-neg
+./toplevel tests/fail-undef-neg.olh 2> fail-undef-neg.err >> testall.log
+diff -b fail-undef-neg.err tests/fail-undef-neg.err > fail-undef-neg.diff
+###### SUCCESS
+
+###### Testing fail-unop-neg
+./toplevel tests/fail-unop-neg.olh 2> fail-unop-neg.err >> testall.log
+diff -b fail-unop-neg.err tests/fail-unop-neg.err > fail-unop-neg.diff
+###### SUCCESS
+
+###### Testing fail-var1-neg
+./toplevel tests/fail-var1-neg.olh 2> fail-var1-neg.err >> testall.log
+diff -b fail-var1-neg.err tests/fail-var1-neg.err > fail-var1-neg.diff
+###### SUCCESS
+
+###### Testing fail-var2-neg
+./toplevel tests/fail-var2-neg.olh 2> fail-var2-neg.err >> testall.log
+diff -b fail-var2-neg.err tests/fail-var2-neg.err > fail-var2-neg.diff
+###### SUCCESS
+
+###### Testing fail-var3-neg
+./toplevel tests/fail-var3-neg.olh 2> fail-var3-neg.err >> testall.log
+diff -b fail-var3-neg.err tests/fail-var3-neg.err > fail-var3-neg.diff
+###### SUCCESS
+
+###### Testing fail-var4-neg
+./toplevel tests/fail-var4-neg.olh 2> fail-var4-neg.err >> testall.log
+diff -b fail-var4-neg.err tests/fail-var4-neg.err > fail-var4-neg.diff
+###### SUCCESS
+
+###### Testing fail-var5-neg
+./toplevel tests/fail-var5-neg.olh 2> fail-var5-neg.err >> testall.log
+diff -b fail-var5-neg.err tests/fail-var5-neg.err > fail-var5-neg.diff
+###### SUCCESS
+
+###### Testing fail-vartype-neg
+./toplevel tests/fail-vartype-neg.olh 2> fail-vartype-neg.err >> testall.log
+diff -b fail-vartype-neg.err tests/fail-vartype-neg.err > fail-vartype-neg.diff
+###### SUCCESS
+
+###### Testing fail-voidas-neg
+./toplevel tests/fail-voidas-neg.olh 2> fail-voidas-neg.err >> testall.log
+diff -b fail-voidas-neg.err tests/fail-voidas-neg.err > fail-voidas-neg.diff
+###### SUCCESS
+
+###### Testing fail-voidvar-neg
+./toplevel tests/fail-voidvar-neg.olh 2> fail-voidvar-neg.err >> testall.log
+diff -b fail-voidvar-neg.err tests/fail-voidvar-neg.err > fail-voidvar-neg.diff
+###### SUCCESS

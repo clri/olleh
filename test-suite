@@ -1,14 +1,4 @@
-TODO - TESTING
-
-
--test empty dictionary, redefining stdlib functions
-
-
-Written (positive)
-standard library (test-stdlib-pos)
-
-
-
+TEST CASES
 
 
 Passing (positive)
@@ -62,6 +52,7 @@ fresh player(something) (test-player-pos)
 Assign player and print its members (test-player-pos)
 fresh player(nothing), (test-player-pos)
 vmembers (test-player-pos)
+standard library (test-stdlib-pos)
 
 
 Passing (negative)
@@ -126,7 +117,6 @@ map that is {} (fail-ambigmap-neg)
 == for non-int/char/bool (string/string) (fail-eq-neg)
 null comparison for disallowed type (int) (fail-null-neg)
 fresh player (same field twice) (fail-freshpla2-neg)
-
 
 
 

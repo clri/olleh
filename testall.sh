@@ -16,10 +16,8 @@ LLC="llc"
 CC="cc"
 
 
-# Path to the OLLEH compiler.  Usually "./toplevel.native"
-# Try "_build/toplevel.native" if ocamlbuild was unable to create a symbolic link.
+# Path to the OLLEH compiler.
 OLLEH="./toplevel"
-#OLLEH="_build/toplevel"
 
 # Set time limit for all operations
 ulimit -t 30
@@ -28,15 +26,6 @@ globallog=testall.log
 rm -f $globallog
 error=0
 globalerror=0
-
-keep=0
-
-Usage() {
-    echo "Usage: testall.sh [options] [.olh files]"
-    echo "-k    Keep intermediate files"
-    echo "-h    Print this help"
-    exit 1
-}
 
 SignalError() {
     if [ $error -eq 0 ] ; then
@@ -58,13 +47,10 @@ Compare() {
 }
 
 # Run <args>
-# Report the command, run it, and report any errors
+# Report the command, run it
 Run() {
     echo $* 1>&2
-    eval $* #|| {
-    	#SignalError "$1 failed on $*"
-    	#return 1
-    #}
+    eval $*
 }
 
 # RunFail <args>
@@ -90,9 +76,9 @@ Check() {
     echo 1>&2
     echo "###### Testing $basename" 1>&2
 
-    #generatedfiles=""
+    generatedfiles=""
 
-    #generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
+    generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out ${basename}.diff" &&
     Run "$OLLEH" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "${basename}.ll" ">" "${basename}.s" &&
     Run "$CC" "-o" "${basename}.exe" "${basename}.s" "ostdlib.o" &&
@@ -102,9 +88,7 @@ Check() {
     # Report the status and clean up the generated files
 
     if [ $error -eq 0 ] ; then
-	#if [ $keep -eq 0 ] ; then
-	#    rm -f $generatedfiles
-	#fi
+	rm -f $generatedfiles
 	echo "OK"
 	echo "###### SUCCESS" 1>&2
     else
@@ -128,15 +112,13 @@ CheckFail() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
-    RunFail "$OLLEH" $1 "2>" "${basename}.err" ">>" $globallog #&&
+    RunFail "$OLLEH" $1 "2>" "${basename}.err" ">>" $globallog
     Compare ${basename}.err ${reffile}.err ${basename}.diff
 
     # Report the status and clean up the generated files
 
     if [ $error -eq 0 ] ; then
-	#if [ $keep -eq 0 ] ; then
-	#    rm -f $generatedfiles
-	#fi
+	rm -f $generatedfiles
 	echo "OK"
 	echo "###### SUCCESS" 1>&2
     else
@@ -144,17 +126,6 @@ CheckFail() {
 	globalerror=$error
     fi
 }
-
-while getopts kdpsh c; do
-    case $c in
-	k) # Keep intermediate files
-	    keep=1
-	    ;;
-	h) # Help
-	    Usage
-	    ;;
-    esac
-done
 
 shift `expr $OPTIND - 1`
 

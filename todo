@@ -7,20 +7,13 @@ ALL FILES
 -sign with whoever worked on it
 
 
-Semantic Checker
--go over and make sure it complies with the specs
--refactor if there's time
-
-
-Legitimate Test Suite
--see test-suite
--and make sure tests/output do match
--there's no way to test random() or readInput()--put that in LRM note maybe
+README
+-see @TODO
 
 
 LRM
 -curly quotes to straight; code to courier
--standardize format (line spacing, font size, all Null, etc)
+-standardize format (line spacing, font size, all Null, Charlist vs list<char>, etc)
 -any updates made in syntax (check against parser/semant at very end)
 -no statements after return
 
@@ -37,6 +30,7 @@ LRM
 -out of bounds behavior on lists
 -reserved keywords of stdlib local variables (you may not use them for global names)
  (w_, temp_, lett_, letters_, len_, i_, ch_, temp2_, temp3_, x_)
+-there's no way to test random() or readInput()--put that in LRM note maybe
 
 
 

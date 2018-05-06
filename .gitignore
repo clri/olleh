@@ -12,7 +12,7 @@ toplevel
 *.exe*
 *.diff
 *.cmx
-hello.ll
+ostdlib
 *.s
 /*.out
 !tests/*
