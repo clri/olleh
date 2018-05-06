@@ -1,1 +1,1 @@
-Fatal error: exception Failure("Map of improper type")
+Fatal error: exception Failure("Map type cannot be inferred")

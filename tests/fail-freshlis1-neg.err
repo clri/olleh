@@ -1,1 +1,1 @@
-Fatal error: exception Failure("Cannot create new list with non-integer arguments")
+Fatal error: exception Failure("Cannot create new list of non-integer args")

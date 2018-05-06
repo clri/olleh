@@ -34,7 +34,37 @@ end;
 String x;
 if (x == Null):
 	if (Null == x):
-		print "it's null";
+		print "it's not null";
 	end;
 end;
 
+if (lis != Null):
+	if (Null != lis):
+		print "it's not null";
+	end;
+end;
+
+if (lis2 != Null):
+	if (Null != lis2):
+		print "it's not null";
+	end;
+end;
+
+if (xx != Null):
+	if (Null != xx):
+		print "it's not null";
+	end;
+end;
+
+if (xxx != Null):
+	if (Null != xxx):
+		print "it's not null";
+	end;
+end;
+
+
+if (x != Null):
+	if (Null != x):
+		print "it's not null";
+	end;
+end;

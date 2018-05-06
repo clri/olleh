@@ -135,7 +135,7 @@ let check (*functions*) (globals, functions) =
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
     let type_of_vmember tvs m  =
       match tvs, m with
-        | Player, "Score" -> Int
+        | Player, "score" -> Int
         | Player, "turn" -> Bool
         | Player, "guessedWords" -> Stringmap
         | Player, "letters" -> Charlist
@@ -224,7 +224,7 @@ let check (*functions*) (globals, functions) =
           | Add when same && t1 = String -> String
           | Add when t1 = String && t2 = Int -> String
           | Equal | Neq when same && (t1 = Int || t1 = Char || t1 = Bool)  -> Bool
-          | Equal when ((e1 = Null && (t2 = Listlist || t2 = Stringmap || t2 = Charlist || t2 = String || t2 = Charmap))
+          | Equal | Neq when ((e1 = Null && (t2 = Listlist || t2 = Stringmap || t2 = Charlist || t2 = String || t2 = Charmap))
             || (e2 = Null && (t1 = Listlist || t1 = Stringmap|| t1 = Charlist || t1 = String || t1 = Charmap))) -> Bool
           | Less | Leq | Greater | Geq
                      when same && (t1 = Int || t1 = Char) -> Bool
@@ -238,10 +238,11 @@ let check (*functions*) (globals, functions) =
           ((ty, SBinop((t1, e1'), op, (t2, e2'))), symbols'')
       | Assignm(var, mem, e) as ex ->
           let ((lt, var'), sy') = expr symbols var in
+          let tov = type_of_vmember lt mem in
           let ((rt, e'), symbols') = expr sy' e in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
             string_of_typ rt ^ " in " ^ string_of_expr ex
-          in ((check_assign lt rt err, SAssignm((lt, var'), mem, (rt, e'))), symbols')
+          in ((check_assign tov rt err, SAssignm((lt, var'), mem, (rt, e'))), symbols')
       | Call(fname, args) as call ->
           let fd = find_func fname in
           let param_length = List.length fd.formals in
@@ -300,9 +301,18 @@ let check (*functions*) (globals, functions) =
                         then ((t, sv v), (t, ex')) :: pla ars'
                         else raise (Failure "Illegal argument to Player")
                 in
+                let rec occurrences lis x =
+                  match lis with [] -> 0
+                  | (Variable(m), _) :: rest ->
+                    if m = x then (occurrences rest x) + 1
+                    else occurrences rest x
+                  | _ :: rest -> occurrences rest x
+                in if (occurrences argus "score" > 1 || occurrences argus "turn" > 1
+                  || occurrences argus "guessedWords" > 1 || occurrences argus "letters" > 1)
+                then raise (Failure "Duplicate argument to Player") else
                 let sargus = pla argus in
                   ((t1, SNewobj(sargus)), symbols)
-              | _ -> raise (Failure ("Object needs type initialization"))
+              | _ -> raise (Failure ("Object" ^ (string_of_typ t1) ^ "cannot be initialized this way"))
 
     in
 

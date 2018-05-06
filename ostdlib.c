@@ -485,6 +485,4 @@ char *anagram(smap_t *dictionary, char *s) {
 }
 
 
-
-
 //

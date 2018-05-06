@@ -1,10 +1,11 @@
 //test-player-pos: positive test for player functionality
 
-Player player = fresh Player{};
-player.turn = true;
-print player.turn;
+//Player player = fresh Player{};
+//player.turn = true;
+//print player.turn;
 
-player = fresh Player{turn -> true, letters -> ['a','b']};
+Player player = fresh Player{turn -> true, letters -> ['a','b']};
+print player.turn;
 print player.letters;
 
 print (fresh Player{turn->true}).turn;
@@ -14,5 +15,3 @@ print player.guessedWords;
 
 player.guessedWords = {"a"->1, "blah"->1};
 print player.guessedWords;
-
-

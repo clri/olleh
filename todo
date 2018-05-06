@@ -7,8 +7,6 @@ ALL FILES
 
 
 Semantic Checker
--compare string to null
--player: duplicate arguments
 -go over and make sure it complies with the specs
 -refactor if there's time
 
@@ -34,16 +32,16 @@ LRM
 -maps with same key twice getting resolved to last occurence
 -behavior with negative fresh list is a negative malloc, which is bad (allocates a large number
  of bytes so be aware that this is a possibility)
+-strings aren't immutable either
+-fresh listlist has autodimension but u can have a list of any length.
+-out of bounds behavior on lists
 
 Standard Library (standard-lib.olh)
 -Hook into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
 
 
 Compiler (codegen.ml)
--player functionality
 -stringmap set/destroy for vmember
--SNewobj (allocating space for new objects:
- set players to malloc, how to set elems: build const ptr and copy it over
 
 
 

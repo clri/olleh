@@ -1,1 +1,1 @@
-Fatal error: exception Failure("illegal assignment Map<char> = Map<string> in mc = {...}")
+Fatal error: exception Failure("illegal assignment Charmap = Stringmap in mc = {lkf6}")

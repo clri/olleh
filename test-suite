@@ -1,29 +1,11 @@
 TODO - TESTING
 
-ERRORS
-test-player-pos (does not compile completely)
-
-
-Positive (to write)
-standard library (test-stdlib-pos)
- getWordScore
- setLetterScore
- checkWord
- setLetters
- getLength (of a string)
- reverse
- scramble
 
 
 
 Written (positive)
-Assign player and print its members (test-player-pos)
-fresh player(nothing), fresh player(something) (test-player-pos)
-vmembers (test-player-pos)
+standard library (test-stdlib-pos)
 
-
-Written (negative)
-fresh player (same field twice) (fail-freshpla2-neg)
 
 
 
@@ -75,6 +57,10 @@ zero-length fresh lists (test-list-pos)
 empty body of for/while/if/foreach (test-emptybody-pos)
 map with same key twice (gets resolved to the last value) (test-builtin-pos)
 null comparison (bw listlist, stringmap, charlist, charmap, string) (test-null-pos)
+fresh player(something) (test-player-pos)
+Assign player and print its members (test-player-pos)
+fresh player(nothing), (test-player-pos)
+vmembers (test-player-pos)
 
 
 Passing (negative)
@@ -138,6 +124,7 @@ return that's not the last statement of a function (fail-returns-neg)
 map that is {} (fail-ambigmap-neg)
 == for non-int/char/bool (string/string) (fail-eq-neg)
 null comparison for disallowed type (int) (fail-null-neg)
+fresh player (same field twice) (fail-freshpla2-neg)
 
 
 

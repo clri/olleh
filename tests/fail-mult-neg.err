@@ -1,1 +1,1 @@
-Fatal error: exception Failure("illegal binary operator List<char> Times Int in [...] Times 4")
+Fatal error: exception Failure("illegal binary operator Charlist Times Int in [...] Times 4")

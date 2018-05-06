@@ -25,7 +25,7 @@ let translate (globals, functions) =
   let _ = L.struct_set_body charmap_t [| i8_t; i32_t; cmap_ptr_t |] false in
   let player_t = L.named_struct_type context "playert" in
   let player_ptr_t = L.pointer_type player_t in
-  let _ = L.struct_set_body player_t [| i32_t ; i1_t ; string_pointer ; map_t |] false
+  let _ = L.struct_set_body player_t [| i32_t ; i1_t ; string_pointer ; map_ptr_t |] false
 
   (* Create an LLVM module -- this is a "container" into which we'll
      generate actual code *)
@@ -263,17 +263,6 @@ let translate (globals, functions) =
                    with Not_found ->  try StringMap.find n lcs
                      with Not_found -> raise (Failure ("FAIL var " ^ n))
     in
-    (*let lookupmem v m = (*let t =*) try StringMap.find v local_vars (*lcs*)
-        with Not_found -> StringMap.find v global_vars
-        (*@TODO: get pointer to member of Player properly
-           in match t with
-                A.Player -> if m = "letters" then (ptr to v.letters) else
-                  if m = "turn" then (ptr to v.turn) else
-                  if m = "guessedWords" then (ptr to v.guessedWords) else
-                  if m = "score" then (ptr to v.guessedWords) else
-                  raise (Failure "Error: should have been caught at semant")
-                | _ -> raise (Failure "Error: should have been caught at semant")*)
-    in*)
 
     let rec inddex (lis: Sast.sexpr list) (i: int) = (*get list elem by index*)
         match lis with elm :: rest ->
@@ -291,7 +280,13 @@ let translate (globals, functions) =
       | SNoexpr -> L.const_int i32_t 0
       | Null -> L.const_null (ltype_of_typ gtype)
       | SVariable s -> L.build_load (lookup s locs) s builder
-      | SVmember (v, m) ->L.const_int i32_t 0 (*@TODO: change to gep or getter*)
+      | SVmember (e, m) ->
+        let pla = expr builder locs e in
+        let idx mem = match mem with "score" -> 0 | "turn" -> 1
+          | "guessedWords" -> 3 | "letters" -> 2 | _ -> raise (Failure "fail")
+        in
+        let x = L.build_struct_gep pla (idx m) "tmp" builder
+        in L.build_load x "tmp2" builder
       | SLiterall l ->
          let l' = List.map (expr builder locs) l in
          let len = (List.length l) + 1 in
@@ -328,10 +323,21 @@ let translate (globals, functions) =
          in let _ =  List.iter set_map rest
          in mptr_actual
         in mptrr
-      | SAssignm (_, s, e) -> let e' = expr builder locs e in (*@TODO: struct access*)
-                          let _  = L.build_store e' (lookup s locs) builder in e'
+      | SAssignm (x, s, e) ->
+          let e' = expr builder locs e in
+          let x' = expr builder locs x in
+          let x'' = L.build_load x' "playerval" builder in
+          let idx mem = match mem with "score" -> 0 | "turn" -> 1
+            | "guessedWords" -> 3 | "letters" -> 2 | _ -> raise (Failure "fail")
+          in let pla = L.build_malloc player_t "tmp" builder
+          in let pptr = L.build_pointercast pla player_ptr_t "aptr" builder
+          in let added_assignm = L.build_insertvalue x'' e' (idx s) "aa" builder
+          in let _ = L.build_store added_assignm pla builder
+          in let _ = match x with (_, SVariable(va)) ->
+            L.build_store pla (lookup va locs) builder | _ -> pptr
+          in pptr
       | SAssign (s, e) -> let e' = expr builder locs e in
-                          let _  = L.build_store e' (lookup s locs) builder in e'
+          let _  = L.build_store e' (lookup s locs) builder in e'
       | SBinop (e1, op, e2) ->
 	  let (t, ee1) = e1 and (tt, ee2) = e2
 	  and e1' = expr builder locs e1
@@ -350,8 +356,9 @@ let translate (globals, functions) =
 	  | A.Geq     -> L.build_icmp L.Icmp.Sge
           | _ -> raise (Failure "semantic error in codegen")
 	      ) e1' e2' "tmp" builder
-          else if ee1 = Null || ee2 = Null then
-            L.build_icmp L.Icmp.Eq e1' e2' "tmp" builder
+          else if ee1 = Null || ee2 = Null then (match op with
+            | A.Neq -> L.build_icmp L.Icmp.Ne
+            | _ -> L.build_icmp L.Icmp.Eq) e1' e2' "tmp" builder
           else if t = A.String then
             if op = A.Add then
               if tt = A.Int then
@@ -384,22 +391,30 @@ let translate (globals, functions) =
           | A.Not                  -> L.build_not e' "tmp" builder
           | A.Asc                  -> L.build_call ascii_func [| e' |] "tmp" builder)
       | SNewtobj(t) -> L.const_null (ltype_of_typ t) (*set map to Null*)
-      | SNewobj _ ->  (* do we need a match expr first?? *)
-         let type_of_ptr = player_t in
-         let pptr = L.build_malloc (type_of_ptr) "tmp" builder
-         (*in let addtoplayer plyr (s, t, g, l) =  (* score, turn, guessed, letters *)
-           let s' = expr builder locs s
-           and t' = expr builder locs t
-           and g' = expr builder locs g
-           and l' = expr builder locs l
-         in let added_score = L.build_insertvalue pptr s' 0 "as" builder
-         in let added_turn = L.build_insertvalue pptr t' 1 "at" builder
-         in let added_guessed = L.build_insertvalue pptr g' 2 "ag" builder
-         in let added_letters = L.build_insertvalue pptr l' 3 "al" builder
-         in let plyr = addtomap pptr (score, turn, guessed, letters)
-         in let set_plyr (s, t, g, l) =
-           L.build_call [|(expr builder locs s); (expr builder locs t); (expr builder locs g); (expr builder locs l)|] "" builder
-         *)in pptr
+      | SNewobj(attrs) ->
+         let und = L.undef player_t in
+         let pla = L.build_malloc player_t "tmp" builder
+         in let pptr = L.build_pointercast pla (ltype_of_typ gtype) "aptr" builder
+         in let rec get_attr strr alist =
+           match alist with [] -> None
+           | ((_, SVariable(a)), vall) :: rest ->
+             if a = strr then Some(vall)
+             else get_attr strr rest
+           | _ :: rest -> get_attr strr rest
+         in let pscore = match (get_attr "score" attrs) with None -> L.const_int i32_t 0
+           | Some(vall) -> expr builder locs vall
+         in let pturn = match (get_attr "turn" attrs) with None -> L.const_int i1_t 0
+           | Some(vall) -> expr builder locs vall
+         in let pguessed = match (get_attr "guessedWords" attrs) with None -> L.const_null map_ptr_t
+           | Some(vall) -> expr builder locs vall
+         in let pletters = match (get_attr "letters" attrs) with None -> L.const_null string_pointer
+           | Some(vall) -> expr builder locs vall
+         in let added_score = L.build_insertvalue und pscore 0 "as" builder
+         in let added_turn = L.build_insertvalue added_score pturn 1 "at" builder
+         in let added_guessed = L.build_insertvalue added_turn pguessed 3 "ag" builder
+         in let added_letters = L.build_insertvalue added_guessed pletters 2 "al" builder
+         in let _ = L.build_store added_letters pla builder
+         in pptr
       | SNewlis l ->
            if gtype = A.Charlist then  (*1 dimension*)
              let e' = expr builder locs (inddex l 0)
