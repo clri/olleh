@@ -451,6 +451,19 @@ let translate (globals, functions) =
           match a with (_, SVariable(var)) -> (*@TODO: SVmember when player is working*)
             let cres = L.build_call smapset_func (Array.of_list llargs) "Smset_result" builder
             in let _  = L.build_store cres (lookup var locs) builder in cres
+          | (_, SVmember(e, m)) ->
+            let cres = L.build_call smapset_func (Array.of_list llargs) "Smset_result" builder
+            in let e' = expr builder locs e in
+            let e'' = L.build_load e' "playerval" builder in
+            let idx mem = match mem with "score" -> 0 | "turn" -> 1
+              | "guessedWords" -> 3 | "letters" -> 2 | _ -> raise (Failure "fail")
+            in let pla = L.build_malloc player_t "tmp" builder
+            in let pptr = L.build_pointercast pla player_ptr_t "aptr" builder
+            in let added_assignm = L.build_insertvalue e'' cres (idx m) "aa" builder
+            in let _ = L.build_store added_assignm pla builder
+            in let _ = match e with (_, SVariable(va)) ->
+              L.build_store pla (lookup va locs) builder | _ -> pptr
+            in cres
           | _ -> L.build_call smapset_func (Array.of_list llargs) "Smset_result" builder
         in ans
       | SCall ("Charmapset", args) ->

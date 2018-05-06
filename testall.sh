@@ -96,7 +96,7 @@ Check() {
     Run "$OLLEH" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "${basename}.ll" ">" "${basename}.s" &&
     Run "$CC" "-o" "${basename}.exe" "${basename}.s" "ostdlib.o" &&
-    Run "./${basename}.exe" > "${basename}.out" &&
+    Run "./${basename}.exe" > "${basename}.out"
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
@@ -173,7 +173,6 @@ then
     files=$@
 else
     files="tests/test-*.olh tests/fail-*.olh"
-    #files="tests/test-list-pos.olh"
 fi
 
 for file in $files
@@ -194,5 +193,7 @@ do
 	    ;;
     esac
 done
+
+rm tets/*.olhi #cleanup
 
 exit $globalerror

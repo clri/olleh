@@ -77,3 +77,22 @@ function String scramble(String w_):
         end;
         return listToString(temp_);
 end;
+//test-assign-positive:
+//assigns variables of primitive types and prints their values
+
+int x = 0;
+print x;
+x = -1;
+print x;
+x = 89;
+print x;
+
+char c;
+c = 'x';
+print c;
+
+boolean b = false;
+print b;
+
+String s = "string";
+print s;

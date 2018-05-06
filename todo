@@ -4,6 +4,7 @@ Once item is done/tested, remove it from the list
 ALL FILES
 -comment code, explain anything that's ambiguous or confusing to you (or that you think
   might need explaining to tfs/townsend)
+-sign with whoever worked on it
 
 
 Semantic Checker
@@ -35,10 +36,8 @@ LRM
 -strings aren't immutable either
 -fresh listlist has autodimension but u can have a list of any length.
 -out of bounds behavior on lists
-
-Standard Library (standard-lib.olh)
--Hook into code we write via the compiler (how?) https://piazza.com/class/jaiu2g6r8py36c?cid=321
-
+-reserved keywords of stdlib local variables (you may not use them for global names)
+ (w_, temp_, lett_, letters_, len_, i_, ch_, temp2_, temp3_, x_)
 
 Compiler (codegen.ml)
 -stringmap set/destroy for vmember
