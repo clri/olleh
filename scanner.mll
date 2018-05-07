@@ -1,3 +1,7 @@
+(*scanner.mll: scans and tokenizes
+ *Contributors: Caroline Roig-Irwin clr2176
+ *)
+
 { open Parser }
 
 rule tokenize = parse

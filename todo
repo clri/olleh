@@ -4,11 +4,10 @@ Once item is done/tested, remove it from the list
 ALL FILES
 -comment code, explain anything that's ambiguous or confusing to you (or that you think
   might need explaining to tfs/townsend)
--sign with whoever worked on it
 
 
 README
--see @TODO
+-see @TODO in the README file
 
 
 LRM

@@ -1,5 +1,6 @@
 /*
  * This is the !Olleh Standard Library
+ * Contributors: Caroline Roig-Irwin clr2176
  */
 
 map<char> letterScores = { 'a' -> 1, 'b' -> 1, 'c' -> 1, 'd' -> 1, 'e' -> 1,

@@ -1,7 +1,8 @@
 (*top level program, parses the AST and prints an error message (generated
 automatically) if the program is invalid or a success message if the input
 is valid
-Adapted from microc/class slides*)
+Adapted from microc/class slides
+Contributors: Caroline Roig-Irwin clr2176*)
 
 let () =
         (*link in the standard library*)

@@ -1,4 +1,6 @@
-(* Semantic checking for the olleh compiler *)
+(* Semantic checking for the !Olleh compiler
+ * Contributors: Caroline Roig-Irwin clr2176
+ *)
 
 open Ast
 open Sast
@@ -7,15 +9,13 @@ module StringMap = Map.Make(String)
 
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
-
    Check each statement, then check each function *)
 
-let check (*functions*) (globals, functions) =
+let check (globals, functions) =
 
   (* Check if a certain kind of binding has void type or is a duplicate
      of another, previously checked binding. If the stmt is NOT a binding
-     then we ignore it. If it matches SBind(), SAssignd() then it is a
-     bind and we need to do stuff *)
+     then we ignore it. *)
   let check_binds (kind : string) (to_check : (*'a*) formalbind list) =
     let check_it checked binding =
       let void_err = "illegal void " ^ kind ^ " " ^ snd binding
@@ -41,7 +41,6 @@ let check (*functions*) (globals, functions) =
     (Bind(Stringmap, "dictionary") :: globals)) in
 
   (**** Checking Functions ****)
-
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
@@ -96,14 +95,6 @@ let check (*functions*) (globals, functions) =
     with Not_found -> raise (Failure ("unrecognized function " ^ s))
   in
 
-  (*let global_context = find_func "main" in (* no spoofed programs please *)
-  let check_main =
-        (*no formals. check the usage of locals*)
-        let in_context = [] in
-
-        ()
-  in*)
-
   let check_function func =
     (* Make sure no formals are void or duplicates *)
     let formals' = check_binds "formal" (func.formals) in
@@ -133,7 +124,7 @@ let check (*functions*) (globals, functions) =
       | _ ->
       try StringMap.find s symbols
       with Not_found -> raise (Failure ("undeclared identifier " ^ s)) in
-    let type_of_vmember tvs m  =
+    let type_of_vmember tvs m  = (*dot syntax: make sure it is correct*)
       match tvs, m with
         | Player, "score" -> Int
         | Player, "turn" -> Bool
@@ -141,7 +132,6 @@ let check (*functions*) (globals, functions) =
         | Player, "letters" -> Charlist
         | _ -> raise (Failure ("Object of type " ^ (string_of_typ tvs) ^ " has no attribute " ^ m))
     in
-
 
     (*tuple mapper helper function*)
     let rec map_tup f s (x, y) =
@@ -216,7 +206,7 @@ let check (*functions*) (globals, functions) =
       | Binop(e1, op, e2) as e ->
           let ((t1, e1'), symbols') = expr symbols e1
           in let ((t2, e2'), symbols'') = expr symbols' e2 in
-          (* All binary operators require operands of the same type *)
+          (* Many binary operators require operands of the same type *)
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
@@ -236,7 +226,7 @@ let check (*functions*) (globals, functions) =
           in let t1' = t1 in let t1 = if e1 = Null then t2 else t1' in
           let t2' = t2 in let t2 = if e2 = Null then t1 else t2' in
           ((ty, SBinop((t1, e1'), op, (t2, e2'))), symbols'')
-      | Assignm(var, mem, e) as ex ->
+      | Assignm(var, mem, e) as ex -> (*assign to a member, e.g. Player.letters*)
           let ((lt, var'), sy') = expr symbols var in
           let tov = type_of_vmember lt mem in
           let ((rt, e'), symbols') = expr sy' e in
@@ -257,7 +247,7 @@ let check (*functions*) (globals, functions) =
           in
           let args' = List.map2 check_call fd.formals args
           in ((fd.typ, SCall(fname, args')), symbols)
-      | Callm(vname, fname, args) as call ->
+      | Callm(vname, fname, args) as call -> (*type.function(): wrap this into SCall()*)
           let ((ty, ee), sy') = expr symbols vname in
           let fd = find_func ((string_of_typ ty) ^ fname) in
           let param_length = List.length fd.formals in
@@ -270,12 +260,12 @@ let check (*functions*) (globals, functions) =
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
             in (check_assign ft et err, e')
           in
-          let args' = List.map2 check_call fd.formals (vname :: args)
+          let args' = List.map2 check_call fd.formals (vname :: args) (*wrap expression who has this function into args*)
           in ((fd.typ, SCall((string_of_typ ty) ^ fname, args')), symbols)
-      | Newtobj(t1) ->
+      | Newtobj(t1) -> (*map*)
           if (t1 = Stringmap) then ((t1, SNewtobj(t1)), symbols)
           else if (t1 = Charmap) then ((t1, SNewtobj(t1)), symbols)
-          else raise (Failure ("Object cannot be initialized with type"))
+          else raise (Failure ("Object " ^ (string_of_typ t1) ^ " cannot be initialized with type"))
       | Newlis(t1, e2) ->
           if (t1 = Charlist && List.length e2 != 1) || (t1 = Listlist && List.length e2 != 2) then
             raise (Failure "Unexpected fatal compiler error") (*parser should have caught this*)
@@ -285,12 +275,12 @@ let check (*functions*) (globals, functions) =
               let lint = List.fold_left is_int true l' in
               if not lint then raise (Failure ("Cannot create new list of non-integer args"))
               else ((t1, SNewlis(List.map fst l')), symbols)
-      | Newobj(t1, argus)  ->
+      | Newobj(t1, argus) -> (*Player*)
           match t1 with
               Player ->
                 let rec pla ars = match ars with
                     [] -> []
-                  | (v, ex) :: ars' ->
+                  | (v, ex) :: ars' -> (*check to make sure it contains only specified attributes*)
                       let sv va = match va with Variable(x) -> SVariable(x)
                        | _ -> raise (Failure "compiler error") in
                       let ((t, ex'), _) = expr symbols ex in
@@ -301,7 +291,7 @@ let check (*functions*) (globals, functions) =
                         then ((t, sv v), (t, ex')) :: pla ars'
                         else raise (Failure "Illegal argument to Player")
                 in
-                let rec occurrences lis x =
+                let rec occurrences lis x = (*no duplicate attributes*)
                   match lis with [] -> 0
                   | (Variable(m), _) :: rest ->
                     if m = x then (occurrences rest x) + 1
@@ -316,6 +306,7 @@ let check (*functions*) (globals, functions) =
 
     in
 
+    (*for while/for:*)
     let check_bool_expr symbols e =
       let ((t', e'), symbols') = expr symbols e
       and err = "expected Boolean expression in " ^ string_of_expr e
@@ -327,7 +318,8 @@ let check (*functions*) (globals, functions) =
       in if t' != Int then raise (Failure err) else ((t', e'), symbols')
     in
 
-    (* Return a semantically-checked statement i.e. containing sexprs *)
+    (* Return a semantically-checked statement i.e. containing sexprs
+     * pass around the symbols to keep them updated as you make new bindings*)
     let rec check_stmt symbols sstm = match sstm with
         Expr e -> let (e', symbols') = expr symbols e in (SExpr (e'), symbols')
       | Print(e) ->

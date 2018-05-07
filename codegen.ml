@@ -1,3 +1,9 @@
+(* Generates code for !Olleh in LLVM. Based on MicroC's from class
+ * Contributors: Caroline Roig-Irwin clr2176
+ *               Amnah Ahmad aza2111
+ *               Mahika Bhalla mmb2276
+ *)
+
 (* We'll refer to Llvm and Ast constructs with module names *)
 module L = Llvm
 module A = Ast
@@ -11,19 +17,18 @@ let translate (globals, functions) =
   let context    = L.global_context () in
   (* Add types to the context so we can use them in our LLVM code *)
   let i32_t      = L.i32_type          context (*int*)
-  and i8_t       = L.i8_type           context (*char/string*)
-  and i1_t       = L.i1_type           context (*bool*)
+  and i8_t       = L.i8_type           context (*char*)
+  and i1_t       = L.i1_type           context (*boolean*)
   and void_t     = L.void_type         context (*void*)
-  (*and p_t  = L.pointer_type (L.i8_type (context))*)(*pointer type*)
-  in let string_pointer = L.pointer_type (L.i8_type context) in
-  let listlist_ptr = L.pointer_type string_pointer in
-  let map_t = L.named_struct_type context "mapt" in
+  in let string_pointer = L.pointer_type (L.i8_type context) in (*string/charlist*)
+  let listlist_ptr = L.pointer_type string_pointer in (*listlist*)
+  let map_t = L.named_struct_type context "mapt" in (*stringmap*)
   let map_ptr_t = L.pointer_type map_t in
   let _ = L.struct_set_body map_t [| string_pointer; i32_t; map_ptr_t |] false in
-  let charmap_t = L.named_struct_type context "charmapt" in
+  let charmap_t = L.named_struct_type context "charmapt" in (*charmap*)
   let cmap_ptr_t = L.pointer_type charmap_t in
   let _ = L.struct_set_body charmap_t [| i8_t; i32_t; cmap_ptr_t |] false in
-  let player_t = L.named_struct_type context "playert" in
+  let player_t = L.named_struct_type context "playert" in (*player*)
   let player_ptr_t = L.pointer_type player_t in
   let _ = L.struct_set_body player_t [| i32_t ; i1_t ; string_pointer ; map_ptr_t |] false
 
@@ -31,7 +36,7 @@ let translate (globals, functions) =
      generate actual code *)
   and the_module = L.create_module context "Olleh" in
 
-  (* Convert Olleh types to LLVM types *)
+  (* Convert !Olleh types to LLVM types *)
   let rec ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
@@ -39,9 +44,9 @@ let translate (globals, functions) =
     | A.String -> string_pointer
     | A.Void  -> void_t
     | A.Stringmap -> map_ptr_t
-    | A.Charmap -> cmap_ptr_t (*@TODO: possibly switch to separate struct*)
+    | A.Charmap -> cmap_ptr_t
     | A.Player -> player_ptr_t
-    | A.Charlist -> string_pointer (* @TODO adapt for 2D *)
+    | A.Charlist -> string_pointer
     | A.Listlist -> listlist_ptr
   in
 
@@ -209,7 +214,6 @@ let translate (globals, functions) =
        let name = fdecl.sfname
        and formal_types =
  	Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
-        (*in let _ = List.map (fun x -> print_string (A.string_of_typ (fst x))) fdecl.sformals*)
        in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
        StringMap.add name (L.define_function name ftype the_module, fdecl) m in
      List.fold_left function_decl StringMap.empty functions in
@@ -244,7 +248,7 @@ let translate (globals, functions) =
 
       let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
           (Array.to_list (L.params the_function)) in
-      let rec onlybind lis = match lis with
+      let rec onlybind lis = match lis with (*retrieve variable declarations*)
           [] -> []
         | SBind(x, y) :: es -> (x, y) :: (onlybind es)
         | SForeach (v, (t, _), _) :: es ->
@@ -257,7 +261,7 @@ let translate (globals, functions) =
     in
 
     (* Return the value for a variable or formal argument. First check
-     * locals, then globals *)
+     * globals, then locals (otherwise main will point to "local version") *)
 
     let lookup n lcs = try StringMap.find n global_vars
                    with Not_found ->  try StringMap.find n lcs
@@ -280,14 +284,14 @@ let translate (globals, functions) =
       | SNoexpr -> L.const_int i32_t 0
       | Null -> L.const_null (ltype_of_typ gtype)
       | SVariable s -> L.build_load (lookup s locs) s builder
-      | SVmember (e, m) ->
+      | SVmember (e, m) -> (*member of player: retrieve from struct*)
         let pla = expr builder locs e in
         let idx mem = match mem with "score" -> 0 | "turn" -> 1
           | "guessedWords" -> 3 | "letters" -> 2 | _ -> raise (Failure "fail")
         in
         let x = L.build_struct_gep pla (idx m) "tmp" builder
         in L.build_load x "tmp2" builder
-      | SLiterall l ->
+      | SLiterall l -> (*build list literal by inserting into an array*)
          let l' = List.map (expr builder locs) l in
          let len = (List.length l) + 1 in
          let (pty, sentinel) = if gtype = A.Charlist then (i8_t, L.const_int i8_t 0)
@@ -300,7 +304,7 @@ let translate (globals, functions) =
            in let _ = List.iteri addtoar l'
            in let _ = addtoar (len - 1) sentinel
          in x
-      | SLiteralm m ->
+      | SLiteralm m -> (*build map literal by initializing the first element and calling set() over the rest*)
         let mptrr =
          match m with
            [] -> L.const_null (ltype_of_typ gtype)
@@ -323,7 +327,7 @@ let translate (globals, functions) =
          in let _ =  List.iter set_map rest
          in mptr_actual
         in mptrr
-      | SAssignm (x, s, e) ->
+      | SAssignm (x, s, e) -> (*to assign a player, build a new player struct to replace it with*)
           let e' = expr builder locs e in
           let x' = expr builder locs x in
           let x'' = L.build_load x' "playerval" builder in
@@ -390,8 +394,8 @@ let translate (globals, functions) =
             A.Neg                  -> L.build_neg e' "tmp" builder
           | A.Not                  -> L.build_not e' "tmp" builder
           | A.Asc                  -> L.build_call ascii_func [| e' |] "tmp" builder)
-      | SNewtobj(t) -> L.const_null (ltype_of_typ t) (*set map to Null*)
-      | SNewobj(attrs) ->
+      | SNewtobj(t) -> L.const_null (ltype_of_typ t) (*set new map to Null*)
+      | SNewobj(attrs) -> (*build a new Player; set only specified attrs*)
          let und = L.undef player_t in
          let pla = L.build_malloc player_t "tmp" builder
          in let pptr = L.build_pointercast pla (ltype_of_typ gtype) "aptr" builder
@@ -476,7 +480,7 @@ let translate (globals, functions) =
             in let _  = L.build_store cres (lookup var locs) builder in cres
           | _ -> L.build_call cmapset_func (Array.of_list llargs) "Cmset_result" builder
         in ans
-      | SCall ("Stringmapdestroy", args) -> (*same with destroyers*)
+      | SCall ("Stringmapdestroy", args) -> (*same reassignment with destroyers*)
         let (a, b) = match args with (aa :: bb :: []) -> (aa, bb)
           | _ -> raise (Failure("wrong number of arguments")) in
         let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
@@ -496,11 +500,11 @@ let translate (globals, functions) =
             in let _  = L.build_store cres (lookup var locs) builder in cres
           | _ -> L.build_call cmapd_func (Array.of_list llargs) "Cmdestroy_result" builder
         in ans
-      | SCall ("readDict", args) -> (*store address of stringmap in dictionary*)
+      | SCall ("readDict", args) -> (*store address of dictionary*)
         let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
         let dict = L.build_call rdict_funct (Array.of_list llargs) "dict_result" builder
         in let _  = L.build_store dict (lookup "dictionary" locs) builder in dict
-      | SCall ("Charmapcontains", args) ->
+      | SCall ("Charmapcontains", args) -> (*convert i8 to bool*)
         let llargs = List.rev (List.map (expr builder locs) (List.rev args)) in
         let res = L.build_call cmapc_func (Array.of_list llargs) "cmcontains_result" builder
         in let ans = L.build_icmp L.Icmp.Eq res (L.const_int i8_t 1) "tmp" builder
@@ -510,17 +514,17 @@ let translate (globals, functions) =
         let res = L.build_call smapc_func (Array.of_list llargs) "smcontains_result" builder
         in let ans = L.build_icmp L.Icmp.Eq res (L.const_int i8_t 1) "tmp" builder
         in ans
-      | SCall ("listToString", args) ->
+      | SCall ("listToString", args) -> (*this isn't a real conversion*)
         expr builder locs (inddex args 0)
-      | SCall ("stringToList", args) ->
+      | SCall ("stringToList", args) -> (*neither is this*)
         expr builder locs (inddex args 0)
-      | SCall ("anagram", args) ->
+      | SCall ("anagram", args) -> (*adds dictionary to the args*)
         L.build_call anagram_func [| L.build_load (lookup "dictionary" locs) "dictionary" builder;
           (expr builder locs (inddex args 0)) |] "anagram_result" builder
       | SCall (f, args) ->
          let llargs = List.rev (List.map (expr builder locs) (List.rev args))
          in let (fdef, result) =
-           match f with
+           match f with (*remaining builtins: nothing special about them*)
              "InitializeRandom" -> (randi_func, "")
            | "ListlistgetLength" -> (lllen_func, "llen_result")
            | "CharlistgetLength" -> (cllen_func, "clen_result")
@@ -537,7 +541,7 @@ let translate (globals, functions) =
            | "intToString" -> (intToString_func, "intToString_result")
            | "random" -> (rand_funct, "rand_result")
            | "readInput" -> (rinput_funct, "rinput_result")
-           | _ ->
+           | _ -> (*stdlib or UDF*)
              let (ff, fdecl) = try StringMap.find f function_decls
              with Not_found -> raise (Failure ("FAIL " ^ f)) in
              let r = (match fdecl.styp with
@@ -559,7 +563,7 @@ let translate (globals, functions) =
 	Some _ -> ()
       | None -> ignore (instr builder) in
 
-
+      (*used for "zipping" stmts and variable definitions*)
       let rec zipper lis x = match lis with
          [] -> []
         | e :: rest -> (e, x) :: (zipper rest x)
@@ -631,13 +635,13 @@ let translate (globals, functions) =
        let rec counterbind s =
          try let _ = StringMap.find s locs in (counterbind (s ^ s))
          with Not_found -> s
-       in let varname = counterbind "_"
+       in let varname = counterbind "_" (*not allowed as user variable name*)
        in let add_local m (t, n) =
         let local_var = L.build_alloca (ltype_of_typ t) n builder
         in StringMap.add n local_var m
        in let locs = add_local locs (A.Int, varname)
-       in let _ = expr builder locs (A.Int, SAssign(varname, (A.Int, SLiterali(0))))
-       in let sx' = SBinop((A.Int, SVariable(varname)), A.Less, e)
+       in let _ = expr builder locs (A.Int, SAssign(varname, (A.Int, SLiterali(0)))) (*start at zero*)
+       in let sx' = SBinop((A.Int, SVariable(varname)), A.Less, e) (*while condition*)
        in let body' = body @
          [SExpr(A.Int,
                 SAssign(varname,
@@ -645,25 +649,24 @@ let translate (globals, functions) =
                                        A.Add,
                                        (A.Int, SLiterali(1))
                                       )
-                       ))
+                       )) (*increment every iteration*)
                )] in
         let builder = stmt builder ((SWhile((A.Bool, sx'), body')), locs) in builder
-     | (SForeach(v, (t, s), body), locs) ->
+     | (SForeach(v, (t, s), body), locs) -> (*unfortunately, we cannot implement this as For()*)
         let type_of_s tr = match tr with A.Listlist -> A.Charlist | A.Charlist -> A.Char
           | A.Charmap -> A.Char | A.Stringmap -> A.String | _ -> raise (Failure "Fatal error: Foreach")
         in let tos = type_of_s t (*the type of v*)
         in let add_local m (t, n) =
          let local_var = L.build_alloca (ltype_of_typ t) n builder
          in StringMap.add n local_var m
-        (*in let locs' = add_local locs (tos, v)*)
         in let rec counterbind s =
           try let _ = StringMap.find s locs in (counterbind (s ^ s))
           with Not_found -> s
-        in let varname = counterbind "_"
+        in let varname = counterbind "_" (*as in for, we need a counter variable*)
         in let locs'' = add_local locs (A.Int, varname)
         in let _ = expr builder locs'' (A.Int, SAssign(varname, (A.Int, SLiterali(0))))
         in let gf = if t = A.Stringmap || t = A.Charmap then
-          (A.string_of_typ t) ^ "geti" else (A.string_of_typ t) ^ "get"
+          (A.string_of_typ t) ^ "geti" else (A.string_of_typ t) ^ "get" (*get function for maintaining v*)
         in let _ = expr builder locs'' (tos, SAssign(v, (tos, SCall(gf, [ (t, s); (A.Int, SLiterali(0)) ]))))
         in let e = (A.Int, SCall((A.string_of_typ t) ^ "getLength", [ (t, s) ]))
         in let sx' = SBinop((A.Int, SVariable(varname)), A.Less, e)
@@ -671,7 +674,7 @@ let translate (globals, functions) =
                              SAssign(v,
                                     (tos, SCall(gf, [ (t, s); (A.Int, SVariable(varname)) ])
                                     )))
-        in let body' = (iiter :: body) @
+        in let body' = (iiter :: body) @ (*initialize/maintain variable at the beginning; update counter at the end*)
           [SExpr(A.Int,
                  SAssign(varname,
                         (A.Int, SBinop((A.Int, SVariable(varname)),

@@ -1,4 +1,5 @@
 scanner.ml
+testall.log
 *.DS_Store
 a.out
 *.cmi

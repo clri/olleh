@@ -1,3 +1,9 @@
+/*parser.mly: parses tokens
+ * Contributors: Caroline Roig-Irwin clr2176
+ *               Amnah Ahmad aza2111
+ *               Mahika Bhalla mmb2276
+ */
+
 %{ open Ast %}
 %token SEMI COLON OPAREN CPAREN OBRACK CBRACK OCURLY CCURLY COMMA PLUS MINUS TIMES DIVIDE MODULO DOT ASSIGN FUNCT FRESH MAPTO PRINT NULL
 %token INTV CHARV STRINGV BOOLV VOID MAPV LISTV PLAYER ASCIV
@@ -172,7 +178,7 @@ expr:
   | MINUS expr %prec NEG { Unop(Neg, $2)                   }
   | NOT expr         { Unop(Not, $2)                       }
   | VARIABLE ASSIGN expr { Assign($1, $3)                  }
-  | expr DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to mem*/
+  | expr DOT VARIABLE ASSIGN expr { Assignm($1, $3, $5)} /*assign to member (e.g. Player.letters)*/
   | expr DOT VARIABLE OPAREN args_opt CPAREN { Callm($1, $3, $5) }
   | VARIABLE OPAREN args_opt CPAREN { Call($1, $3)         }
   | FRESH MAPV OPAREN STRINGV CPAREN { Newtobj( Stringmap )        }
@@ -181,17 +187,6 @@ expr:
   | FRESH LISTV OPAREN expr CPAREN { Newlis(Charlist, ($4 :: [])) }
   | FRESH LISTV OPAREN expr COMMA expr CPAREN { Newlis(Listlist, ($4 :: ($6 :: []))) }
   | OPAREN expr CPAREN { $2                                }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,6 +1,8 @@
 (* AST and functions for printing it.
 Adapted from MicroC ast.ml and ast.ml in
 class notes. *)
+(*authors: Caroline Roig-Irwin clr2176
+           Mahika Bhalla mmb2276*)
 
 type op = Add | Sub | Mult | Div | Equal | Mod |
         Neq | Less | Leq | Greater | Geq |

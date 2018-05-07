@@ -5,6 +5,9 @@
 # Step through a list of files
 #  Compile, run, and check the output of each expected-to-work test
 #  Compile and check the error of each expected-to-fail test
+# Contributors: Caroline Roig-Irwin clr2176
+#               Amnah Ahmad aza2111
+#               Mahika Bhalla mmb2276
 
 # Path to the LLVM interpreter
 LLI="lli"

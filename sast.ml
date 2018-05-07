@@ -1,4 +1,6 @@
-(* Semantically-checked Abstract Syntax Tree*)
+(* Semantically-checked Abstract Syntax Tree
+ * Contributors: Caroline Roig-Irwin clr2176
+ *)
 
 open Ast
 

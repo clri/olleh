@@ -1,3 +1,9 @@
+/*
+ * !Olleh standard library, written in C.
+ * Contributors: Caroline Roig-Irwin clr2176
+ */
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -38,6 +44,7 @@ int GetElemSpace(int e) {
         return ans;
 }
 
+//convert int to string
 char *intToString(int e) {
         char *ans;
         int s = GetElemSpace(e) + 3;
@@ -52,12 +59,16 @@ void PrintCharLis1(char *lis) {
         int i;
         printf("[");
         int n = strlen(lis);
+        if (n == 0) {
+                printf("]");
+                return;
+        }
         for (i = 0; i < n - 1; i++)
                 printf("'%c', ", lis[i]);
         printf("'%c']", lis[i]);
 }
 
-//print charlist
+//print charlist, formatted
 void PrintCharLis(char *lis) {
         PrintCharLis1(lis);
         printf("\n");
@@ -76,7 +87,7 @@ void PrintListList(char **lis) {
         printf("]\n");
 }
 
-
+//print a stringmap
 void PrintStringmap(smap_t *map) {
         smap_t *tmp = map;
 
@@ -90,6 +101,7 @@ void PrintStringmap(smap_t *map) {
         printf("}\n");
 }
 
+//print a charmap
 void PrintCharmap(cmap_t *map) {
         cmap_t *tmp = map;
 
@@ -124,6 +136,8 @@ char* readInput(void) {
         return ans;
 }
 
+//sets m[k] = v. returns the map itself. if the map
+//is empty, allocates space for it.
 smap_t *Stringmapset(smap_t *m, char *k, int v) {
         smap_t *tmp = m;
         smap_t *tmp2 = tmp;
@@ -248,6 +262,7 @@ void Charlistset(char *lis, int i, char c) {
         lis[i] = c;
 }
 
+//fills a list with unprintable ASCII 1
 void FillList(char *lis, int e) {
         int i;
 
@@ -266,7 +281,7 @@ void FillListlist(char **lis, int r, int c) {
         }
 }
 
-//MAP FUNCTIONS
+//length of a charmap
 int CharmapgetLength(cmap_t *m) {
         int ans = 0;
         cmap_t *tmp = m;
@@ -278,6 +293,7 @@ int CharmapgetLength(cmap_t *m) {
         return ans;
 }
 
+//length of a stringmap
 int StringmapgetLength(smap_t *m) {
         int ans = 0;
         smap_t *tmp = m;
@@ -302,7 +318,6 @@ int Charmapget(cmap_t *m, char c) {
                 tmp = tmp->next;
         return (tmp == NULL ? m->value : tmp->value);
 }
-
 int Stringmapget(smap_t *m, char *c) {
         smap_t *tmp = m;
 
@@ -313,6 +328,8 @@ int Stringmapget(smap_t *m, char *c) {
         return (tmp == NULL ? m->value : tmp->value);
 }
 
+
+//geti: used by foreach loops to get each element one by one.
 char Charmapgeti(cmap_t *m, int i) {
         int ind;
         cmap_t *tmp = m;
@@ -390,8 +407,7 @@ smap_t *Stringmapdestroy(smap_t *m, char *key) {
         return m;
 }
 
-//setters: add a node to the map if none exists, or
-//change the existing value
+//analogous to Stringmapset
 cmap_t *Charmapset(cmap_t *m, char k, int v) {
         cmap_t *tmp = m;
         cmap_t *tmp2 = tmp;
@@ -421,7 +437,7 @@ cmap_t *Charmapset(cmap_t *m, char k, int v) {
         return m;
 }
 
-//for contains, how to return a bool? use unsigned char
+//returns 0 if k not in m, 1 if k in m
 unsigned char Charmapcontains(cmap_t *m, char k) {
         cmap_t *tmp = m;
 
@@ -434,7 +450,6 @@ unsigned char Charmapcontains(cmap_t *m, char k) {
         }
         return 0;
 }
-
 unsigned char Stringmapcontains(smap_t *m, char *k) {
         smap_t *tmp = m;
 
@@ -473,6 +488,8 @@ int IsAnagram(char *s1, char *s2) {
 }
 
 //finds first valid anagram in the dictionary, or null if none such
+//finds via iterating, so "first" is first to be entered in the
+//dictionary
 char *anagram(smap_t *dictionary, char *s) {
         smap_t *tmp = dictionary;
 
