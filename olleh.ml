@@ -6,7 +6,7 @@ Contributors: Caroline Roig-Irwin clr2176*)
 
 let () =
         (*link in the standard library*)
-        let temp_file = Sys.argv.(1) ^ "i" in (*!olleh intermediate file*)
+        let temp_file = Sys.argv.(1) ^ "i" in (*!OLLEH intermediate file*)
         let temp_out = open_out temp_file in
         let stdlib = open_in "standard-lib.olh" in (*add stdlib to file*)
           try while true; do

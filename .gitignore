@@ -1,5 +1,7 @@
 scanner.ml
+olleh
 testall.log
+test-suite
 *.DS_Store
 a.out
 *.cmi

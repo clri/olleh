@@ -36,7 +36,7 @@ let translate (globals, functions) =
      generate actual code *)
   and the_module = L.create_module context "Olleh" in
 
-  (* Convert !Olleh types to LLVM types *)
+  (* Convert !OLLEH types to LLVM types *)
   let rec ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t

@@ -1,10 +1,6 @@
 @TODO
 Once item is done/tested, remove it from the list
 
-ALL FILES
--comment code, explain anything that's ambiguous or confusing to you (or that you think
-  might need explaining to tfs/townsend)
-
 
 README
 -see @TODO in the README file
@@ -13,7 +9,9 @@ README
 LRM
 -curly quotes to straight; code to courier '' ""
 -standardize format (line spacing, font size, all Null, Charlist vs list<char>, etc)
--any updates made in syntax (check against parser/semant at very end)
+-any updates made in syntax
+-olleh -> !OLLEH
+-toplevel -> olleh
 
 
 mention pass by reference for non-primitive types

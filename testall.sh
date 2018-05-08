@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Regression testing script for Olleh
+# Regression testing script for !OLLEH
 # Using Stephen Edwards' MicroC example
 # Step through a list of files
 #  Compile, run, and check the output of each expected-to-work test
@@ -19,8 +19,8 @@ LLC="llc"
 CC="cc"
 
 
-# Path to the OLLEH compiler.
-OLLEH="./toplevel"
+# Path to the !OLLEH compiler.
+OLLEH="./olleh"
 
 # Set time limit for all operations
 ulimit -t 30
