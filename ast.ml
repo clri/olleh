@@ -59,7 +59,6 @@ type program = stmt list * func_decl list
 
 
 
-(*@TODO: implement printing functions better*)
 let string_of_typ x = match x with
       String -> "String"
     | Int -> "Int"
