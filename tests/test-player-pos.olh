@@ -1,9 +1,5 @@
 //test-player-pos: positive test for player functionality
 
-//Player player = fresh Player{};
-//player.turn = true;
-//print player.turn;
-
 Player player = fresh Player{turn -> true, letters -> ['a','b']};
 print player.turn;
 print player.letters;

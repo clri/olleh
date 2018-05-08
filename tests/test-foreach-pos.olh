@@ -28,6 +28,5 @@ print m.getLength();
 m.set("anotherr example", -9);
 print m.getLength();
 foreach z m:
-        //print m.get(z);
         print z + " " +  m.get(z);
 end;
