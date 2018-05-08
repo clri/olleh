@@ -1,0 +1,49 @@
+ readDict("zoom_dict.txt");
+ if (dictionary == Null):
+     readDict("zoom_dict.txt");
+ end;
+
+list<char> input; 
+Player richard = fresh Player{turn -> true};
+
+print "Do you think you can rhyme? Let's see what you've got";
+print "Input words you think rhyme with zoom! Don't make a mistake...";
+
+boolean game = true; 
+int score = 0; 
+
+
+while(game):
+	input = stringToList(readInput());
+	print "You said, " + listToString(input);
+
+	if(checkWord(listToString(input)) && !richard.guessedWords.contains(listToString(input))):
+		print "good job"; 
+		richard.score = richard.score + 1; 
+		richard.guessedWords.set(listToString(input),0);
+	 else:
+	 	 if(richard.guessedWords.contains(listToString(input))): 
+	 		 print "You repeated a word!";
+	 	 else:
+	 		 print "That doesn't rhyme with zoom!";
+	 	 end; 
+	 	
+	 	 // end of game 
+		 score = richard.score; 
+		 print "Don't be GLOOM-y, you can always play again!";
+		 print "You scored " + score ;
+		 print "You played the following words: ";
+
+		 foreach word richard.guessedWords:
+		 	print richard.guessedWords;
+		 end;
+
+
+		 print "Play again SOOM, oh no, I meant soon!";
+
+		 exit;
+	end;
+	
+
+ end;
+
