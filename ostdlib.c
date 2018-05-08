@@ -445,9 +445,9 @@ unsigned char Charmapcontains(cmap_t *m, char k) {
         if (m == NULL)
                 return 0;
         while (tmp != NULL) {
-                tmp = tmp->next;
                 if (tmp->key == k)
                         return 1;
+                tmp = tmp->next;
         }
         return 0;
 }
@@ -457,9 +457,9 @@ unsigned char Stringmapcontains(smap_t *m, char *k) {
         if (m == NULL)
                 return 0;
         while (tmp != NULL) {
-                tmp = tmp->next;
-                if (strcmp(tmp->key, k))
+                if (strcmp(tmp->key, k) == 0)
                         return 1;
+                tmp = tmp->next;
         }
         return 0;
 }
