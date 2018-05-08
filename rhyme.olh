@@ -33,14 +33,9 @@ while(game):
 		 print "Don't be GLOOM-y, you can always play again!";
 		 print "You scored " + score ;
 		 print "You played the following words: ";
-
-		 foreach word richard.guessedWords:
-		 	print richard.guessedWords;
-		 end;
-
-
+		 print richard.guessedWords;
+		
 		 print "Play again SOOM, oh no, I meant soon!";
-
 		 exit;
 	end;
 	
