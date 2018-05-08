@@ -2,6 +2,12 @@
 
 print dictionary.getLength();
 readDict("example.txt");
+/*example.txt contains:
+anagram
+function
+function
+please*/
+
 print dictionary.getLength();
 foreach w dictionary:
         print w + ": " + dictionary.get(w);
