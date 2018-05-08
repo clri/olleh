@@ -218,6 +218,17 @@ let translate (globals, functions) =
        StringMap.add name (L.define_function name ftype the_module, fdecl) m in
      List.fold_left function_decl StringMap.empty functions in
 
+    (*used in build_function_body and stmt*)
+     let rec onlybind lis = match lis with (*retrieve variable declarations*)
+         [] -> []
+       | SBind(x, y) :: es -> (x, y) :: (onlybind es)
+       | SForeach (v, (t, _), _) :: es ->
+         let t' = if t = A.Listlist then A.Charlist else if t = A.Stringmap then A.String
+           else Char in
+         (t', v) :: (onlybind es)
+       | _ :: es -> onlybind es in
+
+
    (* Fill in the body of the given function *)
    let build_function_body fdecl =
      let (the_function, _) = StringMap.find fdecl.sfname function_decls in
@@ -247,15 +258,7 @@ let translate (globals, functions) =
       in
 
       let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
-          (Array.to_list (L.params the_function)) in
-      let rec onlybind lis = match lis with (*retrieve variable declarations*)
-          [] -> []
-        | SBind(x, y) :: es -> (x, y) :: (onlybind es)
-        | SForeach (v, (t, _), _) :: es ->
-          let t' = if t = A.Listlist then A.Charlist else if t = A.Stringmap then A.String
-            else Char in
-          (t', v) :: (onlybind es)
-        | _ :: es -> onlybind es
+          (Array.to_list (L.params the_function))
       in let localds = onlybind fdecl.sbody in
       List.fold_left add_local formals localds
     in
@@ -601,12 +604,18 @@ let translate (globals, functions) =
          let branch_instr = L.build_br merge_bb in
 
          let then_bb = L.append_block context "then" the_function in
-
-         let then_builder = List.fold_left stmt (L.builder_at_end context then_bb) (zipper then_stmt locs) in
+         let add_local m (t, n) =
+          let local_var = L.build_alloca (ltype_of_typ t) n builder
+          in StringMap.add n local_var m in
+         let then_binds = onlybind then_stmt in
+         let locs' = List.fold_left add_local locs then_binds in
+         let then_builder = List.fold_left stmt (L.builder_at_end context then_bb) (zipper then_stmt locs') in
          let () = add_terminal then_builder branch_instr in
 
+         let else_binds = onlybind else_stmt in
+         let locs' = List.fold_left add_local locs else_binds in
          let else_bb = L.append_block context "else" the_function in
-         let else_builder = List.fold_left stmt (L.builder_at_end context else_bb) (zipper else_stmt locs) in
+         let else_builder = List.fold_left stmt (L.builder_at_end context else_bb) (zipper else_stmt locs') in
          let () = add_terminal else_builder branch_instr in
 
          let _ = L.build_cond_br bool_val then_bb else_bb builder in
@@ -614,9 +623,13 @@ let translate (globals, functions) =
      | (SWhile (predicate, body), locs) ->  (*lifted from microC, comments removed for brevity*)
          let pred_bb = L.append_block context "while" the_function in
          let _ = L.build_br pred_bb builder in
-
+         let add_local m (t, n) =
+          let local_var = L.build_alloca (ltype_of_typ t) n builder
+          in StringMap.add n local_var m in
+         let body_binds = onlybind body in
+         let locs' = List.fold_left add_local locs body_binds in
          let body_bb = L.append_block context "while_body" the_function in
-         let while_builder = List.fold_left stmt (L.builder_at_end context body_bb) (zipper body locs) in
+         let while_builder = List.fold_left stmt (L.builder_at_end context body_bb) (zipper body locs') in
          let () = add_terminal while_builder (L.build_br pred_bb) in
 
          let pred_builder = L.builder_at_end context pred_bb in
@@ -663,7 +676,8 @@ let translate (globals, functions) =
           try let _ = StringMap.find s locs in (counterbind (s ^ s))
           with Not_found -> s
         in let varname = counterbind "_" (*as in for, we need a counter variable*)
-        in let locs'' = add_local locs (A.Int, varname)
+        in let locs' = add_local locs (tos, v)
+        in let locs'' = add_local locs' (A.Int, varname)
         in let _ = expr builder locs'' (A.Int, SAssign(varname, (A.Int, SLiterali(0))))
         in let gf = if t = A.Stringmap || t = A.Charmap then
           (A.string_of_typ t) ^ "geti" else (A.string_of_typ t) ^ "get" (*get function for maintaining v*)
