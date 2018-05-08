@@ -1,0 +1,79 @@
+Player p1 = fresh Player{turn -> true};
+p1.letters = setLetters(7);
+print "Player One's Letters:";
+print p1.letters;
+Player p2 = fresh Player{};
+p2.letters = setLetters(7);
+print "Player Two's Letters:";
+print p2.letters;
+print "Here's how you play: Each player has to make a word using one of their
+      letters as the first and last letters of the word. Each word counts for
+      its length in points. First to ten points wins!";
+print "It's Player One's turn!";
+
+function void switchTurns():
+    if (p1.turn):
+        p2.turn = true;
+        p1.turn = false;
+    else:
+        p1.turn = true;
+        p2.turn = false;
+    end;
+end;
+
+list<char> inp;
+boolean v1;
+boolean v2;
+
+while (p1.score < 10 && p2.score < 10):
+    inp = stringToList(readInput());
+    print "input received: " + listToString(inp);
+    v1 = false;
+    v2 = false;
+
+    if (p1.turn):
+        char c1 = inp.get(0);
+        char c2 = inp.get(inp.getLength() - 1);
+        foreach ll p1.letters:
+            if (ll == c1):
+                v1 = true;
+            end;
+            if (ll == c2):
+                v2 = true;
+            end;
+        end;
+    else:
+        char c11 = inp.get(0);
+        char c22 = inp.get(inp.getLength() - 1);
+        foreach lll p2.letters:
+            if (lll == c11):
+                v1 = true;
+            end;
+            if (lll == c22):
+                v2 = true;
+            end;
+        end;
+    end;
+    if (!(v1 && v2)):
+        print "Invalid word; switching turns";
+    else:
+        if (p1.turn):
+            p1.guessedWords.set(listToString(inp), 1);
+            p1.score = p1.score + inp.getLength();
+            if (p1.score >= 10):
+                print "Game over! Player One Wins";
+                exit;
+            end;
+            print "Nice one! Now your turn, Player Two";
+        else:
+            p2.guessedWords.set(listToString(inp), 1);
+            p2.score = p1.score + inp.getLength();
+            if (p2.score >= 10):
+                print "Game over! Player Two Wins";
+                exit;
+            end;
+            print "Whoa! Now your turn, Player One";
+        end;
+    end;
+    switchTurns();
+end;
