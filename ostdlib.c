@@ -307,7 +307,7 @@ int StringmapgetLength(smap_t *m) {
 }
 
 //when c is not in the map it will return
-//the value of some element in the map.
+//zero as a "default"
 //so you'd better do a contains() check first!
 //if the map is empty, returns 0
 int Charmapget(cmap_t *m, char c) {
@@ -317,7 +317,7 @@ int Charmapget(cmap_t *m, char c) {
                 return 0;
         while (tmp != NULL && tmp->key != c)
                 tmp = tmp->next;
-        return (tmp == NULL ? m->value : tmp->value);
+        return (tmp == NULL ? 0 : tmp->value);
 }
 int Stringmapget(smap_t *m, char *c) {
         smap_t *tmp = m;
@@ -326,7 +326,7 @@ int Stringmapget(smap_t *m, char *c) {
                 return 0;
         while (tmp != NULL && strcmp(tmp->key,c) != 0)
                 tmp = tmp->next;
-        return (tmp == NULL ? m->value : tmp->value);
+        return (tmp == NULL ? 0 : tmp->value);
 }
 
 
@@ -373,8 +373,8 @@ cmap_t *Charmapdestroy(cmap_t *m, char key) {
         }
 
         while (tmp != NULL && tmp->key != key) {
-                tmp = tmp->next;
                 tmp2 = tmp;
+                tmp = tmp->next;
         }
         if (tmp != NULL && tmp->key == key) {
                 tmp2->next = tmp->next;
@@ -398,8 +398,8 @@ smap_t *Stringmapdestroy(smap_t *m, char *key) {
         }
 
         while (tmp != NULL && !strcmp(tmp->key, key)) {
-                tmp = tmp->next;
                 tmp2 = tmp;
+                tmp = tmp->next;
         }
         if (tmp != NULL && !strcmp(tmp->key, key)) {
                 tmp2->next = tmp->next;
