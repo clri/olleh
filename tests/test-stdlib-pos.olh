@@ -18,7 +18,7 @@ end;
 
 
 Player player = fresh Player{letters -> fresh list(3)};
-setLetters(player);
+player.letters = setLetters(3);
 setLetterScore({'x' -> 1});
 int total = 0;
 foreach lett player.letters:

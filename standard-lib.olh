@@ -26,8 +26,7 @@ function boolean checkWord(String w_):
         return dictionary.contains(w_);
 end;
 
-function void setLetters(Player player_):
-        int len_ = player_.letters.getLength();
+function list<char> setLetters(int len_):
         list<char> temp_ = fresh list(len_);
         int i_ = 0;
         int ch_;
@@ -37,7 +36,7 @@ function void setLetters(Player player_):
                 temp_.set(i_, ASCII ch_);
                 i_ = i_ + 1;
         end;
-        player_.letters = temp_;
+        return temp_;
 end;
 
 function int getLength(String w_):
