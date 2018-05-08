@@ -132,6 +132,7 @@ char* readInput(void) {
         size_t len = 0;
         ssize_t err = getline(&ans, &len, stdin);
         if (!err) return "";
+        if (len == 0) return "";
         ans[strlen(ans) - 1] = 0; //remove newline
         return ans;
 }
