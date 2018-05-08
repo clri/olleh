@@ -213,7 +213,7 @@ let translate (globals, functions) =
      let function_decl m fdecl =
        let name = fdecl.sfname
        and formal_types =
- 	Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
+         Array.of_list (List.map (fun (t,_) -> ltype_of_typ t) fdecl.sformals)
        in let ftype = L.function_type (ltype_of_typ fdecl.styp) formal_types in
        StringMap.add name (L.define_function name ftype the_module, fdecl) m in
      List.fold_left function_decl StringMap.empty functions in
@@ -234,16 +234,16 @@ let translate (globals, functions) =
     let local_vars =
       let add_formal m (t, n) p =
         let () = L.set_value_name n p in
-	let local = L.build_alloca (ltype_of_typ t) n builder in
+        let local = L.build_alloca (ltype_of_typ t) n builder in
         let _  = L.build_store p local builder in
-	StringMap.add n local m
+        StringMap.add n local m
       in
 
       (* Allocate space for any locally declared variables and add the
        * resulting registers to our map *)
       let add_local m (t, n) =
-	let local_var = L.build_alloca (ltype_of_typ t) n builder
-	in StringMap.add n local_var m
+        let local_var = L.build_alloca (ltype_of_typ t) n builder
+        in StringMap.add n local_var m
       in
 
       let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
@@ -277,7 +277,7 @@ let translate (globals, functions) =
 
     (* Construct code for an expression; return its value *)
     let rec expr builder locs ((gtype, e) : sexpr) = match e with
-	SLiterali i -> L.const_int i32_t i
+        SLiterali i -> L.const_int i32_t i
       | SLiteralc c -> L.const_int i8_t (int_of_char c)
       | SLiteralb b -> L.const_int i1_t (if b then 1 else 0)
       | SLiterals s -> L.build_global_stringptr s "" builder
@@ -343,23 +343,23 @@ let translate (globals, functions) =
       | SAssign (s, e) -> let e' = expr builder locs e in
           let _  = L.build_store e' (lookup s locs) builder in e'
       | SBinop (e1, op, e2) ->
-	  let (t, ee1) = e1 and (tt, ee2) = e2
-	  and e1' = expr builder locs e1
-	  and e2' = expr builder locs e2 in
-	  if t = A.Int then (match op with
+          let (t, ee1) = e1 and (tt, ee2) = e2
+          and e1' = expr builder locs e1
+          and e2' = expr builder locs e2 in
+          if t = A.Int then (match op with
           | A.Add     -> L.build_add
-	  | A.Sub     -> L.build_sub
-	  | A.Mult    -> L.build_mul
+          | A.Sub     -> L.build_sub
+          | A.Mult    -> L.build_mul
           | A.Div     -> L.build_sdiv
           | A.Mod     -> L.build_urem
-	  | A.Equal   -> L.build_icmp L.Icmp.Eq
-	  | A.Neq     -> L.build_icmp L.Icmp.Ne
-	  | A.Less    -> L.build_icmp L.Icmp.Slt
-	  | A.Leq     -> L.build_icmp L.Icmp.Sle
-	  | A.Greater -> L.build_icmp L.Icmp.Sgt
-	  | A.Geq     -> L.build_icmp L.Icmp.Sge
+          | A.Equal   -> L.build_icmp L.Icmp.Eq
+          | A.Neq     -> L.build_icmp L.Icmp.Ne
+          | A.Less    -> L.build_icmp L.Icmp.Slt
+          | A.Leq     -> L.build_icmp L.Icmp.Sle
+          | A.Greater -> L.build_icmp L.Icmp.Sgt
+          | A.Geq     -> L.build_icmp L.Icmp.Sge
           | _ -> raise (Failure "semantic error in codegen")
-	      ) e1' e2' "tmp" builder
+              ) e1' e2' "tmp" builder
           else if ee1 = Null || ee2 = Null then (match op with
             | A.Neq -> L.build_icmp L.Icmp.Ne
             | _ -> L.build_icmp L.Icmp.Eq) e1' e2' "tmp" builder
@@ -376,7 +376,7 @@ let translate (globals, functions) =
           else raise (Failure "internal error: not binop for string, should not have passed semantic")
           else if t = A.Bool then
             if op = A.And then L.build_and e1' e2' "tmp" builder
-  	    else L.build_or e1' e2' "tmp" builder
+              else L.build_or e1' e2' "tmp" builder
           else if t = A.Char then (match op with
               A.Equal   -> L.build_icmp L.Icmp.Eq
             | A.Neq     -> L.build_icmp L.Icmp.Ne
@@ -388,9 +388,9 @@ let translate (globals, functions) =
              ) e1' e2' "tmp" builder
           else raise (Failure "internal error: binop not implemented")
       | SUnop(op, e) ->
-	  let _ = e in
+          let _ = e in
           let e' = expr builder locs e in
-	  (match op with
+          (match op with
             A.Neg                  -> L.build_neg e' "tmp" builder
           | A.Not                  -> L.build_not e' "tmp" builder
           | A.Asc                  -> L.build_call ascii_func [| e' |] "tmp" builder)
@@ -560,7 +560,7 @@ let translate (globals, functions) =
     let add_terminal builder instr =
                            (* The current block where we're inserting instr *)
       match L.block_terminator (L.insertion_block builder) with
-	Some _ -> ()
+        Some _ -> ()
       | None -> ignore (instr builder) in
 
       (*used for "zipping" stmts and variable definitions*)
@@ -577,7 +577,7 @@ let translate (globals, functions) =
         (SExpr e, locs) -> let _ = expr builder locs e in builder
       | (SPrint (t, e), locs) ->
           if t = A.String then let _ = L.build_call printf_func [| str_format_str ; (expr builder locs (t,e)) |]
-	    "printf" builder in builder
+            "printf" builder in builder
          else if t = A.Int then let _ = L.build_call printf_func [| int_format_str ; (expr builder locs (t,e)) |]
            "printf" builder in builder
          else if t = A.Char then let _ = L.build_call printf_func [| char_format_str ; (expr builder locs (t,e)) |]
@@ -597,20 +597,20 @@ let translate (globals, functions) =
            "" builder in builder
       | (SIf (predicate, then_stmt, else_stmt), locs) -> (*lifted from microC, comments removed for brevity*)
          let bool_val = expr builder locs predicate in
-	 let merge_bb = L.append_block context "merge" the_function in
+         let merge_bb = L.append_block context "merge" the_function in
          let branch_instr = L.build_br merge_bb in
 
-	 let then_bb = L.append_block context "then" the_function in
+         let then_bb = L.append_block context "then" the_function in
 
          let then_builder = List.fold_left stmt (L.builder_at_end context then_bb) (zipper then_stmt locs) in
-	 let () = add_terminal then_builder branch_instr in
+         let () = add_terminal then_builder branch_instr in
 
-	 let else_bb = L.append_block context "else" the_function in
+         let else_bb = L.append_block context "else" the_function in
          let else_builder = List.fold_left stmt (L.builder_at_end context else_bb) (zipper else_stmt locs) in
-	 let () = add_terminal else_builder branch_instr in
+         let () = add_terminal else_builder branch_instr in
 
-	 let _ = L.build_cond_br bool_val then_bb else_bb builder in
-	 L.builder_at_end context merge_bb
+         let _ = L.build_cond_br bool_val then_bb else_bb builder in
+         L.builder_at_end context merge_bb
      | (SWhile (predicate, body), locs) ->  (*lifted from microC, comments removed for brevity*)
          let pred_bb = L.append_block context "while" the_function in
          let _ = L.build_br pred_bb builder in
