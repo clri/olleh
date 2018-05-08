@@ -11,25 +11,15 @@ README
 
 
 LRM
--curly quotes to straight; code to courier
+-curly quotes to straight; code to courier '' ""
 -standardize format (line spacing, font size, all Null, Charlist vs list<char>, etc)
 -any updates made in syntax (check against parser/semant at very end)
--no statements after return
 
--modifying maps while foreaching them (once that section's written)
--fresh list default
--setLetters is lowercase; will set player's letters only for the size of their letters currently
--printing null will print (null) for string but not for map/list
--string rep of zero size charlist is ['']
--maps with same key twice getting resolved to last occurence
--behavior with negative fresh list is a negative malloc, which is bad (allocates a large number
- of bytes so be aware that this is a possibility)
--strings aren't immutable either
--fresh listlist has autodimension but u can have a list of any length.
--out of bounds behavior on lists
--reserved keywords of stdlib local variables (you may not use them for global names)
- (w_, temp_, lett_, letters_, len_, i_, ch_, temp2_, temp3_, x_)
--there's no way to test random() or readInput()--put that in LRM note maybe
+
+mention pass by reference for non-primitive types
+
+there's no way to deterministically test random() or readInput()--put that in
+report note maybe
 
 
 

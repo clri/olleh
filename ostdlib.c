@@ -1,5 +1,5 @@
 /*
- * !Olleh standard library, written in C.
+ * !OLLEH builtin functions, written in C.
  * Contributors: Caroline Roig-Irwin clr2176
  */
 

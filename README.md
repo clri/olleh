@@ -1,4 +1,4 @@
-The Olleh compiler
+The !OLLEH compiler
 
 Amnah Ahmad: aza2111@barnard.edu
 Mahika Bhalla: mmb2276@columbia.edu

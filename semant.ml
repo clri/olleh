@@ -1,4 +1,4 @@
-(* Semantic checking for the !Olleh compiler
+(* Semantic checking for the !OLLEH compiler
  * Contributors: Caroline Roig-Irwin clr2176
  *)
 
@@ -156,11 +156,11 @@ let check (globals, functions) =
       | Noexpr     -> ((Void, SNoexpr), symbols)
       | Null       -> ((Void, Null), symbols)
       | Variable s  -> ((type_of_identifier s symbols, SVariable s), symbols)
-      | Vmember(e, m) ->
+      | Vmember(e, m) -> (*only correct attributes of Player*)
         let ((t', e'), symbols') = expr symbols e in
         let tov = type_of_vmember t' m in
         ((tov, SVmember((t', e'), m)), symbols')
-      | Literall l ->
+      | Literall l -> (*list literal: make sure every element is a char, or a list<char>*)
           let l' = map_over_two expr symbols l in
           let is_char b ((t, _), _) = b && (t = Char) in
           let lchar = List.fold_left is_char true l' in
@@ -170,7 +170,7 @@ let check (globals, functions) =
             if lchar then ((Charlist, SLiterall(l'')), symbols) else
               if llist then ((Listlist, SLiterall(l'')), symbols) else
                 raise (Failure ("List of improper type"))
-      | Literalm m ->
+      | Literalm m -> (*map literal: make sure all keys are String or all keys are char, and all values are int*)
           let m' = List.map (map_tup expr symbols) m in
           let m'' = List.map (map_tup_nos fst) m' in
           let is_charkey b ((t, _), _) = b && (t = Char) in
@@ -364,7 +364,6 @@ let check (globals, functions) =
       and check_stmt_list symbols stms =
           match stms with
               [Return _ as s] ->  ([fst (check_stmt symbols s)], symbols)
-            | Return _ :: _   -> raise (Failure "nothing may follow a return")
             | s :: ss         -> let (sast, symbols') = check_stmt symbols s
                                  in let (slis, symbols'') = check_stmt_list symbols' ss
                                  in (sast :: slis, symbols'')
@@ -375,6 +374,8 @@ let check (globals, functions) =
     { styp = func.typ;
       sfname = func.fname;
       sformals = formals';
-      sbody = fst (check_stmt_list (if func.fname = "main" then StringMap.empty else symbolz) func.body) (*no err since no block *)
+      sbody = fst (check_stmt_list
+        (if func.fname = "main" then StringMap.empty else symbolz) (*to enforce declare before use in global scope*)
+        func.body)
     }
   in  (globals', List.map check_function functions)

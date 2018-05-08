@@ -1,4 +1,4 @@
-(* Generates code for !Olleh in LLVM. Based on MicroC's from class
+(* Generates code for !OLLEH in LLVM. Based on MicroC's from class
  * Contributors: Caroline Roig-Irwin clr2176
  *               Amnah Ahmad aza2111
  *               Mahika Bhalla mmb2276
