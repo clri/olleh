@@ -1,0 +1,42 @@
+readDict("unscramble_dict.txt");
+if (dictionary == Null):
+    readDict("unscramble_dict.txt");
+end;
+
+list<char> input;
+Player richard = fresh Player{turn -> true};
+
+print "This is a word search game.";
+print "Given the following 20 letters, create as many 1- and 2-letter words as you can.";
+
+list<char> letters = setLetters(20);
+
+boolean game = true;
+int score = 0;
+
+while(game):
+    input = stringToList(readInput());
+
+    if (checkWord(listToString(input)) && !richard.guessedWords.contains(listToString(input))):
+        print "Correct!";
+        richard.score = richard.score + 1;
+        richard.guessedWords.set(listToString(input),0);
+    else:
+        if (richard.guessedWords.contains(listToString(input))):
+            print "You repeated a word!";
+        else if (!checkWord(listToString(input)):
+            print "That's not a word!";
+        end;
+    
+        // end of game
+        score = richard.score;
+        print "You scored " + score;
+        print "You played the following words:";
+        print richard.guessedWords;
+        
+        print "See you next time!";
+        exit;
+
+    end;
+
+end;
