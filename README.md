@@ -24,18 +24,15 @@ tests/\*: tests with output they will be measured against
 ast.ml: abstract syntax tree, output of the parser
 codegen.ml: code generator, converts sast to LLVM code
 example.txt: example !OLLEH dictionary used for testing. please do not modify.
-firstlastgame.olh: example !OLLEH code for a word game
 Makefile: compiles the compiler
 ostdlib.c: builtin functions linked with the !OLLEH compiler.
 parser.mly: parser, converts tokens to ast
-rhyme.olh: example !OLLEH code for a word game
 sast.ml: semantically checked abstract syntax tree, output of semantic checker
 scanner.mll: scanner, tokenizes input file
 semant.ml: semantic checker, turns ast to sast
 standard-lib.olh: !OLLEH standard library that is linked to every file
 testall.sh: shell script that runs the tests
 olleh.ml: driver program for the compiler that compiles !OLLEH to LLVM.
-zoom_dict.txt: dictionary file used by rhyme.olh
 
 
 

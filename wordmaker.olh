@@ -24,16 +24,18 @@ while(game):
     else:
         if (richard.guessedWords.contains(listToString(input))):
             print "You repeated a word!";
-        else if (!checkWord(listToString(input)):
-            print "That's not a word!";
+        else:
+            if (!(checkWord(listToString(input)))):
+                print "That's not a word!";
+            end;
         end;
-    
+
         // end of game
         score = richard.score;
         print "You scored " + score;
         print "You played the following words:";
         print richard.guessedWords;
-        
+
         print "See you next time!";
         exit;
 
