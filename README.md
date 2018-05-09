@@ -19,7 +19,7 @@ The compiler compiles from hello.olh in the tests folder.  testall.sh runs the O
 invokes "cc" (the stock C compiler) to assemble the .s file, link in
 the hello and generate an executable. See testall.sh for details.
 
-Included files:
+Included files (for compiling and running):
 tests/\*: tests with output they will be measured against
 ast.ml: abstract syntax tree, output of the parser
 codegen.ml: code generator, converts sast to LLVM code
@@ -34,6 +34,12 @@ standard-lib.olh: !OLLEH standard library that is linked to every file
 testall.sh: shell script that runs the tests
 olleh.ml: driver program for the compiler that compiles !OLLEH to LLVM.
 
+Included word games and dictionaries (can be compiled and run):
+firstlastgame.olh
+rhyme.olh
+wordmaker.olh
+wordmaker_dict.txt
+zoom_dict.txt 
 
 
 HOW TO COMPILE AND RUN:
